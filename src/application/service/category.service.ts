@@ -18,7 +18,10 @@ export class CategoryService {
     return this.categoryRepository.create(categoryData);
   }
 
-  updateCategory(id: number, categoryData: CategoryDTO): Promise<CategoryDTO | null> {
+  updateCategory(
+    id: number,
+    categoryData: CategoryDTO,
+  ): Promise<CategoryDTO | null> {
     return this.categoryRepository.update(id, categoryData);
   }
 

@@ -21,7 +21,9 @@ let ProductAttributeRepository = class ProductAttributeRepository {
         this.prisma = prisma;
     }
     async findById(id) {
-        const en = await this.prisma.product_attribute.findUnique({ where: { id } });
+        const en = await this.prisma.product_attribute.findUnique({
+            where: { id },
+        });
         return en;
     }
     async update(id, entity) {

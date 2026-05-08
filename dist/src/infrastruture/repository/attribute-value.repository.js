@@ -22,7 +22,9 @@ let AttributeValueRepository = class AttributeValueRepository {
         this.prisma = prisma;
     }
     async findById(id) {
-        const entity = await this.prisma.attribute_value.findUnique({ where: { id } });
+        const entity = await this.prisma.attribute_value.findUnique({
+            where: { id },
+        });
         if (!entity)
             return null;
         return this.toDTO(entity);
