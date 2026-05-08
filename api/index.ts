@@ -1,7 +1,8 @@
 import 'dotenv/config';
 import express from 'express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { createNestApp } from '../src/app.factory';
+import path from 'node:path';
+import module from 'node:module';
 
 type RequestHandler = (
   req: IncomingMessage,
@@ -9,6 +10,29 @@ type RequestHandler = (
 ) => void | Promise<void>;
 
 let cachedHandler: RequestHandler | null = null;
+let createNestAppFn: typeof import('../src/app.factory').createNestApp | null =
+  null;
+
+function configureNodePath() {
+  const rootPath = process.cwd();
+  process.env.NODE_PATH = [process.env.NODE_PATH, rootPath]
+    .filter(Boolean)
+    .join(path.delimiter);
+
+  (
+    module as typeof module & { Module: { _initPaths: () => void } }
+  ).Module._initPaths();
+}
+
+function getCreateNestApp() {
+  if (!createNestAppFn) {
+    configureNodePath();
+    const { createNestApp } = require('../src/app.factory') as typeof import('../src/app.factory');
+    createNestAppFn = createNestApp;
+  }
+
+  return createNestAppFn!;
+}
 
 async function getHandler() {
   if (cachedHandler) {
@@ -16,6 +40,7 @@ async function getHandler() {
   }
 
   const expressApp = express();
+  const createNestApp = getCreateNestApp();
   const app = await createNestApp(expressApp);
   await app.init();
 
