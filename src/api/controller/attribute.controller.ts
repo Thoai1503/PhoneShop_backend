@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { AttributeService } from 'src/application/service/attribute.service';
 import { AttributeDTO } from '../dto/attribute.dto';
 
@@ -14,7 +21,9 @@ export class AttributeController {
 
   // GET api/attribute/GetByCategoryId/:categoryId
   @Get('GetByCategoryId/:categoryId')
-  async getByCategoryId(@Param('categoryId', ParseIntPipe) categoryId: number): Promise<AttributeDTO[]> {
+  async getByCategoryId(
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ): Promise<AttributeDTO[]> {
     return this.service.getByCategoryId(categoryId);
   }
 

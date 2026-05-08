@@ -6,9 +6,7 @@ import { BrandDTO } from 'src/api/dto/brand.dto';
 
 @Injectable()
 export class CategoryBrandRepository {
-  constructor(
-    @Inject(PrismaService) private readonly prisma: PrismaService,
-  ) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async getByCategory(categorySlug: string): Promise<CategoryBrandDTO[]> {
     const list = await this.prisma.category_brands.findMany({
