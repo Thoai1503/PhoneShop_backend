@@ -1,5 +1,5 @@
-import { PrismaService } from '../database/prisma.service';
-import { CartDTO } from "../../api/dto/product.dto";
+import { PrismaService } from '../database/prisma.service.js';
+import { CartDTO } from '../../api/dto/product.dto.js';
 export declare class CartRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);

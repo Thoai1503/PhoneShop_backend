@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BrandRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../database/prisma.service");
-const brand_dto_1 = require("../../api/dto/brand.dto");
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { BrandDTO } from '../../api/dto/brand.dto.js';
 let BrandRepository = class BrandRepository {
     prisma;
     constructor(prisma) {
@@ -26,7 +23,7 @@ let BrandRepository = class BrandRepository {
         return list.map((b) => this.toDTO(b));
     }
     toDTO(b) {
-        const dto = new brand_dto_1.BrandDTO();
+        const dto = new BrandDTO();
         dto.id = b.id;
         dto.name = b.name;
         dto.slug = b.slug;
@@ -34,10 +31,10 @@ let BrandRepository = class BrandRepository {
         return dto;
     }
 };
-exports.BrandRepository = BrandRepository;
-exports.BrandRepository = BrandRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+BrandRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], BrandRepository);
+export { BrandRepository };
 //# sourceMappingURL=brand.repository.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,10 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AttributeValueController = void 0;
-const common_1 = require("@nestjs/common");
-const attribute_value_service_1 = require("../../application/service/attribute-value.service");
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import { AttributeValueService } from '../../application/service/attribute-value.service.js';
 let AttributeValueController = class AttributeValueController {
     service;
     constructor(service) {
@@ -24,16 +21,16 @@ let AttributeValueController = class AttributeValueController {
         return this.service.getByAttributeId(attributeId);
     }
 };
-exports.AttributeValueController = AttributeValueController;
 __decorate([
-    (0, common_1.Get)('Attribute/:attributeId'),
-    __param(0, (0, common_1.Param)('attributeId', common_1.ParseIntPipe)),
+    Get('Attribute/:attributeId'),
+    __param(0, Param('attributeId', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], AttributeValueController.prototype, "getByAttributeId", null);
-exports.AttributeValueController = AttributeValueController = __decorate([
-    (0, common_1.Controller)('api/attributevalue'),
-    __metadata("design:paramtypes", [attribute_value_service_1.AttributeValueService])
+AttributeValueController = __decorate([
+    Controller('api/attributevalue'),
+    __metadata("design:paramtypes", [AttributeValueService])
 ], AttributeValueController);
+export { AttributeValueController };
 //# sourceMappingURL=attribute-value.controller.js.map

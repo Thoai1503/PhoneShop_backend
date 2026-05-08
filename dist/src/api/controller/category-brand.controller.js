@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,10 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryBrandController = void 0;
-const common_1 = require("@nestjs/common");
-const category_brand_service_1 = require("../../application/service/category-brand.service");
+import { Controller, Get, Param } from '@nestjs/common';
+import { CategoryBrandService } from '../../application/service/category-brand.service.js';
 let CategoryBrandController = class CategoryBrandController {
     service;
     constructor(service) {
@@ -24,16 +21,16 @@ let CategoryBrandController = class CategoryBrandController {
         return this.service.getByCategory(category);
     }
 };
-exports.CategoryBrandController = CategoryBrandController;
 __decorate([
-    (0, common_1.Get)('category/:category'),
-    __param(0, (0, common_1.Param)('category')),
+    Get('category/:category'),
+    __param(0, Param('category')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], CategoryBrandController.prototype, "getByCategory", null);
-exports.CategoryBrandController = CategoryBrandController = __decorate([
-    (0, common_1.Controller)('api/categorybrand'),
-    __metadata("design:paramtypes", [category_brand_service_1.CategoryBrandService])
+CategoryBrandController = __decorate([
+    Controller('api/categorybrand'),
+    __metadata("design:paramtypes", [CategoryBrandService])
 ], CategoryBrandController);
+export { CategoryBrandController };
 //# sourceMappingURL=category-brand.controller.js.map

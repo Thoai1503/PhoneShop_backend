@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { CategoryBrandService } from '../../application/service/category-brand.service';
-import { CategoryBrandDTO } from '../dto/category-brand.dto';
+import { CategoryBrandService } from '../../application/service/category-brand.service.js';
+import { CategoryBrandDTO } from '../dto/category-brand.dto.js';
 
 @Controller('api/categorybrand')
 export class CategoryBrandController {

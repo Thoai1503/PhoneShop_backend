@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,14 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductVariantRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../database/prisma.service");
-const product_dto_1 = require("../../api/dto/product.dto");
-const attribute_dto_1 = require("../../api/dto/attribute.dto");
-const category_dto_1 = require("../../api/dto/category.dto");
-const brand_dto_1 = require("../../api/dto/brand.dto");
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { ProductAttributeDTO, ProductDTO, ProductImageDTO, ProductVariantDTO, ProductVariantPaginatedDTO, VariantAttributeDTO, } from '../../api/dto/product.dto.js';
+import { AttributeDTO, AttributeValueDTO, } from '../../api/dto/attribute.dto.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
+import { BrandDTO } from '../../api/dto/brand.dto.js';
 let ProductVariantRepository = class ProductVariantRepository {
     prisma;
     constructor(prisma) {
@@ -44,7 +41,9 @@ let ProductVariantRepository = class ProductVariantRepository {
     }
     async delete(id) {
         try {
-            const existing = await this.prisma.product_variants.findUnique({ where: { id } });
+            const existing = await this.prisma.product_variants.findUnique({
+                where: { id },
+            });
             if (!existing)
                 return false;
             await this.prisma.product_variants.delete({ where: { id } });
@@ -81,7 +80,9 @@ let ProductVariantRepository = class ProductVariantRepository {
     }
     async update(entity) {
         try {
-            const existing = await this.prisma.product_variants.findUnique({ where: { id: entity.id } });
+            const existing = await this.prisma.product_variants.findUnique({
+                where: { id: entity.id },
+            });
             if (!existing)
                 return false;
             await this.prisma.product_variants.update({
@@ -140,7 +141,8 @@ let ProductVariantRepository = class ProductVariantRepository {
         const maxPriceInDb = allVariants.length > 0 ? Math.max(...allVariants.map((v) => v.price)) : 0;
         let list = [...allVariants];
         if (st.category) {
-            list = list.filter((e) => e.products.categories.slug.toLowerCase().trim() === st.category.trim().toLowerCase());
+            list = list.filter((e) => e.products.categories.slug.toLowerCase().trim() ===
+                st.category.trim().toLowerCase());
         }
         if (st.minPrice != null) {
             list = list.filter((e) => e.price >= st.minPrice);
@@ -154,7 +156,7 @@ let ProductVariantRepository = class ProductVariantRepository {
         if (st.sortBy && st.order) {
             const asc = st.order.toLowerCase() === 'asc';
             if (st.sortBy.toLowerCase() === 'price') {
-                list.sort((a, b) => asc ? a.price - b.price : b.price - a.price);
+                list.sort((a, b) => (asc ? a.price - b.price : b.price - a.price));
             }
             else {
                 list.sort((a, b) => {
@@ -179,13 +181,15 @@ let ProductVariantRepository = class ProductVariantRepository {
                 continue;
             list = list.filter((variant) => values.some((value) => {
                 const matchVariant = variant.variant_attribute.some((va) => va.attribute_id === attributeId &&
-                    (va.value_text?.trim().toLowerCase() === value.trim().toLowerCase() ||
+                    (va.value_text?.trim().toLowerCase() ===
+                        value.trim().toLowerCase() ||
                         va.value_int?.toString() === value.trim() ||
                         va.value_decimal?.toString() === value.trim() ||
                         (va.attribute_value_id != null &&
                             va.attribute_value_id === parseInt(value.trim(), 10))));
                 const matchProduct = variant.products.product_attribute.some((pa) => pa.attribute_id === attributeId &&
-                    (pa.value_text?.trim().toLowerCase() === value.trim().toLowerCase() ||
+                    (pa.value_text?.trim().toLowerCase() ===
+                        value.trim().toLowerCase() ||
                         pa.value_int?.toString() === value.trim() ||
                         pa.value_decimal?.toString() === value.trim() ||
                         (pa.attribute_value_id != null &&
@@ -195,7 +199,7 @@ let ProductVariantRepository = class ProductVariantRepository {
         }
         const totalCount = list.length;
         const paginatedList = list.slice(st.skip, st.skip + st.take);
-        const result = new product_dto_1.ProductVariantPaginatedDTO();
+        const result = new ProductVariantPaginatedDTO();
         result.count = totalCount;
         result.max = maxPriceInDb;
         result.min = 0;
@@ -203,7 +207,7 @@ let ProductVariantRepository = class ProductVariantRepository {
         return result;
     }
     toDTO(x) {
-        const dto = new product_dto_1.ProductVariantDTO();
+        const dto = new ProductVariantDTO();
         dto.id = x.id;
         dto.product_id = x.product_id;
         dto.name = x.name;
@@ -213,7 +217,7 @@ let ProductVariantRepository = class ProductVariantRepository {
         dto.created_at = x.created_at;
         if (x.products) {
             const p = x.products;
-            const productDto = new product_dto_1.ProductDTO();
+            const productDto = new ProductDTO();
             productDto.id = p.id;
             productDto.name = p.name;
             productDto.slug = p.slug;
@@ -223,14 +227,14 @@ let ProductVariantRepository = class ProductVariantRepository {
             productDto.brand_id = p.brand_id ?? 0;
             productDto.category_id = p.category_id;
             if (p.categories) {
-                const cat = new category_dto_1.CategoryDTO();
+                const cat = new CategoryDTO();
                 cat.id = p.categories.id;
                 cat.name = p.categories.name?.trim() ?? '';
                 cat.slug = p.categories.slug?.toLowerCase().trim() ?? '';
                 productDto.category = cat;
             }
             if (p.brands) {
-                const brand = new brand_dto_1.BrandDTO();
+                const brand = new BrandDTO();
                 brand.id = p.brands.id;
                 brand.name = p.brands.name;
                 brand.slug = p.brands.slug;
@@ -238,7 +242,7 @@ let ProductVariantRepository = class ProductVariantRepository {
             }
             if (p.product_variants) {
                 productDto.product_variant = p.product_variants.map((v) => {
-                    const vDto = new product_dto_1.ProductVariantDTO();
+                    const vDto = new ProductVariantDTO();
                     vDto.id = v.id;
                     vDto.product_id = v.product_id;
                     vDto.name = v.name;
@@ -251,15 +255,16 @@ let ProductVariantRepository = class ProductVariantRepository {
             }
             if (p.product_attribute) {
                 productDto.product_attribute = p.product_attribute.map((pa) => {
-                    const paDto = new product_dto_1.ProductAttributeDTO();
+                    const paDto = new ProductAttributeDTO();
                     paDto.id = pa.id;
                     paDto.product_id = pa.product_id;
                     paDto.attribute_id = pa.attribute_id;
-                    paDto.value_decimal = pa.value_decimal !== null ? Number(pa.value_decimal) : null;
+                    paDto.value_decimal =
+                        pa.value_decimal !== null ? Number(pa.value_decimal) : null;
                     paDto.value_int = pa.value_int;
                     paDto.value_text = pa.value_text;
                     if (pa.attributes) {
-                        const attr = new attribute_dto_1.AttributeDTO();
+                        const attr = new AttributeDTO();
                         attr.id = pa.attributes.id;
                         attr.name = pa.attributes.name;
                         attr.slug = pa.attributes.slug ?? '';
@@ -275,7 +280,7 @@ let ProductVariantRepository = class ProductVariantRepository {
         }
         if (x.product_image) {
             dto.product_images = x.product_image.map((img) => {
-                const imgDto = new product_dto_1.ProductImageDTO();
+                const imgDto = new ProductImageDTO();
                 imgDto.id = img.id;
                 imgDto.product_id = img.product_id;
                 imgDto.variant_id = img.variant_id;
@@ -285,23 +290,24 @@ let ProductVariantRepository = class ProductVariantRepository {
         }
         if (x.variant_attribute) {
             dto.variant_attributes = x.variant_attribute.map((va) => {
-                const vaDto = new product_dto_1.VariantAttributeDTO();
+                const vaDto = new VariantAttributeDTO();
                 vaDto.id = va.id;
                 vaDto.variant_id = va.variant_id;
                 vaDto.attribute_id = va.attribute_id;
-                vaDto.value_decimal = va.value_decimal !== null ? Number(va.value_decimal) : null;
+                vaDto.value_decimal =
+                    va.value_decimal !== null ? Number(va.value_decimal) : null;
                 vaDto.value_int = va.value_int;
                 vaDto.value_text = va.value_text;
                 vaDto.attribute_value_id = va.attribute_value_id;
                 if (va.attribute_value) {
-                    const avDto = new attribute_dto_1.AttributeValueDTO();
+                    const avDto = new AttributeValueDTO();
                     avDto.id = va.attribute_value.id;
                     avDto.attribute_id = va.attribute_value.attribute_id;
                     avDto.value = va.attribute_value.value ?? '';
                     vaDto.attribute_value = avDto;
                 }
                 if (va.attributes) {
-                    const attr = new attribute_dto_1.AttributeDTO();
+                    const attr = new AttributeDTO();
                     attr.id = va.attributes.id;
                     attr.name = va.attributes.name;
                     attr.slug = va.attributes.slug ?? '';
@@ -316,10 +322,10 @@ let ProductVariantRepository = class ProductVariantRepository {
         return dto;
     }
 };
-exports.ProductVariantRepository = ProductVariantRepository;
-exports.ProductVariantRepository = ProductVariantRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+ProductVariantRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], ProductVariantRepository);
+export { ProductVariantRepository };
 //# sourceMappingURL=product-variant.repository.js.map

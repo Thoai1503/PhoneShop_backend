@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryBrandService = void 0;
-const common_1 = require("@nestjs/common");
-const category_brand_repository_1 = require("../../infrastruture/repository/category-brand.repository");
+import { Injectable } from '@nestjs/common';
+import { CategoryBrandRepository } from '../../infrastruture/repository/category-brand.repository.js';
 let CategoryBrandService = class CategoryBrandService {
     repo;
     constructor(repo) {
@@ -21,9 +18,9 @@ let CategoryBrandService = class CategoryBrandService {
         return this.repo.getByCategory(categorySlug);
     }
 };
-exports.CategoryBrandService = CategoryBrandService;
-exports.CategoryBrandService = CategoryBrandService = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [category_brand_repository_1.CategoryBrandRepository])
+CategoryBrandService = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [CategoryBrandRepository])
 ], CategoryBrandService);
+export { CategoryBrandService };
 //# sourceMappingURL=category-brand.service.js.map

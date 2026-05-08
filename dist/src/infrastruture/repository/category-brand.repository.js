@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,13 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryBrandRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../database/prisma.service");
-const category_brand_dto_1 = require("../../api/dto/category-brand.dto");
-const category_dto_1 = require("../../api/dto/category.dto");
-const brand_dto_1 = require("../../api/dto/brand.dto");
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { CategoryBrandDTO } from '../../api/dto/category-brand.dto.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
+import { BrandDTO } from '../../api/dto/brand.dto.js';
 let CategoryBrandRepository = class CategoryBrandRepository {
     prisma;
     constructor(prisma) {
@@ -29,16 +26,16 @@ let CategoryBrandRepository = class CategoryBrandRepository {
             include: { categories: true, brands: true },
         });
         return list.map((cb) => {
-            const dto = new category_brand_dto_1.CategoryBrandDTO();
+            const dto = new CategoryBrandDTO();
             dto.id = cb.id;
             dto.category_id = cb.category_id;
             dto.brand_id = cb.brand_id;
-            const cat = new category_dto_1.CategoryDTO();
+            const cat = new CategoryDTO();
             cat.id = cb.category_id;
             cat.name = cb.categories.name?.trim() ?? '';
             cat.slug = cb.categories.slug?.trim() ?? '';
             dto.category = cat;
-            const brand = new brand_dto_1.BrandDTO();
+            const brand = new BrandDTO();
             brand.id = cb.brand_id;
             brand.name = cb.brands.name?.trim() ?? '';
             brand.slug = cb.brands.slug?.trim() ?? '';
@@ -47,10 +44,10 @@ let CategoryBrandRepository = class CategoryBrandRepository {
         });
     }
 };
-exports.CategoryBrandRepository = CategoryBrandRepository;
-exports.CategoryBrandRepository = CategoryBrandRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+CategoryBrandRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], CategoryBrandRepository);
+export { CategoryBrandRepository };
 //# sourceMappingURL=category-brand.repository.js.map

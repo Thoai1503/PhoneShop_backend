@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Category = void 0;
-class Category {
+export class Category {
     id;
     name;
     slug;
@@ -15,5 +12,4 @@ class Category {
         this.parentId = category.parentId;
     }
 }
-exports.Category = Category;
 //# sourceMappingURL=category.modal.js.map

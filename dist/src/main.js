@@ -1,9 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-require("dotenv/config");
-const app_factory_1 = require("./app.factory");
+import 'dotenv/config';
+import { createNestApp } from './app.factory.js';
 async function bootstrap() {
-    const app = await (0, app_factory_1.createNestApp)();
+    const app = await createNestApp();
     await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();

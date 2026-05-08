@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,13 +8,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var CatalogSaveChangesService_1;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CatalogSaveChangesService = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("./prisma.service");
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from './prisma.service.js';
 let CatalogSaveChangesService = CatalogSaveChangesService_1 = class CatalogSaveChangesService {
     prisma;
-    logger = new common_1.Logger(CatalogSaveChangesService_1.name);
+    logger = new Logger(CatalogSaveChangesService_1.name);
     constructor(prisma) {
         this.prisma = prisma;
     }
@@ -250,9 +247,9 @@ let CatalogSaveChangesService = CatalogSaveChangesService_1 = class CatalogSaveC
             .replace(/^-+|-+$/g, '');
     }
 };
-exports.CatalogSaveChangesService = CatalogSaveChangesService;
-exports.CatalogSaveChangesService = CatalogSaveChangesService = CatalogSaveChangesService_1 = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+CatalogSaveChangesService = CatalogSaveChangesService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [PrismaService])
 ], CatalogSaveChangesService);
+export { CatalogSaveChangesService };
 //# sourceMappingURL=catalog-save-changes.service.js.map

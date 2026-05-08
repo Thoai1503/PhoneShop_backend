@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryDTO = void 0;
-const class_validator_1 = require("class-validator");
-class CategoryDTO {
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+export class CategoryDTO {
     id;
     name = '';
     slug = '';
@@ -21,30 +18,29 @@ class CategoryDTO {
     created_at;
     category_attributes;
 }
-exports.CategoryDTO = CategoryDTO;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    IsNotEmpty(),
+    IsString(),
     __metadata("design:type", String)
 ], CategoryDTO.prototype, "name", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
+    IsNotEmpty(),
+    IsString(),
     __metadata("design:type", String)
 ], CategoryDTO.prototype, "slug", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumber)(),
+    IsOptional(),
+    IsNumber(),
     __metadata("design:type", Object)
 ], CategoryDTO.prototype, "parent_id", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
+    IsOptional(),
+    IsString(),
     __metadata("design:type", String)
 ], CategoryDTO.prototype, "path", void 0);
 __decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsNumber)(),
+    IsOptional(),
+    IsNumber(),
     __metadata("design:type", Number)
 ], CategoryDTO.prototype, "level", void 0);
 //# sourceMappingURL=category.dto.js.map

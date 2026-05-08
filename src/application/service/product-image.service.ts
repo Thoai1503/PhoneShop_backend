@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ProductImageRepository } from '../../infrastruture/repository/product-image.repository';
-import { ProductImageDTO } from '../../api/dto/product.dto';
+import { ProductImageRepository } from '../../infrastruture/repository/product-image.repository.js';
+import { ProductImageDTO } from '../../api/dto/product.dto.js';
 
 @Injectable()
 export class ProductImageService {

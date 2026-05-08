@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductVariantController = void 0;
-const common_1 = require("@nestjs/common");
-const product_variant_service_1 = require("../../application/service/product-variant.service");
-const product_dto_1 = require("../dto/product.dto");
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Query, } from '@nestjs/common';
+import { ProductVariantService } from '../../application/service/product-variant.service.js';
+import { FilterStateDTO, ProductVariantDTO, } from '../dto/product.dto.js';
 let ProductVariantController = class ProductVariantController {
     service;
     constructor(service) {
@@ -28,7 +25,7 @@ let ProductVariantController = class ProductVariantController {
     async getById(id) {
         const result = await this.service.findById(id);
         if (!result)
-            throw new common_1.NotFoundException();
+            throw new NotFoundException();
         return result;
     }
     async create(entity) {
@@ -37,7 +34,7 @@ let ProductVariantController = class ProductVariantController {
     async updateVariant(entity) {
         const result = await this.service.update(entity);
         if (!result)
-            throw new common_1.NotFoundException();
+            throw new NotFoundException();
         return result;
     }
     async delete(id) {
@@ -47,7 +44,7 @@ let ProductVariantController = class ProductVariantController {
         return this.service.findByProductId(productId);
     }
     parseFilterState(query) {
-        const st = new product_dto_1.FilterStateDTO();
+        const st = new FilterStateDTO();
         if (query['skip'])
             st.skip = parseInt(query['skip'], 10) || 0;
         if (query['take'])
@@ -84,51 +81,51 @@ let ProductVariantController = class ProductVariantController {
         return st;
     }
 };
-exports.ProductVariantController = ProductVariantController;
 __decorate([
-    (0, common_1.Get)(),
-    __param(0, (0, common_1.Query)()),
+    Get(),
+    __param(0, Query()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ProductVariantController.prototype, "getAll", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    Get(':id'),
+    __param(0, Param('id', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ProductVariantController.prototype, "getById", null);
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    Post(),
+    __param(0, Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [product_dto_1.ProductVariantDTO]),
+    __metadata("design:paramtypes", [ProductVariantDTO]),
     __metadata("design:returntype", Promise)
 ], ProductVariantController.prototype, "create", null);
 __decorate([
-    (0, common_1.Post)('Update'),
-    __param(0, (0, common_1.Body)()),
+    Post('Update'),
+    __param(0, Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [product_dto_1.ProductVariantDTO]),
+    __metadata("design:paramtypes", [ProductVariantDTO]),
     __metadata("design:returntype", Promise)
 ], ProductVariantController.prototype, "updateVariant", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    Delete(':id'),
+    __param(0, Param('id', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ProductVariantController.prototype, "delete", null);
 __decorate([
-    (0, common_1.Get)('product/:productId'),
-    __param(0, (0, common_1.Param)('productId', common_1.ParseIntPipe)),
+    Get('product/:productId'),
+    __param(0, Param('productId', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ProductVariantController.prototype, "findByProductId", null);
-exports.ProductVariantController = ProductVariantController = __decorate([
-    (0, common_1.Controller)('api/productvariant'),
-    __metadata("design:paramtypes", [product_variant_service_1.ProductVariantService])
+ProductVariantController = __decorate([
+    Controller('api/productvariant'),
+    __metadata("design:paramtypes", [ProductVariantService])
 ], ProductVariantController);
+export { ProductVariantController };
 //# sourceMappingURL=product-variant.controller.js.map

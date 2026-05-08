@@ -1,5 +1,5 @@
-import { AttributeService } from '../../application/service/attribute.service';
-import { AttributeDTO } from '../dto/attribute.dto';
+import { AttributeService } from '../../application/service/attribute.service.js';
+import { AttributeDTO } from '../dto/attribute.dto.js';
 export declare class AttributeController {
     private readonly service;
     constructor(service: AttributeService);

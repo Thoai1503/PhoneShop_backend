@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductVariantService = void 0;
-const common_1 = require("@nestjs/common");
-const product_variant_repository_1 = require("../../infrastruture/repository/product-variant.repository");
+import { Injectable } from '@nestjs/common';
+import { ProductVariantRepository } from '../../infrastruture/repository/product-variant.repository.js';
 let ProductVariantService = class ProductVariantService {
     repo;
     constructor(repo) {
@@ -36,9 +33,9 @@ let ProductVariantService = class ProductVariantService {
         return this.repo.findByProductId(productId);
     }
 };
-exports.ProductVariantService = ProductVariantService;
-exports.ProductVariantService = ProductVariantService = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [product_variant_repository_1.ProductVariantRepository])
+ProductVariantService = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [ProductVariantRepository])
 ], ProductVariantService);
+export { ProductVariantService };
 //# sourceMappingURL=product-variant.service.js.map

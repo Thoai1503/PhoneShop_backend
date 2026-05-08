@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.VariantAttributeRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../database/prisma.service");
-const product_dto_1 = require("../../api/dto/product.dto");
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { VariantAttributeDTO } from '../../api/dto/product.dto.js';
 let VariantAttributeRepository = class VariantAttributeRepository {
     prisma;
     constructor(prisma) {
@@ -45,7 +42,7 @@ let VariantAttributeRepository = class VariantAttributeRepository {
         }
     }
     toDTO(x) {
-        const dto = new product_dto_1.VariantAttributeDTO();
+        const dto = new VariantAttributeDTO();
         dto.id = x.id;
         dto.attribute_id = x.attribute_id;
         dto.variant_id = x.variant_id;
@@ -56,10 +53,10 @@ let VariantAttributeRepository = class VariantAttributeRepository {
         return dto;
     }
 };
-exports.VariantAttributeRepository = VariantAttributeRepository;
-exports.VariantAttributeRepository = VariantAttributeRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+VariantAttributeRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], VariantAttributeRepository);
+export { VariantAttributeRepository };
 //# sourceMappingURL=variant-attribute.repository.js.map

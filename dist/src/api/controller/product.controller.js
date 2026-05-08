@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductController = void 0;
-const common_1 = require("@nestjs/common");
-const product_service_1 = require("../../application/service/product.service");
-const product_dto_1 = require("../dto/product.dto");
+import { Body, Controller, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, } from '@nestjs/common';
+import { ProductService } from '../../application/service/product.service.js';
+import { ProductAddAndUpdateStateDTO } from '../dto/product.dto.js';
 let ProductController = class ProductController {
     service;
     constructor(service) {
@@ -27,41 +24,41 @@ let ProductController = class ProductController {
     async getById(id) {
         const result = await this.service.findById(id);
         if (!result)
-            throw new common_1.NotFoundException();
+            throw new NotFoundException();
         return result;
     }
     async create(product) {
         const result = await this.service.createAndReturn(product);
         if (!result)
-            throw new common_1.InternalServerErrorException({
+            throw new InternalServerErrorException({
                 message: 'Failed to create product',
             });
         return result;
     }
 };
-exports.ProductController = ProductController;
 __decorate([
-    (0, common_1.Get)(),
+    Get(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getAll", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    Get(':id'),
+    __param(0, Param('id', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getById", null);
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    Post(),
+    __param(0, Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [product_dto_1.ProductAddAndUpdateStateDTO]),
+    __metadata("design:paramtypes", [ProductAddAndUpdateStateDTO]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "create", null);
-exports.ProductController = ProductController = __decorate([
-    (0, common_1.Controller)('api/product'),
-    __metadata("design:paramtypes", [product_service_1.ProductService])
+ProductController = __decorate([
+    Controller('api/product'),
+    __metadata("design:paramtypes", [ProductService])
 ], ProductController);
+export { ProductController };
 //# sourceMappingURL=product.controller.js.map

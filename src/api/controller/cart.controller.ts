@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
-import { CartService } from '../../application/service/cart.service';
-import { CartDTO } from '../dto/product.dto';
+import { CartService } from '../../application/service/cart.service.js';
+import { CartDTO } from '../dto/product.dto.js';
 
 @Controller('api/cart')
 export class CartController {

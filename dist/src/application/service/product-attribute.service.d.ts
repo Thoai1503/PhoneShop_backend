@@ -1,5 +1,5 @@
-import { ProductAttributeRepository } from "../../infrastruture/repository/product-attribute.repository";
-import { ProductAttributeDTO } from '../../api/dto/product.dto';
+import { ProductAttributeRepository } from '../../infrastruture/repository/product-attribute.repository.js';
+import { ProductAttributeDTO } from '../../api/dto/product.dto.js';
 export declare class ProductAttributeService {
     private readonly repo;
     constructor(repo: ProductAttributeRepository);

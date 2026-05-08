@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ProductAttributeRepository } from 'src/infrastruture/repository/product-attribute.repository';
-import { ProductAttributeDTO } from '../../api/dto/product.dto';
+import { ProductAttributeRepository } from '../../infrastruture/repository/product-attribute.repository.js';
+import { ProductAttributeDTO } from '../../api/dto/product.dto.js';
 
 @Injectable()
 export class ProductAttributeService {

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AttributeController = void 0;
-const common_1 = require("@nestjs/common");
-const attribute_service_1 = require("../../application/service/attribute.service");
-const attribute_dto_1 = require("../dto/attribute.dto");
+import { Body, Controller, Get, Param, ParseIntPipe, Post, } from '@nestjs/common';
+import { AttributeService } from '../../application/service/attribute.service.js';
+import { AttributeDTO } from '../dto/attribute.dto.js';
 let AttributeController = class AttributeController {
     service;
     constructor(service) {
@@ -31,29 +28,29 @@ let AttributeController = class AttributeController {
         return this.service.create(entity);
     }
 };
-exports.AttributeController = AttributeController;
 __decorate([
-    (0, common_1.Get)(),
+    Get(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AttributeController.prototype, "getAll", null);
 __decorate([
-    (0, common_1.Get)('GetByCategoryId/:categoryId'),
-    __param(0, (0, common_1.Param)('categoryId', common_1.ParseIntPipe)),
+    Get('GetByCategoryId/:categoryId'),
+    __param(0, Param('categoryId', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], AttributeController.prototype, "getByCategoryId", null);
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    Post(),
+    __param(0, Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [attribute_dto_1.AttributeDTO]),
+    __metadata("design:paramtypes", [AttributeDTO]),
     __metadata("design:returntype", Promise)
 ], AttributeController.prototype, "create", null);
-exports.AttributeController = AttributeController = __decorate([
-    (0, common_1.Controller)('api/attribute'),
-    __metadata("design:paramtypes", [attribute_service_1.AttributeService])
+AttributeController = __decorate([
+    Controller('api/attribute'),
+    __metadata("design:paramtypes", [AttributeService])
 ], AttributeController);
+export { AttributeController };
 //# sourceMappingURL=attribute.controller.js.map

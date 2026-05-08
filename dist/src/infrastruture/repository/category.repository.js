@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,13 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryRepository = void 0;
-const common_1 = require("@nestjs/common");
-const base_repository_1 = require("./base.repository");
-const prisma_service_1 = require("../database/prisma.service");
-const category_dto_1 = require("../../api/dto/category.dto");
-let CategoryRepository = class CategoryRepository extends base_repository_1.BaseRepository {
+import { Inject, Injectable } from '@nestjs/common';
+import { BaseRepository } from './base.repository.js';
+import { PrismaService } from '../database/prisma.service.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
+let CategoryRepository = class CategoryRepository extends BaseRepository {
     prismaService;
     constructor(prismaService) {
         super(prismaService);
@@ -76,7 +73,7 @@ let CategoryRepository = class CategoryRepository extends base_repository_1.Base
         return true;
     }
     toDTO(c) {
-        const dto = new category_dto_1.CategoryDTO();
+        const dto = new CategoryDTO();
         dto.id = c.id;
         dto.name = c.name;
         dto.slug = c.slug;
@@ -87,10 +84,10 @@ let CategoryRepository = class CategoryRepository extends base_repository_1.Base
         return dto;
     }
 };
-exports.CategoryRepository = CategoryRepository;
-exports.CategoryRepository = CategoryRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+CategoryRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], CategoryRepository);
+export { CategoryRepository };
 //# sourceMappingURL=category.repository.js.map

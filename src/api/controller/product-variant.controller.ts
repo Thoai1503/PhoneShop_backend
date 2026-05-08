@@ -9,12 +9,12 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ProductVariantService } from '../../application/service/product-variant.service';
+import { ProductVariantService } from '../../application/service/product-variant.service.js';
 import {
   FilterStateDTO,
   ProductVariantDTO,
   ProductVariantPaginatedDTO,
-} from '../dto/product.dto';
+} from '../dto/product.dto.js';
 
 @Controller('api/productvariant')
 export class ProductVariantController {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { VariantAttributeRepository } from '../../infrastruture/repository/variant-attribute.repository';
-import { VariantAttributeDTO } from '../../api/dto/product.dto';
+import { VariantAttributeRepository } from '../../infrastruture/repository/variant-attribute.repository.js';
+import { VariantAttributeDTO } from '../../api/dto/product.dto.js';
 
 @Injectable()
 export class VariantAttributeService {

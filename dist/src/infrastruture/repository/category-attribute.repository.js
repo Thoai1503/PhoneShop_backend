@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,13 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryAttributeRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../database/prisma.service");
-const category_attribute_dto_1 = require("../../api/dto/category-attribute.dto");
-const attribute_dto_1 = require("../../api/dto/attribute.dto");
-const category_dto_1 = require("../../api/dto/category.dto");
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { CategoryAttributeDTO } from '../../api/dto/category-attribute.dto.js';
+import { AttributeDTO, AttributeValueDTO, } from '../../api/dto/attribute.dto.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
 let CategoryAttributeRepository = class CategoryAttributeRepository {
     prisma;
     constructor(prisma) {
@@ -98,7 +95,7 @@ let CategoryAttributeRepository = class CategoryAttributeRepository {
         return list.map((ca) => {
             const dto = this.toDTO(ca);
             dto.category = (() => {
-                const c = new category_dto_1.CategoryDTO();
+                const c = new CategoryDTO();
                 c.id = ca.categories.id;
                 c.name = ca.categories.name?.trim() ?? '';
                 c.slug = ca.categories.slug?.trim() ?? '';
@@ -106,7 +103,7 @@ let CategoryAttributeRepository = class CategoryAttributeRepository {
             })();
             if (ca.attributes) {
                 dto.attribute.attribute_values = (ca.attributes.attribute_value ?? []).map((av) => {
-                    const avDto = new attribute_dto_1.AttributeValueDTO();
+                    const avDto = new AttributeValueDTO();
                     avDto.id = av.id;
                     avDto.attribute_id = av.attribute_id;
                     avDto.value = av.value ?? '';
@@ -117,7 +114,7 @@ let CategoryAttributeRepository = class CategoryAttributeRepository {
         });
     }
     toDTO(ca) {
-        const dto = new category_attribute_dto_1.CategoryAttributeDTO();
+        const dto = new CategoryAttributeDTO();
         dto.id = ca.id;
         dto.category_id = ca.category_id;
         dto.attribute_id = ca.attribute_id;
@@ -125,7 +122,7 @@ let CategoryAttributeRepository = class CategoryAttributeRepository {
         dto.is_variant_level = ca.is_variant_level;
         dto.is_required = ca.is_required;
         if (ca.attributes) {
-            const attr = new attribute_dto_1.AttributeDTO();
+            const attr = new AttributeDTO();
             attr.id = ca.attributes.id;
             attr.name = ca.attributes.name?.trim() ?? '';
             attr.slug = ca.attributes.slug?.trim() ?? '';
@@ -137,10 +134,10 @@ let CategoryAttributeRepository = class CategoryAttributeRepository {
         return dto;
     }
 };
-exports.CategoryAttributeRepository = CategoryAttributeRepository;
-exports.CategoryAttributeRepository = CategoryAttributeRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+CategoryAttributeRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], CategoryAttributeRepository);
+export { CategoryAttributeRepository };
 //# sourceMappingURL=category-attribute.repository.js.map

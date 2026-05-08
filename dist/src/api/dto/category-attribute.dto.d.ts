@@ -1,5 +1,5 @@
-import { AttributeDTO } from './attribute.dto';
-import { CategoryDTO } from './category.dto';
+import { AttributeDTO } from './attribute.dto.js';
+import { CategoryDTO } from './category.dto.js';
 export declare class CategoryAttributeDTO {
     id: number;
     category_id: number;

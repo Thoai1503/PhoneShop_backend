@@ -5,7 +5,7 @@ import {
   NestExpressApplication,
 } from '@nestjs/platform-express';
 import type { Express } from 'express';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 function getCorsOrigins() {
   const origins = process.env.CORS_ORIGIN?.split(',')

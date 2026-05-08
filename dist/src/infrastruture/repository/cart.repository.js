@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CartRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../database/prisma.service");
-const product_dto_1 = require("../../api/dto/product.dto");
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { CartDTO, ProductImageDTO, ProductVariantDTO, } from '../../api/dto/product.dto.js';
 let CartRepository = class CartRepository {
     prisma;
     constructor(prisma) {
@@ -29,17 +26,17 @@ let CartRepository = class CartRepository {
             },
         });
         return list.map((c) => {
-            const dto = new product_dto_1.CartDTO();
+            const dto = new CartDTO();
             dto.id = c.id;
             dto.user_id = c.user_id;
             dto.variant_id = c.variant_id;
             dto.quantity = c.quantity;
-            const vDto = new product_dto_1.ProductVariantDTO();
+            const vDto = new ProductVariantDTO();
             vDto.id = c.product_variants.id;
             vDto.name = c.product_variants.name;
             vDto.price = c.product_variants.price;
             vDto.product_images = c.product_variants.product_image.map((img) => {
-                const imgDto = new product_dto_1.ProductImageDTO();
+                const imgDto = new ProductImageDTO();
                 imgDto.id = img.id;
                 imgDto.product_id = img.product_id;
                 imgDto.variant_id = img.variant_id;
@@ -51,10 +48,10 @@ let CartRepository = class CartRepository {
         });
     }
 };
-exports.CartRepository = CartRepository;
-exports.CartRepository = CartRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+CartRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], CartRepository);
+export { CartRepository };
 //# sourceMappingURL=cart.repository.js.map

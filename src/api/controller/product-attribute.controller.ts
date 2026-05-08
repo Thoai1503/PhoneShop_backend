@@ -1,6 +1,6 @@
 import { Body, Controller, Put, Param, ParseIntPipe } from '@nestjs/common';
-import { ProductAttributeService } from '../../application/service/product-attribute.service';
-import { ProductAttributeDTO } from '../dto/product.dto';
+import { ProductAttributeService } from '../../application/service/product-attribute.service.js';
+import { ProductAttributeDTO } from '../dto/product.dto.js';
 
 @Controller('api/productattribute')
 export class ProductAttributeController {

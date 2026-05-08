@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { AttributeValueDTO } from 'src/api/dto/attribute.dto';
+import { PrismaService } from '../database/prisma.service.js';
+import { AttributeValueDTO } from '../../api/dto/attribute.dto.js';
 
 @Injectable()
 export class AttributeValueRepository {
-  constructor(
-    @Inject(PrismaService) private readonly prisma: PrismaService,
-  ) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async findById(id: number): Promise<AttributeValueDTO | null> {
-    const entity = await this.prisma.attribute_value.findUnique({ where: { id } });
+    const entity = await this.prisma.attribute_value.findUnique({
+      where: { id },
+    });
     if (!entity) return null;
     return this.toDTO(entity);
   }

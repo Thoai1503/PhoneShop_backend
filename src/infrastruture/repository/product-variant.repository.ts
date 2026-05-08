@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { PrismaService } from '../database/prisma.service.js';
 import {
   FilterStateDTO,
   ProductAttributeDTO,
@@ -8,16 +8,17 @@ import {
   ProductVariantDTO,
   ProductVariantPaginatedDTO,
   VariantAttributeDTO,
-} from 'src/api/dto/product.dto';
-import { AttributeDTO, AttributeValueDTO } from 'src/api/dto/attribute.dto';
-import { CategoryDTO } from 'src/api/dto/category.dto';
-import { BrandDTO } from 'src/api/dto/brand.dto';
+} from '../../api/dto/product.dto.js';
+import {
+  AttributeDTO,
+  AttributeValueDTO,
+} from '../../api/dto/attribute.dto.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
+import { BrandDTO } from '../../api/dto/brand.dto.js';
 
 @Injectable()
 export class ProductVariantRepository {
-  constructor(
-    @Inject(PrismaService) private readonly prisma: PrismaService,
-  ) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async create(entity: ProductVariantDTO): Promise<boolean> {
     try {
@@ -39,7 +40,9 @@ export class ProductVariantRepository {
 
   async delete(id: number): Promise<boolean> {
     try {
-      const existing = await this.prisma.product_variants.findUnique({ where: { id } });
+      const existing = await this.prisma.product_variants.findUnique({
+        where: { id },
+      });
       if (!existing) return false;
       await this.prisma.product_variants.delete({ where: { id } });
       return true;
@@ -75,7 +78,9 @@ export class ProductVariantRepository {
 
   async update(entity: ProductVariantDTO): Promise<boolean> {
     try {
-      const existing = await this.prisma.product_variants.findUnique({ where: { id: entity.id } });
+      const existing = await this.prisma.product_variants.findUnique({
+        where: { id: entity.id },
+      });
       if (!existing) return false;
       await this.prisma.product_variants.update({
         where: { id: entity.id },
@@ -113,7 +118,9 @@ export class ProductVariantRepository {
     return list.map((e) => this.toDTO(e));
   }
 
-  async getPaginationData(st: FilterStateDTO): Promise<ProductVariantPaginatedDTO> {
+  async getPaginationData(
+    st: FilterStateDTO,
+  ): Promise<ProductVariantPaginatedDTO> {
     // Fetch all with relations then filter in memory (same as .NET original)
     const allVariants = await this.prisma.product_variants.findMany({
       include: {
@@ -133,14 +140,17 @@ export class ProductVariantRepository {
       },
     });
 
-    const maxPriceInDb = allVariants.length > 0 ? Math.max(...allVariants.map((v) => v.price)) : 0;
+    const maxPriceInDb =
+      allVariants.length > 0 ? Math.max(...allVariants.map((v) => v.price)) : 0;
 
     let list = [...allVariants];
 
     // Filter by category
     if (st.category) {
       list = list.filter(
-        (e) => e.products.categories.slug.toLowerCase().trim() === st.category.trim().toLowerCase(),
+        (e) =>
+          e.products.categories.slug.toLowerCase().trim() ===
+          st.category.trim().toLowerCase(),
       );
     }
 
@@ -154,14 +164,16 @@ export class ProductVariantRepository {
 
     // Filter by categoryIds
     if (st.categoryIds && st.categoryIds.length > 0) {
-      list = list.filter((e) => st.categoryIds.includes(e.products.category_id));
+      list = list.filter((e) =>
+        st.categoryIds.includes(e.products.category_id),
+      );
     }
 
     // Sort
     if (st.sortBy && st.order) {
       const asc = st.order.toLowerCase() === 'asc';
       if (st.sortBy.toLowerCase() === 'price') {
-        list.sort((a, b) => asc ? a.price - b.price : b.price - a.price);
+        list.sort((a, b) => (asc ? a.price - b.price : b.price - a.price));
       } else {
         list.sort((a, b) => {
           const da = new Date(a.created_at).getTime();
@@ -193,24 +205,22 @@ export class ProductVariantRepository {
           const matchVariant = variant.variant_attribute.some(
             (va) =>
               va.attribute_id === attributeId &&
-              (
-                va.value_text?.trim().toLowerCase() === value.trim().toLowerCase() ||
+              (va.value_text?.trim().toLowerCase() ===
+                value.trim().toLowerCase() ||
                 va.value_int?.toString() === value.trim() ||
                 va.value_decimal?.toString() === value.trim() ||
                 (va.attribute_value_id != null &&
-                  va.attribute_value_id === parseInt(value.trim(), 10))
-              ),
+                  va.attribute_value_id === parseInt(value.trim(), 10))),
           );
           const matchProduct = variant.products.product_attribute.some(
             (pa) =>
               pa.attribute_id === attributeId &&
-              (
-                pa.value_text?.trim().toLowerCase() === value.trim().toLowerCase() ||
+              (pa.value_text?.trim().toLowerCase() ===
+                value.trim().toLowerCase() ||
                 pa.value_int?.toString() === value.trim() ||
                 pa.value_decimal?.toString() === value.trim() ||
                 (pa.attribute_value_id != null &&
-                  pa.attribute_value_id === parseInt(value.trim(), 10))
-              ),
+                  pa.attribute_value_id === parseInt(value.trim(), 10))),
           );
           return matchVariant || matchProduct;
         }),
@@ -286,7 +296,8 @@ export class ProductVariantRepository {
           paDto.id = pa.id;
           paDto.product_id = pa.product_id;
           paDto.attribute_id = pa.attribute_id;
-          paDto.value_decimal = pa.value_decimal !== null ? Number(pa.value_decimal) : null;
+          paDto.value_decimal =
+            pa.value_decimal !== null ? Number(pa.value_decimal) : null;
           paDto.value_int = pa.value_int;
           paDto.value_text = pa.value_text;
           if (pa.attributes) {
@@ -323,7 +334,8 @@ export class ProductVariantRepository {
         vaDto.id = va.id;
         vaDto.variant_id = va.variant_id;
         vaDto.attribute_id = va.attribute_id;
-        vaDto.value_decimal = va.value_decimal !== null ? Number(va.value_decimal) : null;
+        vaDto.value_decimal =
+          va.value_decimal !== null ? Number(va.value_decimal) : null;
         vaDto.value_int = va.value_int;
         vaDto.value_text = va.value_text;
         vaDto.attribute_value_id = va.attribute_value_id;

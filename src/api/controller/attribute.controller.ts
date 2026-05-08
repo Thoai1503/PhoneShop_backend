@@ -6,8 +6,8 @@ import {
   ParseIntPipe,
   Post,
 } from '@nestjs/common';
-import { AttributeService } from '../../application/service/attribute.service';
-import { AttributeDTO } from '../dto/attribute.dto';
+import { AttributeService } from '../../application/service/attribute.service.js';
+import { AttributeDTO } from '../dto/attribute.dto.js';
 
 @Controller('api/attribute')
 export class AttributeController {

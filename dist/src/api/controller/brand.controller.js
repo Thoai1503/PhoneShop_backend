@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BrandController = void 0;
-const common_1 = require("@nestjs/common");
-const brand_service_1 = require("../../application/service/brand.service");
+import { Controller, Get } from '@nestjs/common';
+import { BrandService } from '../../application/service/brand.service.js';
 let BrandController = class BrandController {
     service;
     constructor(service) {
@@ -21,15 +18,15 @@ let BrandController = class BrandController {
         return this.service.getAll();
     }
 };
-exports.BrandController = BrandController;
 __decorate([
-    (0, common_1.Get)(),
+    Get(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "getAll", null);
-exports.BrandController = BrandController = __decorate([
-    (0, common_1.Controller)('api/brand'),
-    __metadata("design:paramtypes", [brand_service_1.BrandService])
+BrandController = __decorate([
+    Controller('api/brand'),
+    __metadata("design:paramtypes", [BrandService])
 ], BrandController);
+export { BrandController };
 //# sourceMappingURL=brand.controller.js.map

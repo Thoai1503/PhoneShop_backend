@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,16 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductImageController = void 0;
-const common_1 = require("@nestjs/common");
-const platform_express_1 = require("@nestjs/platform-express");
-const multer_1 = require("multer");
-const path_1 = require("path");
-const fs_1 = require("fs");
-const uuid_1 = require("uuid");
-const product_image_service_1 = require("../../application/service/product-image.service");
-const product_dto_1 = require("../dto/product.dto");
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, UploadedFiles, UseInterceptors, } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'path';
+import { existsSync, mkdirSync } from 'fs';
+import { v4 as uuidv4 } from 'uuid';
+import { ProductImageService } from '../../application/service/product-image.service.js';
+import { ProductImageDTO } from '../dto/product.dto.js';
 let ProductImageController = class ProductImageController {
     service;
     constructor(service) {
@@ -31,7 +28,7 @@ let ProductImageController = class ProductImageController {
     }
     async createByVariantId(_variantId, images, productId, variantId) {
         for (const file of images) {
-            const entity = new product_dto_1.ProductImageDTO();
+            const entity = new ProductImageDTO();
             entity.product_id = parseInt(productId, 10);
             entity.variant_id = parseInt(variantId, 10);
             entity.url = file.filename;
@@ -45,47 +42,47 @@ let ProductImageController = class ProductImageController {
         return this.service.getByVariantId(variantId);
     }
 };
-exports.ProductImageController = ProductImageController;
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    Delete(':id'),
+    __param(0, Param('id', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ProductImageController.prototype, "delete", null);
 __decorate([
-    (0, common_1.Post)('variant/:variantId'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('images', 20, {
-        storage: (0, multer_1.diskStorage)({
+    Post('variant/:variantId'),
+    UseInterceptors(FilesInterceptor('images', 20, {
+        storage: diskStorage({
             destination: (req, file, cb) => {
-                const uploadsFolder = (0, path_1.join)(process.cwd(), 'Uploads');
-                if (!(0, fs_1.existsSync)(uploadsFolder))
-                    (0, fs_1.mkdirSync)(uploadsFolder, { recursive: true });
+                const uploadsFolder = join(process.cwd(), 'Uploads');
+                if (!existsSync(uploadsFolder))
+                    mkdirSync(uploadsFolder, { recursive: true });
                 cb(null, uploadsFolder);
             },
             filename: (req, file, cb) => {
-                const unique = `${(0, uuid_1.v4)()}${(0, path_1.extname)(file.originalname)}`;
+                const unique = `${uuidv4()}${extname(file.originalname)}`;
                 cb(null, unique);
             },
         }),
     })),
-    __param(0, (0, common_1.Param)('variantId', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.UploadedFiles)()),
-    __param(2, (0, common_1.Body)('product_id')),
-    __param(3, (0, common_1.Body)('variant_id')),
+    __param(0, Param('variantId', ParseIntPipe)),
+    __param(1, UploadedFiles()),
+    __param(2, Body('product_id')),
+    __param(3, Body('variant_id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Array, String, String]),
     __metadata("design:returntype", Promise)
 ], ProductImageController.prototype, "createByVariantId", null);
 __decorate([
-    (0, common_1.Get)('variant/:variantId'),
-    __param(0, (0, common_1.Param)('variantId', common_1.ParseIntPipe)),
+    Get('variant/:variantId'),
+    __param(0, Param('variantId', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ProductImageController.prototype, "getByVariantId", null);
-exports.ProductImageController = ProductImageController = __decorate([
-    (0, common_1.Controller)('api/productimage'),
-    __metadata("design:paramtypes", [product_image_service_1.ProductImageService])
+ProductImageController = __decorate([
+    Controller('api/productimage'),
+    __metadata("design:paramtypes", [ProductImageService])
 ], ProductImageController);
+export { ProductImageController };
 //# sourceMappingURL=product-image.controller.js.map

@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CategoryController = void 0;
-const common_1 = require("@nestjs/common");
-const category_service_1 = require("../../application/service/category.service");
-const category_dto_1 = require("../dto/category.dto");
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, BadRequestException, } from '@nestjs/common';
+import { CategoryService } from '../../application/service/category.service.js';
+import { CategoryDTO } from '../dto/category.dto.js';
 let CategoryController = class CategoryController {
     categoryService;
     constructor(categoryService) {
@@ -30,73 +27,73 @@ let CategoryController = class CategoryController {
     async getById(id) {
         const result = await this.categoryService.findById(id);
         if (!result)
-            throw new common_1.NotFoundException();
+            throw new NotFoundException();
         return result;
     }
     async create(cate) {
         const result = await this.categoryService.createCategory(cate);
         if (!result)
-            throw new common_1.BadRequestException();
+            throw new BadRequestException();
         return result;
     }
     async update(id, cate) {
         const result = await this.categoryService.updateCategory(id, cate);
         if (!result)
-            throw new common_1.NotFoundException();
+            throw new NotFoundException();
         return result;
     }
     async delete(id) {
         const result = await this.categoryService.deleteCategory(id);
         if (!result)
-            throw new common_1.NotFoundException();
+            throw new NotFoundException();
         return result;
     }
 };
-exports.CategoryController = CategoryController;
 __decorate([
-    (0, common_1.Get)(),
+    Get(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "getAll", null);
 __decorate([
-    (0, common_1.Get)('slug/:slug'),
-    __param(0, (0, common_1.Param)('slug')),
+    Get('slug/:slug'),
+    __param(0, Param('slug')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", String)
 ], CategoryController.prototype, "getBySlug", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    Get(':id'),
+    __param(0, Param('id', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "getById", null);
 __decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
+    Post(),
+    __param(0, Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [category_dto_1.CategoryDTO]),
+    __metadata("design:paramtypes", [CategoryDTO]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "create", null);
 __decorate([
-    (0, common_1.Post)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.Body)()),
+    Post(':id'),
+    __param(0, Param('id', ParseIntPipe)),
+    __param(1, Body()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, category_dto_1.CategoryDTO]),
+    __metadata("design:paramtypes", [Number, CategoryDTO]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "update", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    Delete(':id'),
+    __param(0, Param('id', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], CategoryController.prototype, "delete", null);
-exports.CategoryController = CategoryController = __decorate([
-    (0, common_1.Controller)('api/category'),
-    __metadata("design:paramtypes", [category_service_1.CategoryService])
+CategoryController = __decorate([
+    Controller('api/category'),
+    __metadata("design:paramtypes", [CategoryService])
 ], CategoryController);
+export { CategoryController };
 //# sourceMappingURL=category.controller.js.map

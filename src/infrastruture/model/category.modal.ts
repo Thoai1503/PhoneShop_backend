@@ -1,4 +1,4 @@
-import { BaseModel } from './base.modal';
+import { BaseModel } from './base.modal.js';
 
 export class Category implements BaseModel {
   id?: string;

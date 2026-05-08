@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CartDTO = exports.FilterStateDTO = exports.ProductVariantPaginatedDTO = exports.ProductAddAndUpdateStateDTO = exports.ProductDTO = exports.ProductVariantDTO = exports.VariantAttributeDTO = exports.ProductImageDTO = exports.ProductAttributeDTO = void 0;
-class ProductAttributeDTO {
+export class ProductAttributeDTO {
     id = 0;
     product_id = 0;
     attribute_id = 0;
@@ -11,15 +8,13 @@ class ProductAttributeDTO {
     attribute_value_id = null;
     attribute = null;
 }
-exports.ProductAttributeDTO = ProductAttributeDTO;
-class ProductImageDTO {
+export class ProductImageDTO {
     id = 0;
     product_id = 0;
     variant_id = 0;
     url = null;
 }
-exports.ProductImageDTO = ProductImageDTO;
-class VariantAttributeDTO {
+export class VariantAttributeDTO {
     id = 0;
     attribute_id = 0;
     variant_id = 0;
@@ -30,8 +25,7 @@ class VariantAttributeDTO {
     attribute_value = null;
     attribute = null;
 }
-exports.VariantAttributeDTO = VariantAttributeDTO;
-class ProductVariantDTO {
+export class ProductVariantDTO {
     id = 0;
     product_id = 0;
     sku = '';
@@ -43,8 +37,7 @@ class ProductVariantDTO {
     product_images = null;
     variant_attributes = null;
 }
-exports.ProductVariantDTO = ProductVariantDTO;
-class ProductDTO {
+export class ProductDTO {
     id = 0;
     name = '';
     description = '';
@@ -59,8 +52,7 @@ class ProductDTO {
     product_attribute = [];
     product_variant = [];
 }
-exports.ProductDTO = ProductDTO;
-class ProductAddAndUpdateStateDTO {
+export class ProductAddAndUpdateStateDTO {
     id = 0;
     name = '';
     description = '';
@@ -70,15 +62,13 @@ class ProductAddAndUpdateStateDTO {
     rating = 0;
     status = 0;
 }
-exports.ProductAddAndUpdateStateDTO = ProductAddAndUpdateStateDTO;
-class ProductVariantPaginatedDTO {
+export class ProductVariantPaginatedDTO {
     data = [];
     count = 0;
     max = 0;
     min = 0;
 }
-exports.ProductVariantPaginatedDTO = ProductVariantPaginatedDTO;
-class FilterStateDTO {
+export class FilterStateDTO {
     skip = 0;
     take = 10;
     sortBy = 'created_at';
@@ -90,13 +80,11 @@ class FilterStateDTO {
     minPrice = null;
     maxPrice = null;
 }
-exports.FilterStateDTO = FilterStateDTO;
-class CartDTO {
+export class CartDTO {
     id = 0;
     user_id = 0;
     variant_id = 0;
     quantity = 0;
     variant = null;
 }
-exports.CartDTO = CartDTO;
 //# sourceMappingURL=product.dto.js.map

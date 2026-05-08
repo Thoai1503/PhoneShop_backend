@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { createNestApp } from '../src/app.factory';
+import { createNestApp } from '../src/app.factory.js';
 
 type RequestHandler = (
   req: IncomingMessage,

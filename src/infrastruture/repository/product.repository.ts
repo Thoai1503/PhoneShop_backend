@@ -1,16 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
+import { PrismaService } from '../database/prisma.service.js';
 import {
   ProductDTO,
   ProductAddAndUpdateStateDTO,
   ProductAttributeDTO,
   ProductVariantDTO,
   ProductImageDTO,
-} from 'src/api/dto/product.dto';
-import { BrandDTO } from 'src/api/dto/brand.dto';
-import { CategoryDTO } from 'src/api/dto/category.dto';
-import { AttributeDTO, AttributeValueDTO } from 'src/api/dto/attribute.dto';
-import { CategoryAttributeDTO } from 'src/api/dto/category-attribute.dto';
+} from '../../api/dto/product.dto.js';
+import { BrandDTO } from '../../api/dto/brand.dto.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
+import {
+  AttributeDTO,
+  AttributeValueDTO,
+} from '../../api/dto/attribute.dto.js';
+import { CategoryAttributeDTO } from '../../api/dto/category-attribute.dto.js';
 
 @Injectable()
 export class ProductRepository {

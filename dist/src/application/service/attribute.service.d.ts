@@ -1,5 +1,5 @@
-import { AttributeRepository } from '../../infrastruture/repository/attribute.repository';
-import { AttributeDTO } from '../../api/dto/attribute.dto';
+import { AttributeRepository } from '../../infrastruture/repository/attribute.repository.js';
+import { AttributeDTO } from '../../api/dto/attribute.dto.js';
 export declare class AttributeService {
     private readonly attributeRepo;
     constructor(attributeRepo: AttributeRepository);

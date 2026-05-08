@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Brand {
+export default class Brand {
     id;
     name;
     slug;
@@ -12,5 +10,4 @@ class Brand {
         this.slug = brand.slug;
     }
 }
-exports.default = Brand;
 //# sourceMappingURL=brand.modal.js.map

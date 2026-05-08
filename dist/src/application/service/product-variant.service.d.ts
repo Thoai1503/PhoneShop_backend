@@ -1,5 +1,5 @@
-import { ProductVariantRepository } from '../../infrastruture/repository/product-variant.repository';
-import { FilterStateDTO, ProductVariantDTO, ProductVariantPaginatedDTO } from '../../api/dto/product.dto';
+import { ProductVariantRepository } from '../../infrastruture/repository/product-variant.repository.js';
+import { FilterStateDTO, ProductVariantDTO, ProductVariantPaginatedDTO } from '../../api/dto/product.dto.js';
 export declare class ProductVariantService {
     private readonly repo;
     constructor(repo: ProductVariantRepository);

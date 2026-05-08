@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,15 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../database/prisma.service");
-const product_dto_1 = require("../../api/dto/product.dto");
-const brand_dto_1 = require("../../api/dto/brand.dto");
-const category_dto_1 = require("../../api/dto/category.dto");
-const attribute_dto_1 = require("../../api/dto/attribute.dto");
-const category_attribute_dto_1 = require("../../api/dto/category-attribute.dto");
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { ProductDTO, ProductAttributeDTO, ProductVariantDTO, ProductImageDTO, } from '../../api/dto/product.dto.js';
+import { BrandDTO } from '../../api/dto/brand.dto.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
+import { AttributeDTO, AttributeValueDTO, } from '../../api/dto/attribute.dto.js';
+import { CategoryAttributeDTO } from '../../api/dto/category-attribute.dto.js';
 let ProductRepository = class ProductRepository {
     prisma;
     constructor(prisma) {
@@ -34,7 +31,7 @@ let ProductRepository = class ProductRepository {
             },
         });
         return list.map((en) => {
-            const dto = new product_dto_1.ProductDTO();
+            const dto = new ProductDTO();
             dto.id = en.id;
             dto.name = en.name;
             dto.description = en.description;
@@ -42,12 +39,12 @@ let ProductRepository = class ProductRepository {
             dto.brand_id = en.brand_id ?? 0;
             dto.rating = Number(en.rating);
             dto.status = en.status;
-            const brand = new brand_dto_1.BrandDTO();
+            const brand = new BrandDTO();
             brand.id = en.brands?.id ?? 0;
             brand.name = en.brands?.name ?? '';
             brand.slug = en.brands?.slug ?? '';
             dto.brand = brand;
-            const cat = new category_dto_1.CategoryDTO();
+            const cat = new CategoryDTO();
             cat.id = en.categories.id;
             cat.name = en.categories.name;
             cat.slug = en.categories.slug;
@@ -56,14 +53,14 @@ let ProductRepository = class ProductRepository {
             cat.level = en.categories.level ?? 0;
             dto.category = cat;
             dto.product_variant = en.product_variants.map((v) => {
-                const vDto = new product_dto_1.ProductVariantDTO();
+                const vDto = new ProductVariantDTO();
                 vDto.id = v.id;
                 vDto.name = v.name;
                 vDto.price = v.price;
                 vDto.product_id = v.product_id;
                 vDto.sku = v.SKU;
                 vDto.product_images = v.product_image.map((img) => {
-                    const imgDto = new product_dto_1.ProductImageDTO();
+                    const imgDto = new ProductImageDTO();
                     imgDto.id = img.id;
                     imgDto.product_id = img.product_id;
                     imgDto.url = img.url;
@@ -96,7 +93,7 @@ let ProductRepository = class ProductRepository {
         });
         if (!en)
             return null;
-        const dto = new product_dto_1.ProductDTO();
+        const dto = new ProductDTO();
         dto.id = en.id;
         dto.name = en.name;
         dto.description = en.description;
@@ -104,12 +101,12 @@ let ProductRepository = class ProductRepository {
         dto.brand_id = en.brand_id ?? 0;
         dto.rating = Number(en.rating);
         dto.status = en.status;
-        const brand = new brand_dto_1.BrandDTO();
+        const brand = new BrandDTO();
         brand.id = en.brands?.id ?? 0;
         brand.name = en.brands?.name ?? '';
         brand.slug = en.brands?.slug ?? '';
         dto.brand = brand;
-        const cat = new category_dto_1.CategoryDTO();
+        const cat = new CategoryDTO();
         cat.id = en.categories.id;
         cat.name = en.categories.name;
         cat.slug = en.categories.slug;
@@ -117,14 +114,14 @@ let ProductRepository = class ProductRepository {
         cat.path = en.categories.path ?? '';
         cat.level = en.categories.level ?? 0;
         cat.category_attributes = en.categories.category_attributes.map((ca) => {
-            const caDto = new category_attribute_dto_1.CategoryAttributeDTO();
+            const caDto = new CategoryAttributeDTO();
             caDto.id = ca.id;
             caDto.category_id = ca.category_id;
             caDto.attribute_id = ca.attribute_id;
             caDto.is_filterable = ca.is_filterable;
             caDto.is_variant_level = ca.is_variant_level;
             caDto.is_required = ca.is_required;
-            const attr = new attribute_dto_1.AttributeDTO();
+            const attr = new AttributeDTO();
             attr.id = ca.attributes.id;
             attr.name = ca.attributes.name;
             attr.slug = ca.attributes.slug ?? '';
@@ -132,7 +129,7 @@ let ProductRepository = class ProductRepository {
             attr.unit = ca.attributes.unit;
             attr.status = ca.attributes.status;
             attr.attribute_values = ca.attributes.attribute_value.map((av) => {
-                const avDto = new attribute_dto_1.AttributeValueDTO();
+                const avDto = new AttributeValueDTO();
                 avDto.id = av.id;
                 avDto.attribute_id = av.attribute_id;
                 avDto.value = av.value;
@@ -143,7 +140,7 @@ let ProductRepository = class ProductRepository {
         });
         dto.category = cat;
         dto.product_attribute = en.product_attribute.map((pa) => {
-            const paDto = new product_dto_1.ProductAttributeDTO();
+            const paDto = new ProductAttributeDTO();
             paDto.id = pa.id;
             paDto.product_id = pa.product_id;
             paDto.attribute_id = pa.attribute_id;
@@ -152,7 +149,7 @@ let ProductRepository = class ProductRepository {
             paDto.value_decimal =
                 pa.value_decimal !== null ? Number(pa.value_decimal) : null;
             paDto.attribute_value_id = pa.attribute_value_id;
-            const attr = new attribute_dto_1.AttributeDTO();
+            const attr = new AttributeDTO();
             attr.id = pa.attributes.id;
             attr.name = pa.attributes.name;
             attr.slug = pa.attributes.slug ?? '';
@@ -160,7 +157,7 @@ let ProductRepository = class ProductRepository {
             attr.unit = pa.attributes.unit;
             attr.status = pa.attributes.status;
             attr.attribute_values = pa.attributes.attribute_value.map((av) => {
-                const avDto = new attribute_dto_1.AttributeValueDTO();
+                const avDto = new AttributeValueDTO();
                 avDto.id = av.id;
                 avDto.attribute_id = av.attribute_id;
                 avDto.value = av.value;
@@ -210,7 +207,7 @@ let ProductRepository = class ProductRepository {
         });
         if (!en)
             return null;
-        const dto = new product_dto_1.ProductDTO();
+        const dto = new ProductDTO();
         dto.id = en.id;
         dto.name = en.name;
         dto.slug = en.slug;
@@ -219,10 +216,10 @@ let ProductRepository = class ProductRepository {
         return dto;
     }
 };
-exports.ProductRepository = ProductRepository;
-exports.ProductRepository = ProductRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+ProductRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], ProductRepository);
+export { ProductRepository };
 //# sourceMappingURL=product.repository.js.map

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma, category_attributes } from '@prisma/client';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from './prisma.service.js';
 
 type TxClient = Prisma.TransactionClient;
 

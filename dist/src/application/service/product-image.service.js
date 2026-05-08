@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductImageService = void 0;
-const common_1 = require("@nestjs/common");
-const product_image_repository_1 = require("../../infrastruture/repository/product-image.repository");
+import { Injectable } from '@nestjs/common';
+import { ProductImageRepository } from '../../infrastruture/repository/product-image.repository.js';
 let ProductImageService = class ProductImageService {
     repo;
     constructor(repo) {
@@ -27,9 +24,9 @@ let ProductImageService = class ProductImageService {
         return this.repo.getByVariantId(variantId);
     }
 };
-exports.ProductImageService = ProductImageService;
-exports.ProductImageService = ProductImageService = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [product_image_repository_1.ProductImageRepository])
+ProductImageService = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [ProductImageRepository])
 ], ProductImageService);
+export { ProductImageService };
 //# sourceMappingURL=product-image.service.js.map

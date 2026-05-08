@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AttributeRepository } from '../../infrastruture/repository/attribute.repository';
-import { AttributeDTO } from '../../api/dto/attribute.dto';
+import { AttributeRepository } from '../../infrastruture/repository/attribute.repository.js';
+import { AttributeDTO } from '../../api/dto/attribute.dto.js';
 
 @Injectable()
 export class AttributeService {

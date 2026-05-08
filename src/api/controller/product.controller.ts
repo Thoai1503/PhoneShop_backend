@@ -8,8 +8,8 @@ import {
   ParseIntPipe,
   Post,
 } from '@nestjs/common';
-import { ProductService } from '../../application/service/product.service';
-import { ProductAddAndUpdateStateDTO, ProductDTO } from '../dto/product.dto';
+import { ProductService } from '../../application/service/product.service.js';
+import { ProductAddAndUpdateStateDTO, ProductDTO } from '../dto/product.dto.js';
 
 @Controller('api/product')
 export class ProductController {

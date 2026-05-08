@@ -1,7 +1,7 @@
-import { AttributeDTO, AttributeValueDTO } from './attribute.dto';
-import { BrandDTO } from './brand.dto';
-import { CategoryAttributeDTO } from './category-attribute.dto';
-import { CategoryDTO } from './category.dto';
+import { AttributeDTO, AttributeValueDTO } from './attribute.dto.js';
+import { BrandDTO } from './brand.dto.js';
+import { CategoryAttributeDTO } from './category-attribute.dto.js';
+import { CategoryDTO } from './category.dto.js';
 
 export class ProductAttributeDTO {
   id: number = 0;

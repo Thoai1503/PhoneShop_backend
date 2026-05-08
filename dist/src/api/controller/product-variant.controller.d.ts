@@ -1,5 +1,5 @@
-import { ProductVariantService } from '../../application/service/product-variant.service';
-import { ProductVariantDTO, ProductVariantPaginatedDTO } from '../dto/product.dto';
+import { ProductVariantService } from '../../application/service/product-variant.service.js';
+import { ProductVariantDTO, ProductVariantPaginatedDTO } from '../dto/product.dto.js';
 export declare class ProductVariantController {
     private readonly service;
     constructor(service: ProductVariantService);

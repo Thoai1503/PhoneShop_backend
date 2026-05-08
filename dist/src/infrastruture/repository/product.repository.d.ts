@@ -1,5 +1,5 @@
-import { PrismaService } from '../database/prisma.service';
-import { ProductDTO, ProductAddAndUpdateStateDTO } from "../../api/dto/product.dto";
+import { PrismaService } from '../database/prisma.service.js';
+import { ProductDTO, ProductAddAndUpdateStateDTO } from '../../api/dto/product.dto.js';
 export declare class ProductRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);

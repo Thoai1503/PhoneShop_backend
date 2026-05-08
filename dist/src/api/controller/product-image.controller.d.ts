@@ -1,5 +1,5 @@
-import { ProductImageService } from '../../application/service/product-image.service';
-import { ProductImageDTO } from '../dto/product.dto';
+import { ProductImageService } from '../../application/service/product-image.service.js';
+import { ProductImageDTO } from '../dto/product.dto.js';
 export declare class ProductImageController {
     private readonly service;
     constructor(service: ProductImageService);

@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { BaseRepository } from './base.repository';
-import { Category } from '../model/category.modal';
-import { PrismaService } from '../database/prisma.service';
-import { CategoryDTO } from '../../api/dto/category.dto';
+import { BaseRepository } from './base.repository.js';
+import { Category } from '../model/category.modal.js';
+import { PrismaService } from '../database/prisma.service.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
 
 @Injectable()
 export class CategoryRepository extends BaseRepository<Category> {

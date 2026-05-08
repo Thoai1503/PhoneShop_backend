@@ -1,5 +1,5 @@
-import { PrismaService } from '../database/prisma.service';
-import { CategoryAttributeDTO } from "../../api/dto/category-attribute.dto";
+import { PrismaService } from '../database/prisma.service.js';
+import { CategoryAttributeDTO } from '../../api/dto/category-attribute.dto.js';
 export declare class CategoryAttributeRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);

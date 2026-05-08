@@ -1,4 +1,4 @@
-import { BaseModel } from './base.modal';
+import { BaseModel } from './base.modal.js';
 export default class Brand implements BaseModel {
     id?: string;
     name: string;

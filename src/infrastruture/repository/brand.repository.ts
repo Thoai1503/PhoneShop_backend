@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { BrandDTO } from '../../api/dto/brand.dto';
+import { PrismaService } from '../database/prisma.service.js';
+import { BrandDTO } from '../../api/dto/brand.dto.js';
 
 @Injectable()
 export class BrandRepository {

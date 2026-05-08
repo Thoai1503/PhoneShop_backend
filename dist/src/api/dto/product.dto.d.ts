@@ -1,6 +1,6 @@
-import { AttributeDTO, AttributeValueDTO } from './attribute.dto';
-import { BrandDTO } from './brand.dto';
-import { CategoryDTO } from './category.dto';
+import { AttributeDTO, AttributeValueDTO } from './attribute.dto.js';
+import { BrandDTO } from './brand.dto.js';
+import { CategoryDTO } from './category.dto.js';
 export declare class ProductAttributeDTO {
     id: number;
     product_id: number;

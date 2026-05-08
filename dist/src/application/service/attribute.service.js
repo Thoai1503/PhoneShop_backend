@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AttributeService = void 0;
-const common_1 = require("@nestjs/common");
-const attribute_repository_1 = require("../../infrastruture/repository/attribute.repository");
+import { Injectable } from '@nestjs/common';
+import { AttributeRepository } from '../../infrastruture/repository/attribute.repository.js';
 let AttributeService = class AttributeService {
     attributeRepo;
     constructor(attributeRepo) {
@@ -27,9 +24,9 @@ let AttributeService = class AttributeService {
         return this.attributeRepo.getByCategoryId(categoryId);
     }
 };
-exports.AttributeService = AttributeService;
-exports.AttributeService = AttributeService = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [attribute_repository_1.AttributeRepository])
+AttributeService = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [AttributeRepository])
 ], AttributeService);
+export { AttributeService };
 //# sourceMappingURL=attribute.service.js.map

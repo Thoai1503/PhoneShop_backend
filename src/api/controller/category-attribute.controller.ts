@@ -10,11 +10,11 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CategoryAttributeService } from '../../application/service/category-attribute.service';
+import { CategoryAttributeService } from '../../application/service/category-attribute.service.js';
 import {
   CategoryAttributeDTO,
   CategoryAttributeUpdateStateDTO,
-} from '../dto/category-attribute.dto';
+} from '../dto/category-attribute.dto.js';
 
 @Controller('api/categoryattribute')
 export class CategoryAttributeController {

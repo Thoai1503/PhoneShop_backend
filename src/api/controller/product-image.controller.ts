@@ -14,8 +14,8 @@ import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { ProductImageService } from '../../application/service/product-image.service';
-import { ProductImageDTO } from '../dto/product.dto';
+import { ProductImageService } from '../../application/service/product-image.service.js';
+import { ProductImageDTO } from '../dto/product.dto.js';
 
 @Controller('api/productimage')
 export class ProductImageController {

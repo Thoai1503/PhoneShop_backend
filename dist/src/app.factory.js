@@ -1,10 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createNestApp = createNestApp;
-require("dotenv/config");
-const core_1 = require("@nestjs/core");
-const platform_express_1 = require("@nestjs/platform-express");
-const app_module_1 = require("./app.module");
+import 'dotenv/config';
+import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter, } from '@nestjs/platform-express';
+import { AppModule } from './app.module.js';
 function getCorsOrigins() {
     const origins = process.env.CORS_ORIGIN?.split(',')
         .map((origin) => origin.trim())
@@ -17,10 +14,10 @@ function configureApp(app) {
         credentials: true,
     });
 }
-async function createNestApp(expressApp) {
+export async function createNestApp(expressApp) {
     const app = expressApp
-        ? await core_1.NestFactory.create(app_module_1.AppModule, new platform_express_1.ExpressAdapter(expressApp))
-        : await core_1.NestFactory.create(app_module_1.AppModule);
+        ? await NestFactory.create(AppModule, new ExpressAdapter(expressApp))
+        : await NestFactory.create(AppModule);
     configureApp(app);
     return app;
 }

@@ -1,5 +1,5 @@
-import { CategoryBrandService } from '../../application/service/category-brand.service';
-import { CategoryBrandDTO } from '../dto/category-brand.dto';
+import { CategoryBrandService } from '../../application/service/category-brand.service.js';
+import { CategoryBrandDTO } from '../dto/category-brand.dto.js';
 export declare class CategoryBrandController {
     private readonly service;
     constructor(service: CategoryBrandService);

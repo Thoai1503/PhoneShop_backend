@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { createNestApp } from './app.factory';
+import { createNestApp } from './app.factory.js';
 
 async function bootstrap() {
   const app = await createNestApp();

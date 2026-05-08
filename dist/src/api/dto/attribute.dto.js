@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,16 +7,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AttributeDTO = exports.AttributeValueDTO = void 0;
-const class_validator_1 = require("class-validator");
-class AttributeValueDTO {
+import { IsNotEmpty } from 'class-validator';
+export class AttributeValueDTO {
     id = 0;
     attribute_id = 0;
     value = '';
 }
-exports.AttributeValueDTO = AttributeValueDTO;
-class AttributeDTO {
+export class AttributeDTO {
     id = 0;
     name = '';
     slug = '';
@@ -27,9 +23,8 @@ class AttributeDTO {
     is_selected = 0;
     attribute_values = [];
 }
-exports.AttributeDTO = AttributeDTO;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    IsNotEmpty(),
     __metadata("design:type", String)
 ], AttributeDTO.prototype, "name", void 0);
 //# sourceMappingURL=attribute.dto.js.map

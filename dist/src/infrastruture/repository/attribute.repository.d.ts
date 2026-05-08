@@ -1,5 +1,5 @@
-import { PrismaService } from '../database/prisma.service';
-import { AttributeDTO } from '../../api/dto/attribute.dto';
+import { PrismaService } from '../database/prisma.service.js';
+import { AttributeDTO } from '../../api/dto/attribute.dto.js';
 export declare class AttributeRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);

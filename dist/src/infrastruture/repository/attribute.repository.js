@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,11 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AttributeRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../database/prisma.service");
-const attribute_dto_1 = require("../../api/dto/attribute.dto");
+import { Inject, Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service.js';
+import { AttributeDTO, AttributeValueDTO, } from '../../api/dto/attribute.dto.js';
 let AttributeRepository = class AttributeRepository {
     prisma;
     constructor(prisma) {
@@ -58,7 +55,7 @@ let AttributeRepository = class AttributeRepository {
         });
     }
     toDTO(a) {
-        const dto = new attribute_dto_1.AttributeDTO();
+        const dto = new AttributeDTO();
         dto.id = a.id;
         dto.name = a.name;
         dto.slug = a.slug ?? '';
@@ -67,7 +64,7 @@ let AttributeRepository = class AttributeRepository {
         dto.status = a.status;
         dto.is_selected = 0;
         dto.attribute_values = (a.attribute_value ?? []).map((av) => {
-            const avDto = new attribute_dto_1.AttributeValueDTO();
+            const avDto = new AttributeValueDTO();
             avDto.id = av.id;
             avDto.attribute_id = av.attribute_id;
             avDto.value = av.value?.trim() ?? '';
@@ -76,10 +73,10 @@ let AttributeRepository = class AttributeRepository {
         return dto;
     }
 };
-exports.AttributeRepository = AttributeRepository;
-exports.AttributeRepository = AttributeRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)(prisma_service_1.PrismaService)),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+AttributeRepository = __decorate([
+    Injectable(),
+    __param(0, Inject(PrismaService)),
+    __metadata("design:paramtypes", [PrismaService])
 ], AttributeRepository);
+export { AttributeRepository };
 //# sourceMappingURL=attribute.repository.js.map

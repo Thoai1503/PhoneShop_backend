@@ -1,8 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { CategoryAttributeDTO } from 'src/api/dto/category-attribute.dto';
-import { AttributeDTO, AttributeValueDTO } from 'src/api/dto/attribute.dto';
-import { CategoryDTO } from '../../api/dto/category.dto';
+import { PrismaService } from '../database/prisma.service.js';
+import { CategoryAttributeDTO } from '../../api/dto/category-attribute.dto.js';
+import {
+  AttributeDTO,
+  AttributeValueDTO,
+} from '../../api/dto/attribute.dto.js';
+import { CategoryDTO } from '../../api/dto/category.dto.js';
 
 @Injectable()
 export class CategoryAttributeRepository {
