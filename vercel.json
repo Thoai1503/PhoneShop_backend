@@ -1,22 +1,21 @@
 {
   "version": 2,
-  "framework": null,
-  "buildCommand": "npm run vercel-build",
-  "outputDirectory": "dist",
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 10,
-      "includeFiles": "{prisma/**,node_modules/.prisma/**,node_modules/@prisma/**}"
+  "builds": [
+    {
+      "src": "src/main.ts",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.ts"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/api/index.ts"
+      "dest": "src/main.ts",
+      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH"
+      }
     }
-  ]
+  ],
+  "outputDirectory": "dist"
 }
