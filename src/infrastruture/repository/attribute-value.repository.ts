@@ -4,12 +4,12 @@ import { AttributeValueDTO } from 'src/api/dto/attribute.dto';
 
 @Injectable()
 export class AttributeValueRepository {
-  constructor(
-    @Inject(PrismaService) private readonly prisma: PrismaService,
-  ) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async findById(id: number): Promise<AttributeValueDTO | null> {
-    const entity = await this.prisma.attribute_value.findUnique({ where: { id } });
+    const entity = await this.prisma.attribute_value.findUnique({
+      where: { id },
+    });
     if (!entity) return null;
     return this.toDTO(entity);
   }
