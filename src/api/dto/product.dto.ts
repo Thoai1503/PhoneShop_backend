@@ -1,0 +1,102 @@
+import { AttributeDTO, AttributeValueDTO } from './attribute.dto';
+import { BrandDTO } from './brand.dto';
+import { CategoryAttributeDTO } from './category-attribute.dto';
+import { CategoryDTO } from './category.dto';
+
+export class ProductAttributeDTO {
+  id: number = 0;
+  product_id: number = 0;
+  attribute_id: number = 0;
+  value_text?: string | null = null;
+  value_decimal?: number | null = null;
+  value_int?: number | null = null;
+  attribute_value_id?: number | null = null;
+  attribute?: AttributeDTO | null = null;
+}
+
+export class ProductImageDTO {
+  id: number = 0;
+  product_id: number = 0;
+  variant_id: number = 0;
+  url?: string | null = null;
+}
+
+export class VariantAttributeDTO {
+  id: number = 0;
+  attribute_id: number = 0;
+  variant_id: number = 0;
+  value_int?: number | null = null;
+  value_text?: string | null = null;
+  value_decimal?: number | null = null;
+  attribute_value_id?: number | null = null;
+  attribute_value?: AttributeValueDTO | null = null;
+  attribute?: AttributeDTO | null = null;
+}
+
+export class ProductVariantDTO {
+  id: number = 0;
+  product_id: number = 0;
+  sku: string = '';
+  name: string = '';
+  price: number = 0;
+  status: number = 0;
+  created_at?: Date | null = null;
+  product?: ProductDTO | null = null;
+  product_images?: ProductImageDTO[] | null = null;
+  variant_attributes?: VariantAttributeDTO[] | null = null;
+}
+
+export class ProductDTO {
+  id: number = 0;
+  name: string = '';
+  description: string = '';
+  category_id: number = 0;
+  brand_id: number = 0;
+  slug: string = '';
+  rating: number = 0;
+  status: number = 0;
+  created_at?: Date | null = null;
+  category?: CategoryDTO | null = null;
+  brand?: BrandDTO | null = null;
+  product_attribute?: ProductAttributeDTO[] = [];
+  product_variant?: ProductVariantDTO[] = [];
+}
+
+export class ProductAddAndUpdateStateDTO {
+  id: number = 0;
+  name: string = '';
+  description: string = '';
+  category_id: number = 0;
+  brand_id: number = 0;
+  slug: string = '';
+  rating: number = 0;
+  status: number = 0;
+}
+
+export class ProductVariantPaginatedDTO {
+  data: ProductVariantDTO[] = [];
+  count: number = 0;
+  max: number = 0;
+  min: number = 0;
+}
+
+export class FilterStateDTO {
+  skip: number = 0;
+  take: number = 10;
+  sortBy: string = 'created_at';
+  order: string = 'asc';
+  category: string = '';
+  attributes: Record<string, string[]> = {};
+  categoryIds: number[] = [];
+  brandIds: number[] = [];
+  minPrice?: number | null = null;
+  maxPrice?: number | null = null;
+}
+
+export class CartDTO {
+  id: number = 0;
+  user_id: number = 0;
+  variant_id: number = 0;
+  quantity: number = 0;
+  variant?: ProductVariantDTO | null = null;
+}

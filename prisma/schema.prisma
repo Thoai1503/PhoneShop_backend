@@ -1,0 +1,292 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Inventory {
+  id                 Int      @id @default(autoincrement())
+  variant_id         Int
+  available_quantity Int
+  reversed_quantity  Int
+  update_at          DateTime @default(now()) @db.DateTime(0)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model InventoryTransaction {
+  id              Int
+  variant_id      Int
+  change_quantity Int
+  reference_id    Int
+  created_at      DateTime @default(now()) @db.DateTime(0)
+
+  @@ignore
+}
+
+model EFMigrationsHistory {
+  MigrationId    String @id @db.VarChar(150)
+  ProductVersion String @db.VarChar(32)
+
+  @@map("__EFMigrationsHistory")
+}
+
+model attribute_value {
+  id                Int                 @id @default(autoincrement())
+  attribute_id      Int
+  value             String              @db.Char(50)
+  attributes        attributes          @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_attribute_value_attributes")
+  variant_attribute variant_attribute[]
+
+  @@index([attribute_id], map: "FK_attribute_value_attributes")
+}
+
+model attributes {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(255)
+  slug                String?               @db.VarChar(255)
+  data_type           String                @db.VarChar(50)
+  unit                String                @db.VarChar(50)
+  status              Int                   @default(1)
+  attribute_value     attribute_value[]
+  category_attributes category_attributes[]
+  product_attribute   product_attribute[]
+  variant_attribute   variant_attribute[]
+}
+
+model brands {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(50)
+  slug            String            @default("default-slug") @db.VarChar(50)
+  status          Int               @default(1)
+  category_brands category_brands[]
+  products        products[]
+}
+
+model cart {
+  id               Int              @id @default(autoincrement())
+  user_id          Int
+  variant_id       Int
+  quantity         Int
+  unit_price       Decimal?         @db.Decimal(18, 0)
+  product_variants product_variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cart_product_variants")
+
+  @@index([variant_id], map: "FK_cart_product_variants")
+}
+
+model categories {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(120)
+  slug                String                @unique(map: "UQ_categories_slug") @db.VarChar(140)
+  parent_id           Int?
+  path                String?               @db.VarChar(400)
+  level               Int                   @default(0)
+  status              Int                   @default(1)
+  created_at          DateTime              @default(dbgenerated("(utc_timestamp(6))")) @db.DateTime(6)
+  category_attributes category_attributes[]
+  category_brands     category_brands[]
+  products            products[]
+}
+
+model category_attributes {
+  id               Int        @id @default(autoincrement())
+  category_id      Int
+  attribute_id     Int
+  is_filterable    Boolean    @default(false)
+  is_variant_level Boolean    @default(false)
+  is_required      Boolean    @default(false)
+  attributes       attributes @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_category_attributes_attributes")
+  categories       categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_category_attributes_categories")
+
+  @@index([attribute_id], map: "FK_category_attributes_attributes")
+  @@index([category_id], map: "FK_category_attributes_categories")
+}
+
+model category_brands {
+  id          Int        @id @default(autoincrement())
+  brand_id    Int
+  category_id Int
+  brands      brands     @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_category_brands_brands")
+  categories  categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_category_brands_categories")
+
+  @@index([brand_id], map: "FK_category_brands_brands")
+  @@index([category_id], map: "FK_category_brands_categories")
+}
+
+model districts {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(100)
+  code           String           @unique(map: "UQ_districts_code") @db.VarChar(20)
+  province_id    Int
+  status         Int              @default(1)
+  provinces      provinces        @relation(fields: [province_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_districts_provinces")
+  user_addresses user_addresses[]
+  wards          wards[]
+
+  @@index([province_id], map: "IX_districts_province_id")
+}
+
+model order_detail {
+  id         Int    @id @default(autoincrement())
+  order_id   Int
+  variant_id Int
+  quantity   Int
+  orders     orders @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_order_detail_orders")
+
+  @@index([order_id], map: "FK_order_detail_orders")
+}
+
+model orders {
+  id             Int             @id @default(autoincrement())
+  user_id        Int
+  discount       Decimal         @db.Decimal(18, 0)
+  total          Decimal         @db.Decimal(18, 0)
+  created_at     DateTime        @default(now()) @db.DateTime(0)
+  status         Int             @default(1)
+  address_id     Int?
+  order_detail   order_detail[]
+  user_addresses user_addresses? @relation(fields: [address_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_user_addresses")
+  users          users           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_users")
+
+  @@index([address_id], map: "FK_orders_user_addresses")
+  @@index([user_id], map: "FK_orders_users")
+}
+
+model product_attribute {
+  id                 Int        @id @default(autoincrement())
+  product_id         Int
+  attribute_id       Int
+  value_text         String?    @db.VarChar(50)
+  value_decimal      Decimal?   @db.Decimal(18, 0)
+  value_int          Int?
+  attribute_value_id Int?
+  attributes         attributes @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_product_attribute_attributes")
+  products           products   @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_product_attribute_products")
+
+  @@index([attribute_id], map: "FK_product_attribute_attributes")
+  @@index([product_id], map: "FK_product_attribute_products")
+}
+
+model product_image {
+  id               Int              @id @default(autoincrement())
+  product_id       Int
+  variant_id       Int
+  url              String           @db.VarChar(250)
+  product_variants product_variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_product_image_product_variants")
+
+  @@index([variant_id], map: "FK_product_image_product_variants")
+}
+
+model product_variants {
+  id                Int                 @id @default(autoincrement())
+  name              String              @default("default") @db.Char(250)
+  product_id        Int
+  SKU               String              @db.Char(100)
+  price             Int
+  status            Int                 @default(1)
+  quantity          Int                 @default(1)
+  created_at        DateTime            @default(now()) @db.DateTime(0)
+  cart              cart[]
+  product_image     product_image[]
+  products          products            @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_product_variants_products")
+  variant_attribute variant_attribute[]
+
+  @@index([product_id], map: "FK_product_variants_products")
+}
+
+model products {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(255)
+  slug              String              @db.Char(100)
+  brand_id          Int?
+  category_id       Int
+  description       String              @db.Text
+  rating            Decimal             @default(0.00) @db.Decimal(3, 2)
+  status            Int                 @default(1)
+  created_at        DateTime            @default(now()) @db.DateTime(0)
+  product_attribute product_attribute[]
+  product_variants  product_variants[]
+  brands            brands?             @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_products_brands")
+  categories        categories          @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_products_categories")
+
+  @@index([brand_id], map: "FK_products_brands")
+  @@index([category_id], map: "FK_products_categories")
+}
+
+model provinces {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(100)
+  code           String           @unique(map: "UQ_provinces_code") @db.VarChar(20)
+  status         Int              @default(1)
+  districts      districts[]
+  user_addresses user_addresses[]
+}
+
+model user_addresses {
+  id             Int       @id @default(autoincrement())
+  user_id        Int
+  full_name      String    @db.VarChar(100)
+  phone          String    @db.VarChar(20)
+  province_id    Int
+  district_id    Int
+  ward_id        Int
+  address_detail String    @db.VarChar(500)
+  address_type   Int       @default(1)
+  is_default     Boolean   @default(false)
+  status         Int       @default(1)
+  created_at     DateTime  @default(now()) @db.DateTime(0)
+  updated_at     DateTime? @db.DateTime(0)
+  orders         orders[]
+  districts      districts @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_addresses_districts")
+  provinces      provinces @relation(fields: [province_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_addresses_provinces")
+  users          users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_user_addresses_users")
+  wards          wards     @relation(fields: [ward_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_addresses_wards")
+
+  @@index([district_id], map: "FK_user_addresses_districts")
+  @@index([province_id], map: "FK_user_addresses_provinces")
+  @@index([ward_id], map: "FK_user_addresses_wards")
+  @@index([user_id], map: "IX_user_addresses_user_id")
+}
+
+model users {
+  id             Int              @id @default(autoincrement())
+  email          String           @db.Char(50)
+  password       String           @db.Char(150)
+  phone          String           @db.Char(11)
+  full_name      String           @db.VarChar(50)
+  role           Int
+  status         Int
+  created_at     DateTime?        @default(now()) @db.Timestamp(0)
+  orders         orders[]
+  user_addresses user_addresses[]
+}
+
+model variant_attribute {
+  id                 Int              @id @default(autoincrement())
+  attribute_id       Int
+  variant_id         Int
+  value_int          Int?
+  value_decimal      Decimal?         @db.Decimal(18, 0)
+  value_text         String?          @db.VarChar(50)
+  attribute_value_id Int?
+  attribute_value    attribute_value? @relation(fields: [attribute_value_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_variant_attribute_attribute_value")
+  attributes         attributes       @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_variant_attribute_attributes")
+  product_variants   product_variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_variant_attribute_product_variants")
+
+  @@index([attribute_value_id], map: "FK_variant_attribute_attribute_value")
+  @@index([attribute_id], map: "FK_variant_attribute_attributes")
+  @@index([variant_id], map: "FK_variant_attribute_product_variants")
+}
+
+model wards {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(100)
+  code           String           @unique(map: "UQ_wards_code") @db.VarChar(20)
+  district_id    Int
+  status         Int              @default(1)
+  user_addresses user_addresses[]
+  districts      districts        @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_wards_districts")
+
+  @@index([district_id], map: "IX_wards_district_id")
+}
