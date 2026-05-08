@@ -1,4 +1,4 @@
-import { ProductVariantService } from "../../application/service/product-variant.service";
+import { ProductVariantService } from '../../application/service/product-variant.service';
 import { ProductVariantDTO, ProductVariantPaginatedDTO } from '../dto/product.dto';
 export declare class ProductVariantController {
     private readonly service;

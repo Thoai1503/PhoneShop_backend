@@ -1,4 +1,4 @@
-import { AttributeValueRepository } from "../../infrastruture/repository/attribute-value.repository";
+import { AttributeValueRepository } from '../../infrastruture/repository/attribute-value.repository';
 import { AttributeValueDTO } from '../../api/dto/attribute.dto';
 export declare class AttributeValueService {
     private readonly repo;

@@ -1,4 +1,4 @@
-import { ProductImageRepository } from "../../infrastruture/repository/product-image.repository";
+import { ProductImageRepository } from '../../infrastruture/repository/product-image.repository';
 import { ProductImageDTO } from '../../api/dto/product.dto';
 export declare class ProductImageService {
     private readonly repo;

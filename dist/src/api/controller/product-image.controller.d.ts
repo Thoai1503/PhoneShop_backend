@@ -1,4 +1,4 @@
-import { ProductImageService } from "../../application/service/product-image.service";
+import { ProductImageService } from '../../application/service/product-image.service';
 import { ProductImageDTO } from '../dto/product.dto';
 export declare class ProductImageController {
     private readonly service;

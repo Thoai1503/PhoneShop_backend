@@ -1,4 +1,4 @@
-import { ProductRepository } from "../../infrastruture/repository/product.repository";
+import { ProductRepository } from '../../infrastruture/repository/product.repository';
 import { ProductDTO, ProductAddAndUpdateStateDTO } from '../../api/dto/product.dto';
 export declare class ProductService {
     private readonly repo;

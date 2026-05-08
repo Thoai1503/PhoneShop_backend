@@ -1,5 +1,5 @@
-import { CategoryRepository } from "../../infrastruture/repository/category.repository";
-import { CategoryDTO } from "../../api/dto/category.dto";
+import { CategoryRepository } from '../../infrastruture/repository/category.repository';
+import { CategoryDTO } from '../../api/dto/category.dto';
 export declare class CategoryService {
     private readonly categoryRepository;
     constructor(categoryRepository: CategoryRepository);

@@ -1,4 +1,4 @@
-import { CategoryBrandRepository } from "../../infrastruture/repository/category-brand.repository";
+import { CategoryBrandRepository } from '../../infrastruture/repository/category-brand.repository';
 import { CategoryBrandDTO } from '../../api/dto/category-brand.dto';
 export declare class CategoryBrandService {
     private readonly repo;

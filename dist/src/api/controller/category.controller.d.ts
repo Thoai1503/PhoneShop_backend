@@ -1,4 +1,4 @@
-import { CategoryService } from "../../application/service/category.service";
+import { CategoryService } from '../../application/service/category.service';
 import { CategoryDTO } from '../dto/category.dto';
 export declare class CategoryController {
     private readonly categoryService;

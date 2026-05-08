@@ -1,4 +1,4 @@
-import { AttributeService } from "../../application/service/attribute.service";
+import { AttributeService } from '../../application/service/attribute.service';
 import { AttributeDTO } from '../dto/attribute.dto';
 export declare class AttributeController {
     private readonly service;

@@ -1,4 +1,4 @@
-import { CategoryAttributeService } from "../../application/service/category-attribute.service";
+import { CategoryAttributeService } from '../../application/service/category-attribute.service';
 import { CategoryAttributeDTO, CategoryAttributeUpdateStateDTO } from '../dto/category-attribute.dto';
 export declare class CategoryAttributeController {
     private readonly service;

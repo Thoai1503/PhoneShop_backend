@@ -1,4 +1,4 @@
-import { ProductService } from "../../application/service/product.service";
+import { ProductService } from '../../application/service/product.service';
 import { ProductAddAndUpdateStateDTO, ProductDTO } from '../dto/product.dto';
 export declare class ProductController {
     private readonly service;

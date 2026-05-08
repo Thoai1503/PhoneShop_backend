@@ -1,5 +1,5 @@
-import { CategoryAttributeRepository } from "../../infrastruture/repository/category-attribute.repository";
-import { CategoryAttributeDTO, CategoryAttributeUpdateStateDTO } from "../../api/dto/category-attribute.dto";
+import { CategoryAttributeRepository } from '../../infrastruture/repository/category-attribute.repository';
+import { CategoryAttributeDTO, CategoryAttributeUpdateStateDTO } from '../../api/dto/category-attribute.dto';
 export declare class CategoryAttributeService {
     private readonly repo;
     constructor(repo: CategoryAttributeRepository);

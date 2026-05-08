@@ -1,4 +1,4 @@
-import { CartService } from "../../application/service/cart.service";
+import { CartService } from '../../application/service/cart.service';
 import { CartDTO } from '../dto/product.dto';
 export declare class CartController {
     private readonly service;
