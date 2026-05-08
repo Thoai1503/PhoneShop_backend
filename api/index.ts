@@ -18,18 +18,24 @@ function configureNodePath() {
     .filter(Boolean)
     .join(path.delimiter);
 
-  const nodeModule = require('node:module') as { Module: { _initPaths: () => void } };
-  nodeModule.Module._initPaths();
+  const nodeModuleSystem = require('node:module') as {
+    Module: { _initPaths: () => void };
+  };
+  nodeModuleSystem.Module._initPaths();
 }
 
-function getCreateNestApp() {
+function getCreateNestApp(): typeof import('../src/app.factory').createNestApp {
   if (!createNestAppFn) {
     configureNodePath();
     const appFactory: typeof import('../src/app.factory') = require('../src/app.factory');
     createNestAppFn = appFactory.createNestApp;
   }
 
-  return createNestAppFn!;
+  if (!createNestAppFn) {
+    throw new Error('Failed to initialize createNestApp');
+  }
+
+  return createNestAppFn;
 }
 
 async function getHandler() {
