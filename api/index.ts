@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express from 'express';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import path from 'node:path';
-import module from 'node:module';
 
 type RequestHandler = (
   req: IncomingMessage,
@@ -19,16 +18,15 @@ function configureNodePath() {
     .filter(Boolean)
     .join(path.delimiter);
 
-  (
-    module as typeof module & { Module: { _initPaths: () => void } }
-  ).Module._initPaths();
+  const nodeModule = require('node:module') as { Module: { _initPaths: () => void } };
+  nodeModule.Module._initPaths();
 }
 
 function getCreateNestApp() {
   if (!createNestAppFn) {
     configureNodePath();
-    const { createNestApp } = require('../src/app.factory') as typeof import('../src/app.factory');
-    createNestAppFn = createNestApp;
+    const appFactory: typeof import('../src/app.factory') = require('../src/app.factory');
+    createNestAppFn = appFactory.createNestApp;
   }
 
   return createNestAppFn!;
