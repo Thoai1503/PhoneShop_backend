@@ -36,10 +36,7 @@ let CategoryAttributeController = class CategoryAttributeController {
     async update(id, entity) {
         const result = await this.service.update(id, entity);
         if (!result.success)
-            throw new common_1.NotFoundException({
-                success: false,
-                message: 'Category attribute not found or update failed',
-            });
+            throw new common_1.NotFoundException({ success: false, message: 'Category attribute not found or update failed' });
         return result.entity;
     }
     async delete(id) {

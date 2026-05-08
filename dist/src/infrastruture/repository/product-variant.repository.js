@@ -44,9 +44,7 @@ let ProductVariantRepository = class ProductVariantRepository {
     }
     async delete(id) {
         try {
-            const existing = await this.prisma.product_variants.findUnique({
-                where: { id },
-            });
+            const existing = await this.prisma.product_variants.findUnique({ where: { id } });
             if (!existing)
                 return false;
             await this.prisma.product_variants.delete({ where: { id } });
@@ -83,9 +81,7 @@ let ProductVariantRepository = class ProductVariantRepository {
     }
     async update(entity) {
         try {
-            const existing = await this.prisma.product_variants.findUnique({
-                where: { id: entity.id },
-            });
+            const existing = await this.prisma.product_variants.findUnique({ where: { id: entity.id } });
             if (!existing)
                 return false;
             await this.prisma.product_variants.update({
@@ -144,8 +140,7 @@ let ProductVariantRepository = class ProductVariantRepository {
         const maxPriceInDb = allVariants.length > 0 ? Math.max(...allVariants.map((v) => v.price)) : 0;
         let list = [...allVariants];
         if (st.category) {
-            list = list.filter((e) => e.products.categories.slug.toLowerCase().trim() ===
-                st.category.trim().toLowerCase());
+            list = list.filter((e) => e.products.categories.slug.toLowerCase().trim() === st.category.trim().toLowerCase());
         }
         if (st.minPrice != null) {
             list = list.filter((e) => e.price >= st.minPrice);
@@ -159,7 +154,7 @@ let ProductVariantRepository = class ProductVariantRepository {
         if (st.sortBy && st.order) {
             const asc = st.order.toLowerCase() === 'asc';
             if (st.sortBy.toLowerCase() === 'price') {
-                list.sort((a, b) => (asc ? a.price - b.price : b.price - a.price));
+                list.sort((a, b) => asc ? a.price - b.price : b.price - a.price);
             }
             else {
                 list.sort((a, b) => {
@@ -184,15 +179,13 @@ let ProductVariantRepository = class ProductVariantRepository {
                 continue;
             list = list.filter((variant) => values.some((value) => {
                 const matchVariant = variant.variant_attribute.some((va) => va.attribute_id === attributeId &&
-                    (va.value_text?.trim().toLowerCase() ===
-                        value.trim().toLowerCase() ||
+                    (va.value_text?.trim().toLowerCase() === value.trim().toLowerCase() ||
                         va.value_int?.toString() === value.trim() ||
                         va.value_decimal?.toString() === value.trim() ||
                         (va.attribute_value_id != null &&
                             va.attribute_value_id === parseInt(value.trim(), 10))));
                 const matchProduct = variant.products.product_attribute.some((pa) => pa.attribute_id === attributeId &&
-                    (pa.value_text?.trim().toLowerCase() ===
-                        value.trim().toLowerCase() ||
+                    (pa.value_text?.trim().toLowerCase() === value.trim().toLowerCase() ||
                         pa.value_int?.toString() === value.trim() ||
                         pa.value_decimal?.toString() === value.trim() ||
                         (pa.attribute_value_id != null &&
@@ -262,8 +255,7 @@ let ProductVariantRepository = class ProductVariantRepository {
                     paDto.id = pa.id;
                     paDto.product_id = pa.product_id;
                     paDto.attribute_id = pa.attribute_id;
-                    paDto.value_decimal =
-                        pa.value_decimal !== null ? Number(pa.value_decimal) : null;
+                    paDto.value_decimal = pa.value_decimal !== null ? Number(pa.value_decimal) : null;
                     paDto.value_int = pa.value_int;
                     paDto.value_text = pa.value_text;
                     if (pa.attributes) {
@@ -297,8 +289,7 @@ let ProductVariantRepository = class ProductVariantRepository {
                 vaDto.id = va.id;
                 vaDto.variant_id = va.variant_id;
                 vaDto.attribute_id = va.attribute_id;
-                vaDto.value_decimal =
-                    va.value_decimal !== null ? Number(va.value_decimal) : null;
+                vaDto.value_decimal = va.value_decimal !== null ? Number(va.value_decimal) : null;
                 vaDto.value_int = va.value_int;
                 vaDto.value_text = va.value_text;
                 vaDto.attribute_value_id = va.attribute_value_id;

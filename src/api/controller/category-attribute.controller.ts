@@ -11,10 +11,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { CategoryAttributeService } from 'src/application/service/category-attribute.service';
-import {
-  CategoryAttributeDTO,
-  CategoryAttributeUpdateStateDTO,
-} from '../dto/category-attribute.dto';
+import { CategoryAttributeDTO, CategoryAttributeUpdateStateDTO } from '../dto/category-attribute.dto';
 
 @Controller('api/categoryattribute')
 export class CategoryAttributeController {
@@ -28,9 +25,7 @@ export class CategoryAttributeController {
 
   // GET api/categoryattribute/category/:category
   @Get('category/:category')
-  async getByCategory(
-    @Param('category') category: string,
-  ): Promise<CategoryAttributeDTO[]> {
+  async getByCategory(@Param('category') category: string): Promise<CategoryAttributeDTO[]> {
     return this.service.getByCategory(category);
   }
 
@@ -49,11 +44,7 @@ export class CategoryAttributeController {
     @Body() entity: CategoryAttributeUpdateStateDTO,
   ): Promise<CategoryAttributeDTO> {
     const result = await this.service.update(id, entity);
-    if (!result.success)
-      throw new NotFoundException({
-        success: false,
-        message: 'Category attribute not found or update failed',
-      });
+    if (!result.success) throw new NotFoundException({ success: false, message: 'Category attribute not found or update failed' });
     return result.entity!;
   }
 
