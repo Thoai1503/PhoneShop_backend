@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { VariantAttributeService } from 'src/application/service/variant-attribute.service';
+import { VariantAttributeService } from '../../application/service/variant-attribute.service';
 import { VariantAttributeDTO } from '../dto/product.dto';
 
 @Controller('api/variantattribute')

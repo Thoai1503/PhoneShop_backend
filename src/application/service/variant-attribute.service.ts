@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { VariantAttributeRepository } from 'src/infrastruture/repository/variant-attribute.repository';
+import { VariantAttributeRepository } from '../../infrastruture/repository/variant-attribute.repository';
 import { VariantAttributeDTO } from '../../api/dto/product.dto';
 
 @Injectable()

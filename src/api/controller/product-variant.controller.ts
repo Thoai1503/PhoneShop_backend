@@ -9,7 +9,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ProductVariantService } from 'src/application/service/product-variant.service';
+import { ProductVariantService } from '../../application/service/product-variant.service';
 import {
   FilterStateDTO,
   ProductVariantDTO,

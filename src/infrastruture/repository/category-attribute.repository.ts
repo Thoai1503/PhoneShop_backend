@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { CategoryAttributeDTO } from 'src/api/dto/category-attribute.dto';
 import { AttributeDTO, AttributeValueDTO } from 'src/api/dto/attribute.dto';
-import { CategoryDTO } from 'src/api/dto/category.dto';
+import { CategoryDTO } from '../../api/dto/category.dto';
 
 @Injectable()
 export class CategoryAttributeRepository {

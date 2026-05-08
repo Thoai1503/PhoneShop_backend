@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { AttributeDTO, AttributeValueDTO } from 'src/api/dto/attribute.dto';
+import { AttributeDTO, AttributeValueDTO } from '../../api/dto/attribute.dto';
 
 @Injectable()
 export class AttributeRepository {

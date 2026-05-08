@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { ProductImageDTO } from 'src/api/dto/product.dto';
+import { ProductImageDTO } from '../../api/dto/product.dto';
 import * as path from 'path';
 import * as fs from 'fs';
 

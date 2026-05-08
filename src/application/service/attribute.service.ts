@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AttributeRepository } from 'src/infrastruture/repository/attribute.repository';
+import { AttributeRepository } from '../../infrastruture/repository/attribute.repository';
 import { AttributeDTO } from '../../api/dto/attribute.dto';
 
 @Injectable()

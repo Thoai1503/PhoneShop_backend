@@ -10,7 +10,7 @@ import {
   Post,
   BadRequestException,
 } from '@nestjs/common';
-import { CategoryService } from 'src/application/service/category.service';
+import { CategoryService } from '../../application/service/category.service';
 import { CategoryDTO } from '../dto/category.dto';
 
 @Controller('api/category')

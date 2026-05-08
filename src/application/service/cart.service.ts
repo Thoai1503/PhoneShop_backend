@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CartRepository } from 'src/infrastruture/repository/cart.repository';
+import { CartRepository } from '../../infrastruture/repository/cart.repository';
 import { CartDTO } from '../../api/dto/product.dto';
 
 @Injectable()

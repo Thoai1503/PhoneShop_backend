@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ProductVariantRepository } from 'src/infrastruture/repository/product-variant.repository';
+import { ProductVariantRepository } from '../../infrastruture/repository/product-variant.repository';
 import {
   FilterStateDTO,
   ProductVariantDTO,

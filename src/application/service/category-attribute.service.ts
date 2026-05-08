@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryAttributeRepository } from 'src/infrastruture/repository/category-attribute.repository';
+import { CategoryAttributeRepository } from '../../infrastruture/repository/category-attribute.repository';
 import {
   CategoryAttributeDTO,
   CategoryAttributeUpdateStateDTO,
-} from 'src/api/dto/category-attribute.dto';
+} from '../../api/dto/category-attribute.dto';
 
 @Injectable()
 export class CategoryAttributeService {

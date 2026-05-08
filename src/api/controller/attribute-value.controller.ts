@@ -1,5 +1,5 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
-import { AttributeValueService } from 'src/application/service/attribute-value.service';
+import { AttributeValueService } from '../../application/service/attribute-value.service';
 import { AttributeValueDTO } from '../dto/attribute.dto';
 
 @Controller('api/attributevalue')

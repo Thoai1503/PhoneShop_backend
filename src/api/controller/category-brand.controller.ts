@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { CategoryBrandService } from 'src/application/service/category-brand.service';
+import { CategoryBrandService } from '../../application/service/category-brand.service';
 import { CategoryBrandDTO } from '../dto/category-brand.dto';
 
 @Controller('api/categorybrand')

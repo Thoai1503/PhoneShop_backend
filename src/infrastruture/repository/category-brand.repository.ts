@@ -1,14 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { CategoryBrandDTO } from 'src/api/dto/category-brand.dto';
-import { CategoryDTO } from 'src/api/dto/category.dto';
-import { BrandDTO } from 'src/api/dto/brand.dto';
+import { CategoryBrandDTO } from '../../api/dto/category-brand.dto';
+import { CategoryDTO } from '../../api/dto/category.dto';
+import { BrandDTO } from '../../api/dto/brand.dto';
 
 @Injectable()
 export class CategoryBrandRepository {
-  constructor(
-    @Inject(PrismaService) private readonly prisma: PrismaService,
-  ) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async getByCategory(categorySlug: string): Promise<CategoryBrandDTO[]> {
     const list = await this.prisma.category_brands.findMany({

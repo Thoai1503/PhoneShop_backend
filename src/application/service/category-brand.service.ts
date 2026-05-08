@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryBrandRepository } from 'src/infrastruture/repository/category-brand.repository';
+import { CategoryBrandRepository } from '../../infrastruture/repository/category-brand.repository';
 import { CategoryBrandDTO } from '../../api/dto/category-brand.dto';
 
 @Injectable()

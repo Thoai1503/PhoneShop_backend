@@ -1,15 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
-import { ProductAttributeDTO } from 'src/api/dto/product.dto';
+import { ProductAttributeDTO } from '../../api/dto/product.dto';
 
 @Injectable()
 export class ProductAttributeRepository {
-  constructor(
-    @Inject(PrismaService) private readonly prisma: PrismaService,
-  ) {}
+  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
   async findById(id: number): Promise<any | null> {
-    const en = await this.prisma.product_attribute.findUnique({ where: { id } });
+    const en = await this.prisma.product_attribute.findUnique({
+      where: { id },
+    });
     return en;
   }
 

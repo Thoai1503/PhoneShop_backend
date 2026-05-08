@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryRepository } from 'src/infrastruture/repository/category.repository';
-import { CategoryDTO } from 'src/api/dto/category.dto';
+import { CategoryRepository } from '../../infrastruture/repository/category.repository';
+import { CategoryDTO } from '../../api/dto/category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -18,7 +18,10 @@ export class CategoryService {
     return this.categoryRepository.create(categoryData);
   }
 
-  updateCategory(id: number, categoryData: CategoryDTO): Promise<CategoryDTO | null> {
+  updateCategory(
+    id: number,
+    categoryData: CategoryDTO,
+  ): Promise<CategoryDTO | null> {
     return this.categoryRepository.update(id, categoryData);
   }
 

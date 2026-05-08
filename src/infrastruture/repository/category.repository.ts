@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { BaseRepository } from './base.repository';
 import { Category } from '../model/category.modal';
 import { PrismaService } from '../database/prisma.service';
-import { CategoryDTO } from 'src/api/dto/category.dto';
+import { CategoryDTO } from '../../api/dto/category.dto';
 
 @Injectable()
 export class CategoryRepository extends BaseRepository<Category> {
