@@ -1,8 +1,7 @@
 import { BaseRepository } from './base.repository.js';
-import { Category } from '../model/category.modal.js';
 import { PrismaService } from '../database/prisma.service.js';
 import { CategoryDTO } from '../../api/dto/category.dto.js';
-export declare class CategoryRepository extends BaseRepository<Category> {
+export declare class CategoryRepository extends BaseRepository {
     protected readonly prismaService: PrismaService;
     constructor(prismaService: PrismaService);
     create(item: CategoryDTO): Promise<CategoryDTO>;

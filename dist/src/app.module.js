@@ -21,6 +21,12 @@ import { ProductVariantController } from './api/controller/product-variant.contr
 import { VariantAttributeController } from './api/controller/variant-attribute.controller.js';
 import { ProductImageController } from './api/controller/product-image.controller.js';
 import { CartController } from './api/controller/cart.controller.js';
+import { ProvinceController } from './api/controller/province.controller.js';
+import { DistrictController } from './api/controller/district.controller.js';
+import { WardController } from './api/controller/ward.controller.js';
+import { UserAddressController } from './api/controller/user-address.controller.js';
+import { OrderController } from './api/controller/order.controller.js';
+import { OrderDetailController } from './api/controller/order-detail.controller.js';
 import { CategoryService } from './application/service/category.service.js';
 import { AttributeService } from './application/service/attribute.service.js';
 import { AttributeValueService } from './application/service/attribute-value.service.js';
@@ -33,6 +39,12 @@ import { ProductVariantService } from './application/service/product-variant.ser
 import { VariantAttributeService } from './application/service/variant-attribute.service.js';
 import { ProductImageService } from './application/service/product-image.service.js';
 import { CartService } from './application/service/cart.service.js';
+import { ProvinceService } from './application/service/province.service.js';
+import { DistrictService } from './application/service/district.service.js';
+import { WardService } from './application/service/ward.service.js';
+import { UserAddressService } from './application/service/user-address.service.js';
+import { OrderService } from './application/service/order.service.js';
+import { OrderDetailService } from './application/service/order-detail.service.js';
 import { CategoryRepository } from './infrastruture/repository/category.repository.js';
 import { AttributeRepository } from './infrastruture/repository/attribute.repository.js';
 import { AttributeValueRepository } from './infrastruture/repository/attribute-value.repository.js';
@@ -45,24 +57,45 @@ import { ProductVariantRepository } from './infrastruture/repository/product-var
 import { VariantAttributeRepository } from './infrastruture/repository/variant-attribute.repository.js';
 import { ProductImageRepository } from './infrastruture/repository/product-image.repository.js';
 import { CartRepository } from './infrastruture/repository/cart.repository.js';
+import { ProvinceRepository } from './infrastruture/repository/province.repository.js';
+import { DistrictRepository } from './infrastruture/repository/district.repository.js';
+import { WardRepository } from './infrastruture/repository/ward.repository.js';
+import { UserAddressRepository } from './infrastruture/repository/user-address.repository.js';
+import { OrderRepository } from './infrastruture/repository/order.repository.js';
+import { OrderDetailRepository } from './infrastruture/repository/order-detail.repository.js';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-const isVercel = process.env.VERCEL === '1' || process.env.VERCEL === 'true';
+import { AuthController } from './api/controller/auth.controller.js';
+import { AuthService } from './application/service/auth.service.js';
+import { UsersRepository } from './infrastruture/repository/user.repository.js';
+import PasswordService from './application/service/password.service.js';
+import JWTService from './application/service/JWT.service.js';
+import { LoggerService } from './application/service/logger.service.js';
+import { LoggerMiddleware } from './application/middleware/logger.middleware.js';
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply((req, res, next) => {
+            console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+            next();
+        })
+            .forRoutes('*')
+            .apply(LoggerMiddleware)
+            .forRoutes(AuthController);
+    }
 };
 AppModule = __decorate([
     Module({
         imports: [
             PrismaModule,
             MulterModule.register({}),
-            ...(!isVercel
-                ? [
-                    ServeStaticModule.forRoot({
-                        rootPath: join(process.cwd(), 'Uploads'),
-                        serveRoot: '/Uploads',
-                    }),
-                ]
-                : []),
+            ServeStaticModule.forRoot({
+                rootPath: join(process.cwd(), 'Uploads'),
+                serveRoot: '/Uploads',
+            }),
+            ServeStaticModule.forRoot({
+                rootPath: join(process.cwd(), 'public'),
+            }),
         ],
         controllers: [
             AppController,
@@ -78,10 +111,20 @@ AppModule = __decorate([
             VariantAttributeController,
             ProductImageController,
             CartController,
+            AuthController,
+            ProvinceController,
+            DistrictController,
+            WardController,
+            UserAddressController,
+            OrderController,
+            OrderDetailController,
         ],
         providers: [
             AppService,
+            AuthService,
             CategoryService,
+            JWTService,
+            PasswordService,
             AttributeService,
             AttributeValueService,
             BrandService,
@@ -93,11 +136,18 @@ AppModule = __decorate([
             VariantAttributeService,
             ProductImageService,
             CartService,
+            ProvinceService,
+            DistrictService,
+            WardService,
+            UserAddressService,
+            OrderService,
+            OrderDetailService,
             CategoryRepository,
             AttributeRepository,
             AttributeValueRepository,
             BrandRepository,
             CategoryAttributeRepository,
+            UsersRepository,
             CategoryBrandRepository,
             ProductRepository,
             ProductAttributeRepository,
@@ -105,6 +155,13 @@ AppModule = __decorate([
             VariantAttributeRepository,
             ProductImageRepository,
             CartRepository,
+            ProvinceRepository,
+            DistrictRepository,
+            WardRepository,
+            UserAddressRepository,
+            OrderRepository,
+            OrderDetailRepository,
+            LoggerService,
         ],
     })
 ], AppModule);

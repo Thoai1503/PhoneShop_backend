@@ -6,6 +6,17 @@ import { BrandDTO } from '../../api/dto/brand.dto.js';
 export class BrandRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
+  async create(item: BrandDTO): Promise<number> {
+    const created = await this.prisma.brands.create({
+      data: {
+        name: item.name,
+        slug: item.slug || '',
+        status: item.status ?? 1,
+      },
+    });
+    return created.id;
+  }
+
   async getAll(): Promise<BrandDTO[]> {
     const list = await this.prisma.brands.findMany();
     return list.map((b) => this.toDTO(b));

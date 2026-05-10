@@ -14,8 +14,20 @@ let CartService = class CartService {
     constructor(repo) {
         this.repo = repo;
     }
+    async create(item) {
+        return this.repo.create(item);
+    }
     async findByUserId(userId) {
         return this.repo.findByUserId(userId);
+    }
+    async updateQuantity(id, quantity) {
+        return this.repo.updateQuantity(id, quantity);
+    }
+    async deleteById(id) {
+        return this.repo.deleteById(id);
+    }
+    async deleteByUserId(userId) {
+        return this.repo.deleteByUserId(userId);
     }
 };
 CartService = __decorate([

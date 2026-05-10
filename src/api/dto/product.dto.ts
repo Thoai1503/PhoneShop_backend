@@ -98,5 +98,6 @@ export class CartDTO {
   user_id: number = 0;
   variant_id: number = 0;
   quantity: number = 0;
+  unit_price?: number | null = null;
   variant?: ProductVariantDTO | null = null;
 }

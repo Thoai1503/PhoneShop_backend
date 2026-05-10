@@ -1,7 +1,13 @@
 import { BrandService } from '../../application/service/brand.service.js';
-import { BrandDTO } from '../dto/brand.dto.js';
+import type { Request, Response } from 'express';
 export declare class BrandController {
     private readonly service;
     constructor(service: BrandService);
-    getAll(): Promise<BrandDTO[]>;
+    createBrand(req: Request, body: {
+        id?: number;
+        name?: string;
+        slug?: string;
+        status?: number;
+    }, res: Response): Promise<Response>;
+    getAll(req: Request, res: Response): Promise<Response>;
 }

@@ -6,6 +6,10 @@ import { BrandDTO } from '../../api/dto/brand.dto.js';
 export class BrandService {
   constructor(private readonly repo: BrandRepository) {}
 
+  async create(brand: BrandDTO): Promise<number> {
+    return this.repo.create(brand);
+  }
+
   async getAll(): Promise<BrandDTO[]> {
     return this.repo.getAll();
   }

@@ -85,6 +85,7 @@ export class CartDTO {
     user_id = 0;
     variant_id = 0;
     quantity = 0;
+    unit_price = null;
     variant = null;
 }
 //# sourceMappingURL=product.dto.js.map

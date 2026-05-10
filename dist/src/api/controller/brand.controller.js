@@ -7,21 +7,52 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Controller, Get } from '@nestjs/common';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { BrandService } from '../../application/service/brand.service.js';
+import { BrandDTO } from '../dto/brand.dto.js';
+import { respondSuccess } from '../../common/http/response.util.js';
 let BrandController = class BrandController {
     service;
     constructor(service) {
         this.service = service;
     }
-    async getAll() {
-        return this.service.getAll();
+    async createBrand(req, body, res) {
+        try {
+            const newBrand = new BrandDTO();
+            newBrand.id = body.id ?? 0;
+            newBrand.name = body.name ?? '';
+            newBrand.slug = body.slug ?? '';
+            newBrand.status = body.status ?? 1;
+            const data = await this.service.create(newBrand);
+            return respondSuccess(req, res, 200, data, { message: 'Brand created' });
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async getAll(req, res) {
+        const list = await this.service.getAll();
+        return respondSuccess(req, res, 200, list);
     }
 };
 __decorate([
-    Get(),
+    Post(),
+    __param(0, Req()),
+    __param(1, Body()),
+    __param(2, Res({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], BrandController.prototype, "createBrand", null);
+__decorate([
+    Get(),
+    __param(0, Req()),
+    __param(1, Res({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "getAll", null);
 BrandController = __decorate([

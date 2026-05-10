@@ -6,6 +6,8 @@ import {
 } from '@nestjs/platform-express';
 import type { Express } from 'express';
 import { AppModule } from './app.module.js';
+import { ValidationPipe } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
 
 function getCorsOrigins() {
   const origins = process.env.CORS_ORIGIN?.split(',')
@@ -20,6 +22,7 @@ function configureApp(app: NestExpressApplication) {
     origin: getCorsOrigins(),
     credentials: true,
   });
+  app.use(cookieParser());
 }
 
 export async function createNestApp(expressApp?: Express) {
@@ -29,6 +32,14 @@ export async function createNestApp(expressApp?: Express) {
         new ExpressAdapter(expressApp),
       )
     : await NestFactory.create<NestExpressApplication>(AppModule);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true, // loại bỏ field không khai báo trong DTO
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   configureApp(app);
   return app;

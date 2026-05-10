@@ -18,6 +18,16 @@ let BrandRepository = class BrandRepository {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async create(item) {
+        const created = await this.prisma.brands.create({
+            data: {
+                name: item.name,
+                slug: item.slug || '',
+                status: item.status ?? 1,
+            },
+        });
+        return created.id;
+    }
     async getAll() {
         const list = await this.prisma.brands.findMany();
         return list.map((b) => this.toDTO(b));

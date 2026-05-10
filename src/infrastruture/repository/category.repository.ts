@@ -5,7 +5,7 @@ import { PrismaService } from '../database/prisma.service.js';
 import { CategoryDTO } from '../../api/dto/category.dto.js';
 
 @Injectable()
-export class CategoryRepository extends BaseRepository<Category> {
+export class CategoryRepository extends BaseRepository {
   constructor(
     @Inject(PrismaService) protected readonly prismaService: PrismaService,
   ) {

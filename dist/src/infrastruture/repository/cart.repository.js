@@ -18,6 +18,34 @@ let CartRepository = class CartRepository {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async create(item) {
+        const created = await this.prisma.cart.create({
+            data: {
+                user_id: item.user_id,
+                variant_id: item.variant_id,
+                quantity: item.quantity,
+                unit_price: item.unit_price ?? null,
+            },
+        });
+        return created.id;
+    }
+    async updateQuantity(id, quantity) {
+        const updated = await this.prisma.cart.updateMany({
+            where: { id },
+            data: { quantity },
+        });
+        return updated.count > 0;
+    }
+    async deleteById(id) {
+        const deleted = await this.prisma.cart.deleteMany({ where: { id } });
+        return deleted.count > 0;
+    }
+    async deleteByUserId(userId) {
+        await this.prisma.cart.deleteMany({
+            where: { user_id: userId },
+        });
+        return true;
+    }
     async findByUserId(userId) {
         const list = await this.prisma.cart.findMany({
             where: { user_id: userId },
@@ -31,6 +59,7 @@ let CartRepository = class CartRepository {
             dto.user_id = c.user_id;
             dto.variant_id = c.variant_id;
             dto.quantity = c.quantity;
+            dto.unit_price = Number(c.unit_price ?? 0);
             const vDto = new ProductVariantDTO();
             vDto.id = c.product_variants.id;
             vDto.name = c.product_variants.name;

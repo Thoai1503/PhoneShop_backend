@@ -1,0 +1,391 @@
+{
+  "info": {
+    "name": "PhoneShop Migrated APIs",
+    "description": "Migrated endpoints from Test Vercel ts to PhoneShop. Legacy response is default; add x-response-format: standard to opt into unified envelope.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": "1"
+    },
+    {
+      "key": "categoryId",
+      "value": "1"
+    },
+    {
+      "key": "orderId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/login"
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Demo User\",\n  \"email\": \"demo@example.com\",\n  \"phone\": \"0909999999\",\n  \"password\": \"123456\",\n  \"role\": 0,\n  \"status\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/register"
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/auth/refresh_token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Brand",
+      "item": [
+        {
+          "name": "Create Brand",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Apple\",\n  \"slug\": \"apple\",\n  \"status\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/brand"
+          }
+        },
+        {
+          "name": "Get All Brands",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/brand"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Category",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/category"
+          }
+        },
+        {
+          "name": "Get Category By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/category/{{categoryId}}"
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smartphone\",\n  \"parent_id\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/category"
+          }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Smartphone New\",\n  \"parent_id\": null\n}"
+            },
+            "url": "{{baseUrl}}/api/category/{{categoryId}}"
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/category/{{categoryId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Add To Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1,\n  \"variant_id\": 10,\n  \"quantity\": 2,\n  \"unit_price\": 12000000\n}"
+            },
+            "url": "{{baseUrl}}/api/cart"
+          }
+        },
+        {
+          "name": "Get Cart By User",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/cart/user/{{userId}}"
+          }
+        },
+        {
+          "name": "Update Cart Quantity",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3\n}"
+            },
+            "url": "{{baseUrl}}/api/cart/1"
+          }
+        },
+        {
+          "name": "Add List To Cart",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"list\": [\n    {\n      \"variant_id\": 10,\n      \"quantity\": 1,\n      \"unit_price\": 12000000\n    },\n    {\n      \"variant_id\": 11,\n      \"quantity\": 2,\n      \"unit_price\": 500000\n    }\n  ],\n  \"user_id\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/cart/list"
+          }
+        },
+        {
+          "name": "Clear Cart",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/cart/user/{{userId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Location",
+      "item": [
+        {
+          "name": "Get Provinces",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/province"
+          }
+        },
+        {
+          "name": "Get Districts By Province",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/district/province/1"
+          }
+        },
+        {
+          "name": "Get Wards By District",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/ward/district/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Address",
+      "item": [
+        {
+          "name": "Create Address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": 1,\n  \"full_name\": \"Nguyen Van A\",\n  \"phone\": \"0909999999\",\n  \"province_id\": 1,\n  \"district_id\": 1,\n  \"ward_id\": 1,\n  \"address_detail\": \"123 Le Loi\",\n  \"address_type\": 1,\n  \"is_default\": true,\n  \"status\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/user-address"
+          }
+        },
+        {
+          "name": "Get Address By User",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/user-address/user/{{userId}}"
+          }
+        },
+        {
+          "name": "Update Address",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": 1,\n  \"user_id\": 1,\n  \"full_name\": \"Nguyen Van B\",\n  \"phone\": \"0901111111\",\n  \"province_id\": 1,\n  \"district_id\": 1,\n  \"ward_id\": 1,\n  \"address_detail\": \"99 Nguyen Hue\",\n  \"address_type\": 1,\n  \"is_default\": false,\n  \"status\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/user-address/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order",
+      "item": [
+        {
+          "name": "Get All Orders",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/order?page=1&search=090"
+          }
+        },
+        {
+          "name": "Get Orders By User",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/order/user/{{userId}}"
+          }
+        },
+        {
+          "name": "Get Order By Id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/order/{{orderId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order Detail",
+      "item": [
+        {
+          "name": "Get Order Details",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/order-detail/order/{{orderId}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Standardized Response Samples",
+      "item": [
+        {
+          "name": "Get Provinces (standard mode)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-response-format",
+                "value": "standard"
+              }
+            ],
+            "url": "{{baseUrl}}/api/province"
+          }
+        },
+        {
+          "name": "Get Orders (standard mode)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-response-format",
+                "value": "standard"
+              }
+            ],
+            "url": "{{baseUrl}}/api/order?page=1&search="
+          }
+        }
+      ]
+    }
+  ]
+}

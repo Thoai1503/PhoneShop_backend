@@ -14,6 +14,9 @@ let BrandService = class BrandService {
     constructor(repo) {
         this.repo = repo;
     }
+    async create(brand) {
+        return this.repo.create(brand);
+    }
     async getAll() {
         return this.repo.getAll();
     }

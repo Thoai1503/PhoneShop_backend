@@ -88,5 +88,6 @@ export declare class CartDTO {
     user_id: number;
     variant_id: number;
     quantity: number;
+    unit_price?: number | null;
     variant?: ProductVariantDTO | null;
 }
