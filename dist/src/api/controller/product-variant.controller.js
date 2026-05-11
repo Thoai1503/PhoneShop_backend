@@ -29,6 +29,7 @@ let ProductVariantController = class ProductVariantController {
         return result;
     }
     async create(entity) {
+        console.log('Received product variant for creation:', JSON.stringify(entity));
         return this.service.create(entity);
     }
     async updateVariant(entity) {

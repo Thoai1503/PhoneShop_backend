@@ -4,7 +4,7 @@ import {
   ExpressAdapter,
   NestExpressApplication,
 } from '@nestjs/platform-express';
-import type { Express } from 'express';
+import express, { type Express } from 'express';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
@@ -18,6 +18,14 @@ function getCorsOrigins() {
 }
 
 function configureApp(app: NestExpressApplication) {
+  // Accept JSON payloads even when clients mistakenly send text/plain.
+  app.use(
+    express.json({
+      type: ['application/json', 'application/*+json', 'text/plain'],
+    }),
+  );
+  app.use(express.urlencoded({ extended: true }));
+
   app.enableCors({
     origin: getCorsOrigins(),
     credentials: true,
@@ -36,8 +44,8 @@ export async function createNestApp(expressApp?: Express) {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // loại bỏ field không khai báo trong DTO
-      forbidNonWhitelisted: true,
-      transform: true,
+      forbidNonWhitelisted: false,
+      //transform: true,
     }),
   );
 

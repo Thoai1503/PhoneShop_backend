@@ -17,7 +17,7 @@ import {
   respondSuccess,
 } from '../../common/http/response.util.js';
 
-@Controller('api/v1/cart')
+@Controller('api/cart')
 export class CartController {
   constructor(private readonly service: CartService) {}
 

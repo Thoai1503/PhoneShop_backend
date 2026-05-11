@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter, } from '@nestjs/platform-express';
+import express from 'express';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
@@ -11,6 +12,10 @@ function getCorsOrigins() {
     return origins && origins.length > 0 ? origins : true;
 }
 function configureApp(app) {
+    app.use(express.json({
+        type: ['application/json', 'application/*+json', 'text/plain'],
+    }));
+    app.use(express.urlencoded({ extended: true }));
     app.enableCors({
         origin: getCorsOrigins(),
         credentials: true,
@@ -23,8 +28,7 @@ export async function createNestApp(expressApp) {
         : await NestFactory.create(AppModule);
     app.useGlobalPipes(new ValidationPipe({
         whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
+        forbidNonWhitelisted: false,
     }));
     configureApp(app);
     return app;

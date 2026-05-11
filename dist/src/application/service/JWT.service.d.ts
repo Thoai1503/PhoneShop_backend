@@ -1,4 +1,4 @@
-import { TokenPair } from 'src/api/dto/user.dto.js';
+import { TokenPair } from '../../api/dto/user.dto.js';
 export default class JWTService {
     private accessTokenSecret;
     private refreshTokenSecret;

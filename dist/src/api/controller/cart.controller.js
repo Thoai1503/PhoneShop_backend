@@ -137,7 +137,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], CartController.prototype, "clearCart", null);
 CartController = __decorate([
-    Controller('api/v1/cart'),
+    Controller('api/cart'),
     __metadata("design:paramtypes", [CartService])
 ], CartController);
 export { CartController };

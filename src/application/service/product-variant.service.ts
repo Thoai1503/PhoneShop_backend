@@ -21,7 +21,13 @@ export class ProductVariantService {
   }
 
   async create(entity: ProductVariantDTO): Promise<boolean> {
-    return this.repo.create(entity);
+    return this.repo
+      .create(entity)
+      .then((res) => res)
+      .catch((er) => {
+        console.error('Error creating product variant:', er);
+        return false;
+      });
   }
 
   async update(entity: ProductVariantDTO): Promise<boolean> {

@@ -42,6 +42,10 @@ export class ProductVariantController {
   // POST api/productvariant
   @Post()
   async create(@Body() entity: ProductVariantDTO): Promise<boolean> {
+    console.log(
+      'Received product variant for creation:',
+      JSON.stringify(entity),
+    );
     return this.service.create(entity);
   }
 

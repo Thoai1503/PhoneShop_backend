@@ -1,3 +1,5 @@
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { AttributeDTO, AttributeValueDTO } from './attribute.dto.js';
 import { BrandDTO } from './brand.dto.js';
 import { CategoryAttributeDTO } from './category-attribute.dto.js';
@@ -34,11 +36,18 @@ export class VariantAttributeDTO {
 }
 
 export class ProductVariantDTO {
+  @IsNumber()
   id: number = 0;
+  @IsNumber()
   product_id: number = 0;
+  @IsString()
   sku: string = '';
+  @IsString()
   name: string = '';
+  @Type(() => Number)
+  @IsNumber()
   price: number = 0;
+  @IsNumber()
   status: number = 0;
   created_at?: Date | null = null;
   product?: ProductDTO | null = null;
@@ -63,13 +72,35 @@ export class ProductDTO {
 }
 
 export class ProductAddAndUpdateStateDTO {
+  @Type(() => Number)
+  @IsNumber()
   id: number = 0;
+
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @IsNotEmpty()
+  @IsString()
   name: string = '';
+
+  @IsString()
   description: string = '';
+
+  @Type(() => Number)
+  @IsNumber()
   category_id: number = 0;
+
+  @Type(() => Number)
+  @IsNumber()
   brand_id: number = 0;
+
+  @IsString()
   slug: string = '';
+
+  @Type(() => Number)
+  @IsNumber()
   rating: number = 0;
+
+  @Type(() => Number)
+  @IsNumber()
   status: number = 0;
 }
 

@@ -29,14 +29,14 @@ let ProductVariantRepository = class ProductVariantRepository {
                     name: entity.name,
                     SKU: entity.sku,
                     price: entity.price,
-                    status: entity.status,
+                    status: 1,
                     created_at: new Date(),
                 },
             });
             return true;
         }
-        catch {
-            return false;
+        catch (er) {
+            throw er;
         }
     }
     async delete(id) {
@@ -49,8 +49,8 @@ let ProductVariantRepository = class ProductVariantRepository {
             await this.prisma.product_variants.delete({ where: { id } });
             return true;
         }
-        catch {
-            return false;
+        catch (er) {
+            throw er;
         }
     }
     async findById(id) {

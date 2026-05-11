@@ -34,6 +34,7 @@ export class ProductController {
   async create(
     @Body() product: ProductAddAndUpdateStateDTO,
   ): Promise<ProductDTO> {
+    console.log('Received product for creation:', JSON.stringify(product));
     const result = await this.service.createAndReturn(product);
     if (!result)
       throw new InternalServerErrorException({

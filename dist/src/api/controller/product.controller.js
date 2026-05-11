@@ -28,6 +28,7 @@ let ProductController = class ProductController {
         return result;
     }
     async create(product) {
+        console.log('Received product for creation:', JSON.stringify(product));
         const result = await this.service.createAndReturn(product);
         if (!result)
             throw new InternalServerErrorException({
