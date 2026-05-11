@@ -8,6 +8,7 @@ import express, { type Express } from 'express';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
+import { get } from 'http';
 
 function getCorsOrigins() {
   return process.env.CORS_ORIGIN?.split(',')
@@ -24,7 +25,7 @@ function configureApp(app: NestExpressApplication) {
   app.use(express.urlencoded({ extended: true }));
 
   app.enableCors({
-    origin: 'https://phone-shop-backend.vercel.app/',
+    origin: getCorsOrigins(),
     credentials: true,
   });
   app.use(cookieParser());

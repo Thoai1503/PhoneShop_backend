@@ -6,10 +6,9 @@ import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 function getCorsOrigins() {
-    const origins = process.env.CORS_ORIGIN?.split(',')
+    return process.env.CORS_ORIGIN?.split(',')
         .map((origin) => origin.trim())
         .filter(Boolean);
-    return origins && origins.length > 0 ? origins : true;
 }
 function configureApp(app) {
     app.use(express.json({
