@@ -10,13 +10,10 @@ import { ValidationPipe } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 
 function getCorsOrigins() {
-  const origins = process.env.CORS_ORIGIN?.split(',')
+  return process.env.CORS_ORIGIN?.split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
-
-  return origins && origins.length > 0 ? origins : true;
 }
-
 function configureApp(app: NestExpressApplication) {
   // Accept JSON payloads even when clients mistakenly send text/plain.
   app.use(
@@ -27,7 +24,7 @@ function configureApp(app: NestExpressApplication) {
   app.use(express.urlencoded({ extended: true }));
 
   app.enableCors({
-    origin: getCorsOrigins(),
+    origin: 'https://phone-shop-backend.vercel.app/',
     credentials: true,
   });
   app.use(cookieParser());
