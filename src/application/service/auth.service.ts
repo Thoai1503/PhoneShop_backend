@@ -57,8 +57,8 @@ export class AuthService {
             (Number(process.env.JWT_COOKIE_EXPIRE) || 0) * 24 * 60 * 60 * 1000,
         ),
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Only secure in production
-        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'none',
         path: '/',
       };
 
@@ -139,7 +139,7 @@ export class AuthService {
       secure: process.env.NODE_ENV === 'production', // Only secure in production
       sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      domain: '.vercel.app', // Set domain for production
+      //   domain: '.vercel.app', // Set domain for production
     };
 
     // Debug logging
