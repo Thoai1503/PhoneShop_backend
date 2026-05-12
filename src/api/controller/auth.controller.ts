@@ -1,4 +1,4 @@
-import { Body, Controller, Next, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Next, Post, Query, Res } from '@nestjs/common';
 import { LoginDTO } from '../dto/login.dto.js';
 import { AuthService } from '../../application/service/auth.service.js';
 import type { NextFunction, Response } from 'express';
@@ -47,6 +47,7 @@ export class AuthController {
       password: body.password,
       role: body.role ?? 0,
       status: body.status ?? 0,
+      is_verified: 0,
     });
 
     return this.authService.register(newUser, res, next);
@@ -62,5 +63,26 @@ export class AuthController {
       res,
       () => {},
     );
+  }
+
+  @Post('verify-email')
+  async verifyEmailByPost(
+    @Res({ passthrough: true }) res: Response,
+    @Body() body: { token?: string },
+  ) {
+    return this.authService.verifyEmailToken(body.token, res);
+  }
+
+  @Get('verify-email')
+  async verifyEmailByGet(
+    @Res({ passthrough: true }) res: Response,
+    @Query('token') token?: string,
+  ) {
+    return this.authService.verifyEmailToken(token, res);
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: Response): Promise<Response> {
+    return this.authService.logout(res);
   }
 }

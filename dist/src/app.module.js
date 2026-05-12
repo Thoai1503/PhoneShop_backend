@@ -72,6 +72,7 @@ import PasswordService from './application/service/password.service.js';
 import JWTService from './application/service/JWT.service.js';
 import { LoggerService } from './application/service/logger.service.js';
 import { LoggerMiddleware } from './application/middleware/logger.middleware.js';
+import { MailService } from './service/mail.service.js';
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -125,6 +126,7 @@ AppModule = __decorate([
             CategoryService,
             JWTService,
             PasswordService,
+            MailService,
             AttributeService,
             AttributeValueService,
             BrandService,
@@ -161,6 +163,7 @@ AppModule = __decorate([
             UserAddressRepository,
             OrderRepository,
             OrderDetailRepository,
+            MailService,
             LoggerService,
         ],
     })

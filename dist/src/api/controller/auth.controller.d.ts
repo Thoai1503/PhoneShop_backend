@@ -10,4 +10,9 @@ export declare class AuthController {
     refreshToken(res: Response, body: {
         refreshToken?: string;
     }): Promise<Response<any, Record<string, any>> | undefined>;
+    verifyEmailByPost(res: Response, body: {
+        token?: string;
+    }): Promise<Response<any, Record<string, any>>>;
+    verifyEmailByGet(res: Response, token?: string): Promise<Response<any, Record<string, any>>>;
+    logout(res: Response): Promise<Response>;
 }

@@ -18,6 +18,7 @@ export interface UserData {
     password?: string;
     role: number;
     status: number;
+    is_verified?: number;
 }
 export default class UserDTO {
     private id;
@@ -27,6 +28,7 @@ export default class UserDTO {
     private password;
     private role;
     private status;
+    private is_verified;
     private jwtService;
     static USER_TABLE: string;
     constructor(data?: UserData);
@@ -38,6 +40,8 @@ export default class UserDTO {
     getRole(): number;
     getStatus(): number;
     setStatus(status: number): void;
+    getIsVerified(): number;
+    setIsVerified(is_verified: number): void;
     static validate(payload: {
         name?: string;
         email?: string;

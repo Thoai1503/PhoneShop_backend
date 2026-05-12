@@ -8,6 +8,7 @@ export default class UserDTO {
     password = '';
     role = 0;
     status = 0;
+    is_verified = 0;
     jwtService;
     static USER_TABLE = 'users';
     constructor(data) {
@@ -18,6 +19,7 @@ export default class UserDTO {
         this.password = data?.password ?? '';
         this.role = data?.role ?? 0;
         this.status = data?.status ?? 0;
+        this.is_verified = data?.is_verified ?? 0;
         this.jwtService = new JWTService();
     }
     getId() {
@@ -43,6 +45,12 @@ export default class UserDTO {
     }
     setStatus(status) {
         this.status = status;
+    }
+    getIsVerified() {
+        return this.is_verified;
+    }
+    setIsVerified(is_verified) {
+        this.is_verified = is_verified;
     }
     static validate(payload) {
         const errors = {};

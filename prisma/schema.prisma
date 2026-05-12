@@ -256,6 +256,7 @@ model users {
   phone          String           @db.Char(11)
   full_name      String           @db.VarChar(50)
   role           Int
+  is_verified    Int              @default(0)
   status         Int
   created_at     DateTime?        @default(now()) @db.Timestamp(0)
   orders         orders[]

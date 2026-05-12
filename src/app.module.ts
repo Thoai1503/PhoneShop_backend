@@ -73,6 +73,7 @@ import JWTService from './application/service/JWT.service.js';
 import { LoggingInterceptor } from './infrastruture/interceptor/logging.interceptor.js';
 import { LoggerService } from './application/service/logger.service.js';
 import { LoggerMiddleware } from './application/middleware/logger.middleware.js';
+import { MailService } from './service/mail.service.js';
 
 @Module({
   imports: [
@@ -114,6 +115,7 @@ import { LoggerMiddleware } from './application/middleware/logger.middleware.js'
     CategoryService,
     JWTService,
     PasswordService,
+    MailService,
     AttributeService,
     AttributeValueService,
     BrandService,
@@ -150,6 +152,7 @@ import { LoggerMiddleware } from './application/middleware/logger.middleware.js'
     UserAddressRepository,
     OrderRepository,
     OrderDetailRepository,
+    MailService,
     LoggerService,
   ],
 })

@@ -22,6 +22,7 @@ export class UsersRepository extends BaseRepository {
       status: user?.status,
       phone: user?.phone,
       name: user?.full_name,
+      is_verified: user?.is_verified,
     });
   }
 
@@ -30,9 +31,10 @@ export class UsersRepository extends BaseRepository {
       data: {
         email: user.getEmail(),
         password: user.getPassword(),
-        role: user.getRole(),
+        role: 2,
         status: user.getStatus(),
         phone: user.getPhone(),
+        is_verified: user.getIsVerified(),
         full_name: user.getName(),
       },
     });
@@ -44,6 +46,7 @@ export class UsersRepository extends BaseRepository {
       status: created.status,
       phone: created.phone,
       name: created.full_name,
+      is_verified: created.is_verified,
     });
   }
   async getUserById(id: number): Promise<UserDTO | null> {
@@ -59,6 +62,17 @@ export class UsersRepository extends BaseRepository {
       status: user?.status,
       phone: user?.phone,
       name: user?.full_name,
+      is_verified: user?.is_verified,
+    });
+  }
+
+  async markUserAsVerified(id: number): Promise<void> {
+    await this.prismaService.users.update({
+      where: { id },
+      data: {
+        is_verified: 1,
+        status: 1,
+      },
     });
   }
 }

@@ -7,4 +7,5 @@ export declare class UsersRepository extends BaseRepository {
     findByEmail(email: string): Promise<UserDTO | null>;
     createUser(user: UserDTO): Promise<UserDTO>;
     getUserById(id: number): Promise<UserDTO | null>;
+    markUserAsVerified(id: number): Promise<void>;
 }

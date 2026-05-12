@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Body, Controller, Next, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, Next, Post, Query, Res } from '@nestjs/common';
 import { LoginDTO } from '../dto/login.dto.js';
 import { AuthService } from '../../application/service/auth.service.js';
 import { RegisterDTO } from '../dto/register.dto.js';
@@ -38,11 +38,21 @@ let AuthController = class AuthController {
             password: body.password,
             role: body.role ?? 0,
             status: body.status ?? 0,
+            is_verified: 0,
         });
         return this.authService.register(newUser, res, next);
     }
     async refreshToken(res, body) {
         return this.authService.refreshToken({ refreshToken: body.refreshToken }, res, () => { });
+    }
+    async verifyEmailByPost(res, body) {
+        return this.authService.verifyEmailToken(body.token, res);
+    }
+    async verifyEmailByGet(res, token) {
+        return this.authService.verifyEmailToken(token, res);
+    }
+    async logout(res) {
+        return this.authService.logout(res);
     }
 };
 __decorate([
@@ -70,6 +80,29 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "refreshToken", null);
+__decorate([
+    Post('verify-email'),
+    __param(0, Res({ passthrough: true })),
+    __param(1, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyEmailByPost", null);
+__decorate([
+    Get('verify-email'),
+    __param(0, Res({ passthrough: true })),
+    __param(1, Query('token')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyEmailByGet", null);
+__decorate([
+    Post('logout'),
+    __param(0, Res({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "logout", null);
 AuthController = __decorate([
     Controller('api/v1/auth'),
     __metadata("design:paramtypes", [AuthService])

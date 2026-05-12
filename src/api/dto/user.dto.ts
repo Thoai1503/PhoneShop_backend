@@ -21,6 +21,7 @@ export interface UserData {
   password?: string;
   role: number;
   status: number;
+  is_verified?: number;
 }
 
 export default class UserDTO {
@@ -31,6 +32,7 @@ export default class UserDTO {
   private password: string = '';
   private role: number = 0;
   private status: number = 0;
+  private is_verified: number = 0;
   private jwtService: JWTService;
 
   static USER_TABLE = 'users';
@@ -43,6 +45,7 @@ export default class UserDTO {
     this.password = data?.password ?? '';
     this.role = data?.role ?? 0;
     this.status = data?.status ?? 0;
+    this.is_verified = data?.is_verified ?? 0;
 
     this.jwtService = new JWTService();
   }
@@ -69,6 +72,12 @@ export default class UserDTO {
   }
   public setStatus(status: number): void {
     this.status = status;
+  }
+  public getIsVerified(): number {
+    return this.is_verified;
+  }
+  public setIsVerified(is_verified: number): void {
+    this.is_verified = is_verified;
   }
 
   // -- Validation helper (simple, synchronous)

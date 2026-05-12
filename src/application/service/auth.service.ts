@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import UserDTO from '../../api/dto/user.dto.js';
 import { UsersRepository } from '../../infrastruture/repository/user.repository.js';
 import { CookieOptions, NextFunction, Response } from 'express';
+import jwt from 'jsonwebtoken';
+
 import PasswordService from './password.service.js';
 import JWTService from './JWT.service.js';
+import { MailService } from '../../service/mail.service.js';
+// import { mailService } from '../../service/mail.instance';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +15,7 @@ export class AuthService {
     private readonly userRepo: UsersRepository,
     private readonly passwordService: PasswordService,
     private readonly jwtService: JWTService,
+    private readonly mailService: MailService,
   ) {}
 
   refreshToken = async (
@@ -132,8 +137,9 @@ export class AuthService {
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Only secure in production
-      sameSite: 'lax',
+      sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      domain: '.vercel.app', // Set domain for production
     };
 
     // Debug logging
@@ -164,6 +170,84 @@ export class AuthService {
         },
       });
   };
+
+  verifyEmailToken = async (token: string | undefined, res: Response) => {
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        message: 'Verification token is required',
+        code: 'MISSING_VERIFY_TOKEN',
+      });
+    }
+
+    try {
+      const decoded = this.jwtService.verifyAccessToken(token) as {
+        id?: number;
+        email?: string;
+        purpose?: string;
+      };
+
+      if (!decoded?.id || !decoded?.email) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid verification token payload',
+          code: 'INVALID_VERIFY_TOKEN',
+        });
+      }
+
+      if (decoded.purpose !== 'email_verification') {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid token purpose',
+          code: 'INVALID_TOKEN_PURPOSE',
+        });
+      }
+
+      const user = await this.userRepo.getUserById(decoded.id);
+      if (!user || user.getEmail() !== decoded.email) {
+        return res.status(404).json({
+          success: false,
+          message: 'User for verification token not found',
+          code: 'VERIFY_USER_NOT_FOUND',
+        });
+      }
+
+      if (user.getStatus() === 1) {
+        return res.status(200).json({
+          success: true,
+          message: 'Email already verified',
+          code: 'EMAIL_ALREADY_VERIFIED',
+        });
+      }
+
+      await this.userRepo.markUserAsVerified(user.getId());
+
+      return res.status(200).json({
+        success: true,
+        message: 'Email verified successfully. You can now log in.',
+        code: 'EMAIL_VERIFIED',
+      });
+    } catch (error) {
+      if (
+        error instanceof jwt.TokenExpiredError ||
+        error instanceof jwt.JsonWebTokenError
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: 'Verification token is invalid or expired',
+          code: 'INVALID_OR_EXPIRED_VERIFY_TOKEN',
+        });
+      }
+
+      console.error('Email verification error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error while verifying email',
+        code: 'VERIFY_EMAIL_ERROR',
+      });
+    }
+  };
+
   register = async (req: UserDTO, res: Response, next: NextFunction) => {
     //  const { name, email, password, repeated_password } = req;
 
@@ -229,15 +313,90 @@ export class AuthService {
         password: req.getPassword(),
         role: 0,
         status: 0,
+        is_verified: 0,
       });
       await newUser.hashPassword(); // Hash password before saving
-      newUser.setStatus(1); // Set default status to active
+      newUser.setStatus(0); // Account must verify email before becoming active
+      newUser.setIsVerified(0); // Mark as not verified yet
 
       const createdUser = await this.userRepo.createUser(newUser);
-      this.sendTokenResponse(createdUser, 201, res);
+
+      const verifyToken = this.jwtService.generateEmailVerificationToken({
+        id: createdUser.getId(),
+        email: createdUser.getEmail(),
+        purpose: 'email_verification',
+      });
+      const frontendBaseUrl =
+        process.env.FRONTEND_URL || 'http://localhost:5173';
+      const verifyUrl = `${frontendBaseUrl}/verify-email?token=${encodeURIComponent(verifyToken)}`;
+
+      // Gửi mail xác nhận đăng ký
+      try {
+        console.log('Sending registration email to:', createdUser.getEmail());
+        await this.mailService.sendMail({
+          to: createdUser.getEmail(),
+          subject: 'Xac nhan email dang ky tai khoan PhoneShop',
+          text: `Xin chao ${createdUser.getName()},\n\nVui long xac nhan email dang ky tai khoan bang link sau:\n${verifyUrl}\n\nLink co hieu luc trong 24 gio.`,
+          html: `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
+              <h3>Xin chao ${createdUser.getName()},</h3>
+              <p>Cam on ban da dang ky tai khoan tai PhoneShop.</p>
+              <p>Vui long bam nut ben duoi de xac nhan email:</p>
+              <p>
+                <a href="${verifyUrl}" style="display:inline-block;background:#0d6efd;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;">Xac nhan email</a>
+              </p>
+              <p>Neu nut khong hoat dong, ban co the sao chep link sau:</p>
+              <p><a href="${verifyUrl}">${verifyUrl}</a></p>
+              <p>Link co hieu luc trong 24 gio.</p>
+            </div>`,
+        });
+        console.log('Registration email sent successfully');
+      } catch (mailErr) {
+        console.error('Gửi mail thất bại:', mailErr);
+      }
+
+      return res.status(201).json({
+        success: true,
+        message:
+          'Dang ky thanh cong. Vui long kiem tra email de xac nhan tai khoan.',
+        code: 'REGISTER_SUCCESS_VERIFY_EMAIL_REQUIRED',
+        data: {
+          id: createdUser.getId(),
+          email: createdUser.getEmail(),
+          status: createdUser.getStatus(),
+        },
+      });
     } catch (error) {
       console.error('Registration error:', error);
       next(error);
+    }
+  };
+
+  logout = async (res: Response): Promise<Response> => {
+    try {
+      // Clear authentication cookies
+      const cookieOptions: CookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 0, // This removes the cookie
+      };
+
+      return res
+        .status(200)
+        .clearCookie('accessToken', { path: '/' })
+        .clearCookie('refreshToken', { path: '/' })
+        .json({
+          success: true,
+          message: 'Logout successful',
+          code: 'LOGOUT_SUCCESS',
+        });
+    } catch (error) {
+      console.error('Logout error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error during logout',
+        code: 'LOGOUT_ERROR',
+      });
     }
   };
 }

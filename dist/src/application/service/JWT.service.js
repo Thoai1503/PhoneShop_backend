@@ -11,7 +11,7 @@ export default class JWTService {
         }
         this.accessTokenSecret = process.env.JWT_SECRET;
         this.refreshTokenSecret = process.env.JWT_REFRESH_SECRET;
-        this.accessTokenExpiry = process.env.JWT_EXPIRE || '30m';
+        this.accessTokenExpiry = process.env.JWT_EXPIRE || '15m';
         this.refreshTokenExpiry = process.env.JWT_REFRESH_EXPIRE || '7d';
     }
     generateAccessToken(payload) {
