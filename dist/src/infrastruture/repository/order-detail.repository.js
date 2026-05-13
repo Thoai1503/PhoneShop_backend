@@ -28,7 +28,7 @@ let OrderDetailRepository = class OrderDetailRepository {
             const dto = new OrderDetailDTO();
             dto.id = item.id;
             dto.order_id = item.order_id;
-            dto.variant_id = item.variant_id;
+            dto.variant_id = item.variant_id !== null ? Number(item.variant_id) : 0;
             dto.quantity = item.quantity;
             return dto;
         });

@@ -50,7 +50,7 @@ let AuthService = class AuthService {
                     (Number(process.env.JWT_COOKIE_EXPIRE) || 0) * 24 * 60 * 60 * 1000),
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
+                sameSite: 'none',
                 path: '/',
             };
             res
@@ -119,7 +119,7 @@ let AuthService = class AuthService {
         const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: 'none',
             maxAge: 24 * 60 * 60 * 1000,
         };
         console.log('Generated tokens:', {
@@ -268,7 +268,7 @@ let AuthService = class AuthService {
             const verifyUrl = `${frontendBaseUrl}/verify-email?token=${encodeURIComponent(verifyToken)}`;
             try {
                 console.log('Sending registration email to:', createdUser.getEmail());
-                await this.mailService.sendMail({
+                this.mailService.sendMail({
                     to: createdUser.getEmail(),
                     subject: 'Xac nhan email dang ky tai khoan PhoneShop',
                     text: `Xin chao ${createdUser.getName()},\n\nVui long xac nhan email dang ky tai khoan bang link sau:\n${verifyUrl}\n\nLink co hieu luc trong 24 gio.`,

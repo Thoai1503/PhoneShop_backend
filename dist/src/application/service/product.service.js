@@ -23,6 +23,12 @@ let ProductService = class ProductService {
     async createAndReturn(product) {
         return this.repo.createAndReturn(product);
     }
+    async saveHtmlContentByProductId(productId, html, locale = 'vi', changeNote) {
+        return this.repo.saveHtmlContentByProductId(productId, html, locale, changeNote);
+    }
+    async getHtmlContentByProductId(productId) {
+        return this.repo.getHtmlContentByProductId(productId);
+    }
 };
 ProductService = __decorate([
     Injectable(),

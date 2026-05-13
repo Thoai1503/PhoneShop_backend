@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { AttributeDTO, AttributeValueDTO } from './attribute.dto.js';
 import { BrandDTO } from './brand.dto.js';
@@ -102,6 +102,33 @@ export class ProductAddAndUpdateStateDTO {
   @Type(() => Number)
   @IsNumber()
   status: number = 0;
+}
+
+export class SaveProductContentDTO {
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @IsNotEmpty()
+  @IsString()
+  html: string = '';
+
+  @IsOptional()
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toLowerCase() : value,
+  )
+  @IsString()
+  locale?: string = 'vi';
+
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @IsString()
+  change_note?: string | null = null;
+}
+
+export class SaveProductContentResultDTO {
+  product_id: number = 0;
+  locale: string = 'vi';
+  product_content_id: number = 0;
+  draft_version_id: number = 0;
+  version_number: number = 1;
 }
 
 export class ProductVariantPaginatedDTO {

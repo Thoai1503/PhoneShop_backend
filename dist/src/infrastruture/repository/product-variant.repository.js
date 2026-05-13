@@ -16,14 +16,17 @@ import { ProductAttributeDTO, ProductDTO, ProductImageDTO, ProductVariantDTO, Pr
 import { AttributeDTO, AttributeValueDTO, } from '../../api/dto/attribute.dto.js';
 import { CategoryDTO } from '../../api/dto/category.dto.js';
 import { BrandDTO } from '../../api/dto/brand.dto.js';
+import { CatalogSaveChangesService } from '../database/catalog-save-changes.service.js';
 let ProductVariantRepository = class ProductVariantRepository {
     prisma;
-    constructor(prisma) {
+    catalogSaveChangesService;
+    constructor(prisma, catalogSaveChangesService) {
         this.prisma = prisma;
+        this.catalogSaveChangesService = catalogSaveChangesService;
     }
     async create(entity) {
         try {
-            await this.prisma.product_variants.create({
+            const variant = await this.prisma.product_variants.create({
                 data: {
                     product_id: entity.product_id,
                     name: entity.name,
@@ -33,6 +36,7 @@ let ProductVariantRepository = class ProductVariantRepository {
                     created_at: new Date(),
                 },
             });
+            await this.catalogSaveChangesService.afterProductVariantCreated(variant.id);
             return true;
         }
         catch (er) {
@@ -50,6 +54,7 @@ let ProductVariantRepository = class ProductVariantRepository {
             return true;
         }
         catch (er) {
+            console.error('Error deleting product variant:', er);
             throw er;
         }
     }
@@ -325,7 +330,9 @@ let ProductVariantRepository = class ProductVariantRepository {
 ProductVariantRepository = __decorate([
     Injectable(),
     __param(0, Inject(PrismaService)),
-    __metadata("design:paramtypes", [PrismaService])
+    __param(1, Inject()),
+    __metadata("design:paramtypes", [PrismaService,
+        CatalogSaveChangesService])
 ], ProductVariantRepository);
 export { ProductVariantRepository };
 //# sourceMappingURL=product-variant.repository.js.map

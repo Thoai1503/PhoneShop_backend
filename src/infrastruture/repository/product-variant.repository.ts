@@ -15,14 +15,19 @@ import {
 } from '../../api/dto/attribute.dto.js';
 import { CategoryDTO } from '../../api/dto/category.dto.js';
 import { BrandDTO } from '../../api/dto/brand.dto.js';
+import { CatalogSaveChangesService } from '../database/catalog-save-changes.service.js';
 
 @Injectable()
 export class ProductVariantRepository {
-  constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject(PrismaService) private readonly prisma: PrismaService,
+    @Inject()
+    private readonly catalogSaveChangesService: CatalogSaveChangesService,
+  ) {}
 
   async create(entity: ProductVariantDTO): Promise<boolean> {
     try {
-      await this.prisma.product_variants.create({
+      const variant = await this.prisma.product_variants.create({
         data: {
           product_id: entity.product_id,
           name: entity.name,
@@ -32,6 +37,9 @@ export class ProductVariantRepository {
           created_at: new Date(),
         },
       });
+      await this.catalogSaveChangesService.afterProductVariantCreated(
+        variant.id,
+      );
       return true;
     } catch (er) {
       throw er;
@@ -47,6 +55,7 @@ export class ProductVariantRepository {
       await this.prisma.product_variants.delete({ where: { id } });
       return true;
     } catch (er) {
+      console.error('Error deleting product variant:', er);
       throw er;
     }
   }

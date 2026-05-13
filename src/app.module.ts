@@ -74,6 +74,7 @@ import { LoggingInterceptor } from './infrastruture/interceptor/logging.intercep
 import { LoggerService } from './application/service/logger.service.js';
 import { LoggerMiddleware } from './application/middleware/logger.middleware.js';
 import { MailService } from './service/mail.service.js';
+import { CloudinaryService } from './service/cloudinary.service.js';
 
 @Module({
   imports: [
@@ -154,6 +155,7 @@ import { MailService } from './service/mail.service.js';
     OrderDetailRepository,
     MailService,
     LoggerService,
+    CloudinaryService,
   ],
 })
 export class AppModule implements NestModule {

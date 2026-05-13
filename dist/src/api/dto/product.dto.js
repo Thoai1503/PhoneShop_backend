@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 export class ProductAttributeDTO {
     id = 0;
@@ -137,6 +137,36 @@ __decorate([
     IsNumber(),
     __metadata("design:type", Number)
 ], ProductAddAndUpdateStateDTO.prototype, "status", void 0);
+export class SaveProductContentDTO {
+    html = '';
+    locale = 'vi';
+    change_note = null;
+}
+__decorate([
+    Transform(({ value }) => (typeof value === 'string' ? value.trim() : value)),
+    IsNotEmpty(),
+    IsString(),
+    __metadata("design:type", String)
+], SaveProductContentDTO.prototype, "html", void 0);
+__decorate([
+    IsOptional(),
+    Transform(({ value }) => typeof value === 'string' ? value.trim().toLowerCase() : value),
+    IsString(),
+    __metadata("design:type", String)
+], SaveProductContentDTO.prototype, "locale", void 0);
+__decorate([
+    IsOptional(),
+    Transform(({ value }) => (typeof value === 'string' ? value.trim() : value)),
+    IsString(),
+    __metadata("design:type", Object)
+], SaveProductContentDTO.prototype, "change_note", void 0);
+export class SaveProductContentResultDTO {
+    product_id = 0;
+    locale = 'vi';
+    product_content_id = 0;
+    draft_version_id = 0;
+    version_number = 1;
+}
 export class ProductVariantPaginatedDTO {
     data = [];
     count = 0;

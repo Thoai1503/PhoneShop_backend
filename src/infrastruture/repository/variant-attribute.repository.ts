@@ -20,7 +20,7 @@ export class VariantAttributeRepository {
             data: {
               attribute_id: x.attribute_id,
               variant_id: x.variant_id,
-              value_int: x.value_int ?? null,
+              value_int: x.value_int !== null ? Number(x.value_int) : null,
               value_text: x.value_text ?? null,
               value_decimal: x.value_decimal ?? null,
               attribute_value_id: x.attribute_value_id ?? null,
@@ -29,7 +29,8 @@ export class VariantAttributeRepository {
         ),
       );
       return true;
-    } catch {
+    } catch (error) {
+      console.error('Error updating variant attributes:', error);
       return false;
     }
   }

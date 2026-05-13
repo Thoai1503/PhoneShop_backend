@@ -65,6 +65,18 @@ export declare class ProductAddAndUpdateStateDTO {
     rating: number;
     status: number;
 }
+export declare class SaveProductContentDTO {
+    html: string;
+    locale?: string;
+    change_note?: string | null;
+}
+export declare class SaveProductContentResultDTO {
+    product_id: number;
+    locale: string;
+    product_content_id: number;
+    draft_version_id: number;
+    version_number: number;
+}
 export declare class ProductVariantPaginatedDTO {
     data: ProductVariantDTO[];
     count: number;

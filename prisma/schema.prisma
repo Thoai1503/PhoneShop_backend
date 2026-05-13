@@ -7,21 +7,26 @@ datasource db {
 }
 
 model Inventory {
-  id                 Int      @id @default(autoincrement())
+  id                 Int              @id @default(autoincrement())
   variant_id         Int
   available_quantity Int
   reversed_quantity  Int
-  update_at          DateTime @default(now()) @db.DateTime(0)
+  update_at          DateTime         @default(now()) @db.DateTime(0)
+  product_variants   product_variants @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Inventory_product_variants")
+
+  @@index([variant_id], map: "FK_Inventory_product_variants")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model InventoryTransaction {
-  id              Int
-  variant_id      Int
-  change_quantity Int
-  reference_id    Int
-  created_at      DateTime @default(now()) @db.DateTime(0)
+  id               Int
+  variant_id       Int
+  change_quantity  Int
+  reference_id     Int
+  created_at       DateTime         @default(now()) @db.DateTime(0)
+  product_variants product_variants @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_InventoryTransaction_product_variants")
 
+  @@index([variant_id], map: "FK_InventoryTransaction_product_variants")
   @@ignore
 }
 
@@ -70,9 +75,11 @@ model cart {
   variant_id       Int
   quantity         Int
   unit_price       Decimal?         @db.Decimal(18, 0)
-  product_variants product_variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_cart_product_variants")
+  product_variants product_variants @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_cart_product_variants")
+  users            users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_cart_users")
 
   @@index([variant_id], map: "FK_cart_product_variants")
+  @@index([user_id], map: "FK_cart_users")
 }
 
 model categories {
@@ -128,13 +135,15 @@ model districts {
 }
 
 model order_detail {
-  id         Int    @id @default(autoincrement())
-  order_id   Int
-  variant_id Int
-  quantity   Int
-  orders     orders @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_order_detail_orders")
+  id               Int               @id @default(autoincrement())
+  order_id         Int
+  variant_id       Int?
+  quantity         Int
+  orders           orders            @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_order_detail_orders")
+  product_variants product_variants? @relation(fields: [variant_id], references: [id], onUpdate: NoAction, map: "FK_order_detail_product_variants")
 
   @@index([order_id], map: "FK_order_detail_orders")
+  @@index([variant_id], map: "FK_order_detail_product_variants")
 }
 
 model orders {
@@ -147,7 +156,7 @@ model orders {
   address_id     Int?
   order_detail   order_detail[]
   user_addresses user_addresses? @relation(fields: [address_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_user_addresses")
-  users          users           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_orders_users")
+  users          users           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_orders_users")
 
   @@index([address_id], map: "FK_orders_user_addresses")
   @@index([user_id], map: "FK_orders_users")
@@ -173,24 +182,28 @@ model product_image {
   product_id       Int
   variant_id       Int
   url              String           @db.VarChar(250)
-  product_variants product_variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_product_image_product_variants")
+  product_variants product_variants @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_product_image_product_variants")
 
   @@index([variant_id], map: "FK_product_image_product_variants")
 }
 
 model product_variants {
-  id                Int                 @id @default(autoincrement())
-  name              String              @default("default") @db.Char(250)
-  product_id        Int
-  SKU               String              @db.Char(100)
-  price             Int
-  status            Int                 @default(1)
-  quantity          Int                 @default(1)
-  created_at        DateTime            @default(now()) @db.DateTime(0)
-  cart              cart[]
-  product_image     product_image[]
-  products          products            @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_product_variants_products")
-  variant_attribute variant_attribute[]
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @default("default") @db.Char(250)
+  product_id           Int
+  SKU                  String                 @db.Char(255)
+  price                Int
+  status               Int                    @default(1)
+  quantity             Int                    @default(1)
+  created_at           DateTime               @default(now()) @db.DateTime(0)
+  Inventory            Inventory[]
+  InventoryTransaction InventoryTransaction[] @ignore
+  cart                 cart[]
+  order_detail         order_detail[]
+  product_image        product_image[]
+  product_media        product_media[]
+  products             products               @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_product_variants_products")
+  variant_attribute    variant_attribute[]
 
   @@index([product_id], map: "FK_product_variants_products")
 }
@@ -198,7 +211,7 @@ model product_variants {
 model products {
   id                Int                 @id @default(autoincrement())
   name              String              @db.VarChar(255)
-  slug              String              @db.Char(100)
+  slug              String              @db.Char(255)
   brand_id          Int?
   category_id       Int
   description       String              @db.Text
@@ -206,6 +219,8 @@ model products {
   status            Int                 @default(1)
   created_at        DateTime            @default(now()) @db.DateTime(0)
   product_attribute product_attribute[]
+  product_content   product_content[]
+  product_media     product_media[]
   product_variants  product_variants[]
   brands            brands?             @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_products_brands")
   categories        categories          @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_products_categories")
@@ -250,17 +265,20 @@ model user_addresses {
 }
 
 model users {
-  id             Int              @id @default(autoincrement())
-  email          String           @db.Char(50)
-  password       String           @db.Char(150)
-  phone          String           @db.Char(11)
-  full_name      String           @db.VarChar(50)
-  role           Int
-  is_verified    Int              @default(0)
-  status         Int
-  created_at     DateTime?        @default(now()) @db.Timestamp(0)
-  orders         orders[]
-  user_addresses user_addresses[]
+  id               Int                @id @default(autoincrement())
+  email            String             @db.Char(50)
+  password         String             @db.Char(150)
+  phone            String             @db.Char(11)
+  full_name        String             @db.VarChar(50)
+  role             Int
+  is_verified      Int                @default(0)
+  status           Int
+  created_at       DateTime?          @default(now()) @db.Timestamp(0)
+  cart             cart[]
+  content_versions content_versions[]
+  media_assets     media_assets[]
+  orders           orders[]
+  user_addresses   user_addresses[]
 }
 
 model variant_attribute {
@@ -273,7 +291,7 @@ model variant_attribute {
   attribute_value_id Int?
   attribute_value    attribute_value? @relation(fields: [attribute_value_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_variant_attribute_attribute_value")
   attributes         attributes       @relation(fields: [attribute_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_variant_attribute_attributes")
-  product_variants   product_variants @relation(fields: [variant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_variant_attribute_product_variants")
+  product_variants   product_variants @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_variant_attribute_product_variants")
 
   @@index([attribute_value_id], map: "FK_variant_attribute_attribute_value")
   @@index([attribute_id], map: "FK_variant_attribute_attributes")
@@ -290,4 +308,95 @@ model wards {
   districts      districts        @relation(fields: [district_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_wards_districts")
 
   @@index([district_id], map: "IX_wards_district_id")
+}
+
+model content_blocks {
+  id               Int              @id @default(autoincrement())
+  version_id       Int
+  block_type       String           @db.VarChar(50)
+  sort_order       Int              @default(0) @db.SmallInt
+  data             Json
+  anchor_id        String?          @db.VarChar(100)
+  content_versions content_versions @relation(fields: [version_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_blocks_versions")
+
+  @@index([version_id, sort_order], map: "IDX_blocks_version_order")
+}
+
+model content_versions {
+  id                                                                     Int               @id @default(autoincrement())
+  product_content_id                                                     Int
+  version_number                                                         Int               @default(1)
+  created_by                                                             Int?
+  created_at                                                             DateTime          @default(now()) @db.DateTime(0)
+  change_note                                                            String?           @db.VarChar(255)
+  content_blocks                                                         content_blocks[]
+  product_content_content_versions_product_content_idToproduct_content   product_content   @relation("content_versions_product_content_idToproduct_content", fields: [product_content_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_versions_product_content")
+  users                                                                  users?            @relation(fields: [created_by], references: [id], onUpdate: NoAction, map: "FK_versions_users")
+  product_content_product_content_draft_version_idTocontent_versions     product_content[] @relation("product_content_draft_version_idTocontent_versions")
+  product_content_product_content_published_version_idTocontent_versions product_content[] @relation("product_content_published_version_idTocontent_versions")
+
+  @@index([created_by], map: "FK_versions_users")
+  @@index([product_content_id], map: "IDX_versions_content")
+}
+
+model media_assets {
+  id            Int             @id @default(autoincrement())
+  original_name String          @db.VarChar(255)
+  storage_key   String          @db.VarChar(500)
+  cdn_provider  String?         @default("local") @db.VarChar(50)
+  mime_type     String          @db.VarChar(100)
+  file_size     Int?            @db.UnsignedInt
+  width         Int?            @db.UnsignedSmallInt
+  height        Int?            @db.UnsignedSmallInt
+  duration_ms   Int?            @db.UnsignedInt
+  blurhash      String?         @db.VarChar(100)
+  alt_text      String?         @db.VarChar(255)
+  uploaded_by   Int?
+  created_at    DateTime        @default(now()) @db.DateTime(0)
+  users         users?          @relation(fields: [uploaded_by], references: [id], onUpdate: NoAction, map: "FK_assets_users")
+  product_media product_media[]
+
+  @@index([uploaded_by], map: "FK_assets_users")
+  @@index([mime_type], map: "IDX_assets_mime")
+}
+
+model product_content {
+  id                                                                      Int                @id @default(autoincrement())
+  product_id                                                              Int
+  locale                                                                  String             @default("vi") @db.VarChar(10)
+  seo_title                                                               String?            @db.VarChar(120)
+  seo_description                                                         String?            @db.VarChar(320)
+  seo_slug                                                                String?            @db.VarChar(200)
+  og_data                                                                 Json?
+  status                                                                  Int                @default(0) @db.TinyInt
+  published_version_id                                                    Int?
+  draft_version_id                                                        Int?
+  published_at                                                            DateTime?          @db.DateTime(0)
+  created_at                                                              DateTime           @default(now()) @db.DateTime(0)
+  updated_at                                                              DateTime?          @db.DateTime(0)
+  content_versions_content_versions_product_content_idToproduct_content   content_versions[] @relation("content_versions_product_content_idToproduct_content")
+  content_versions_product_content_draft_version_idTocontent_versions     content_versions?  @relation("product_content_draft_version_idTocontent_versions", fields: [draft_version_id], references: [id], onUpdate: NoAction, map: "FK_content_draft_version")
+  content_versions_product_content_published_version_idTocontent_versions content_versions?  @relation("product_content_published_version_idTocontent_versions", fields: [published_version_id], references: [id], onUpdate: NoAction, map: "FK_content_published_version")
+  products                                                                products           @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_product_content_products")
+
+  @@unique([product_id, locale], map: "UQ_product_content_locale")
+  @@index([draft_version_id], map: "FK_content_draft_version")
+  @@index([published_version_id], map: "FK_content_published_version")
+}
+
+model product_media {
+  id               Int               @id @default(autoincrement())
+  product_id       Int
+  variant_id       Int?
+  asset_id         Int
+  media_role       String            @default("gallery") @db.VarChar(50)
+  sort_order       Int               @default(0) @db.SmallInt
+  alt_text         String?           @db.VarChar(255)
+  media_assets     media_assets      @relation(fields: [asset_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_product_media_assets")
+  products         products          @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_product_media_products")
+  product_variants product_variants? @relation(fields: [variant_id], references: [id], onUpdate: NoAction, map: "FK_product_media_variants")
+
+  @@index([asset_id], map: "FK_product_media_assets")
+  @@index([product_id, media_role, sort_order], map: "IDX_product_media_product")
+  @@index([variant_id], map: "IDX_product_media_variant")
 }
