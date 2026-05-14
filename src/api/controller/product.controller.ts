@@ -2,7 +2,9 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
+  Header,
   InternalServerErrorException,
   NotFoundException,
   Param,
@@ -19,8 +21,10 @@ import {
   ProductDTO,
   SaveProductContentDTO,
   SaveProductContentResultDTO,
+  RestoreVersionDTO,
 } from '../dto/product.dto.js';
 import { CloudinaryService } from '../../service/cloudinary.service.js';
+import { set } from 'supertest/lib/cookies.js';
 
 @Controller('api/product')
 export class ProductController {
@@ -45,6 +49,12 @@ export class ProductController {
 
   // GET api/product/:id/content
   @Get(':id/content')
+  @Header(
+    'Cache-Control',
+    'no-store, no-cache, must-revalidate, proxy-revalidate',
+  )
+  @Header('Pragma', 'no-cache')
+  @Header('Expires', '0')
   async getProductHtmlContent(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<{ html: string }> {
@@ -53,6 +63,55 @@ export class ProductController {
       throw new NotFoundException('Product content not found');
     }
     return { html: content };
+  }
+
+  // GET api/product/:id/content/published
+  @Get(':id/content/published')
+  async getPublishedProductHtmlContent(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ html: string }> {
+    const content = await this.service.getPublishedHtmlContentByProductId(id);
+    if (!content) {
+      throw new NotFoundException('Published product content not found');
+    }
+    return { html: content };
+  }
+
+  // GET api/product/:id/content/versions
+  @Get(':id/content/versions')
+  async getContentVersions(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.service.getVersionsList(id);
+    if (!result) {
+      throw new NotFoundException('Product content not found');
+    }
+    return result;
+  }
+
+  // GET api/product/:id/content/versions/:versionId
+  @Get(':id/content/versions/:versionId')
+  async getContentVersionDetail(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('versionId', ParseIntPipe) versionId: number,
+  ) {
+    const result = await this.service.getVersionDetail(id, versionId);
+    if (!result) {
+      throw new NotFoundException('Version not found');
+    }
+    return result;
+  }
+
+  // GET api/product/:id/content/compare/:v1/:v2
+  @Get(':id/content/compare/:v1/:v2')
+  async compareVersions(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('v1', ParseIntPipe) v1: number,
+    @Param('v2', ParseIntPipe) v2: number,
+  ) {
+    const result = await this.service.compareVersions(id, v1, v2);
+    if (!result) {
+      throw new NotFoundException('Versions not found');
+    }
+    return result;
   }
 
   // POST api/product
@@ -117,5 +176,46 @@ export class ProductController {
     }
 
     return result;
+  }
+
+  // POST api/product/:id/content/versions/:versionId/publish
+  @Post(':id/content/versions/:versionId/publish')
+  async publishVersion(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('versionId', ParseIntPipe) versionId: number,
+  ) {
+    const result = await this.service.publishVersion(id, versionId);
+    if (!result) {
+      throw new NotFoundException('Version not found');
+    }
+    return result;
+  }
+
+  // POST api/product/:id/content/versions/:versionId/restore
+  @Post(':id/content/versions/:versionId/restore')
+  async restoreVersion(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('versionId', ParseIntPipe) versionId: number,
+  ) {
+    const result = await this.service.restoreVersion(id, versionId);
+    if (!result) {
+      throw new NotFoundException('Version not found');
+    }
+    return result;
+  }
+
+  // DELETE api/product/:id/content/versions/:versionId
+  @Delete(':id/content/versions/:versionId')
+  async deleteVersion(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('versionId', ParseIntPipe) versionId: number,
+  ) {
+    const result = await this.service.deleteVersion(id, versionId);
+    if (!result) {
+      throw new BadRequestException(
+        'Cannot delete draft or published versions',
+      );
+    }
+    return { success: true };
   }
 }

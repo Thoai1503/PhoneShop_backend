@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { BadRequestException, Body, Controller, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, UploadedFile, UseInterceptors, } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Header, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, UploadedFile, UseInterceptors, } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ProductService } from '../../application/service/product.service.js';
@@ -39,6 +39,34 @@ let ProductController = class ProductController {
         }
         return { html: content };
     }
+    async getPublishedProductHtmlContent(id) {
+        const content = await this.service.getPublishedHtmlContentByProductId(id);
+        if (!content) {
+            throw new NotFoundException('Published product content not found');
+        }
+        return { html: content };
+    }
+    async getContentVersions(id) {
+        const result = await this.service.getVersionsList(id);
+        if (!result) {
+            throw new NotFoundException('Product content not found');
+        }
+        return result;
+    }
+    async getContentVersionDetail(id, versionId) {
+        const result = await this.service.getVersionDetail(id, versionId);
+        if (!result) {
+            throw new NotFoundException('Version not found');
+        }
+        return result;
+    }
+    async compareVersions(id, v1, v2) {
+        const result = await this.service.compareVersions(id, v1, v2);
+        if (!result) {
+            throw new NotFoundException('Versions not found');
+        }
+        return result;
+    }
     async create(product) {
         console.log('Received product for creation:', JSON.stringify(product));
         const result = await this.service.createAndReturn(product);
@@ -66,6 +94,27 @@ let ProductController = class ProductController {
         }
         return result;
     }
+    async publishVersion(id, versionId) {
+        const result = await this.service.publishVersion(id, versionId);
+        if (!result) {
+            throw new NotFoundException('Version not found');
+        }
+        return result;
+    }
+    async restoreVersion(id, versionId) {
+        const result = await this.service.restoreVersion(id, versionId);
+        if (!result) {
+            throw new NotFoundException('Version not found');
+        }
+        return result;
+    }
+    async deleteVersion(id, versionId) {
+        const result = await this.service.deleteVersion(id, versionId);
+        if (!result) {
+            throw new BadRequestException('Cannot delete draft or published versions');
+        }
+        return { success: true };
+    }
 };
 __decorate([
     Get(),
@@ -82,11 +131,45 @@ __decorate([
 ], ProductController.prototype, "getById", null);
 __decorate([
     Get(':id/content'),
+    Header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate'),
+    Header('Pragma', 'no-cache'),
+    Header('Expires', '0'),
     __param(0, Param('id', ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "getProductHtmlContent", null);
+__decorate([
+    Get(':id/content/published'),
+    __param(0, Param('id', ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getPublishedProductHtmlContent", null);
+__decorate([
+    Get(':id/content/versions'),
+    __param(0, Param('id', ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getContentVersions", null);
+__decorate([
+    Get(':id/content/versions/:versionId'),
+    __param(0, Param('id', ParseIntPipe)),
+    __param(1, Param('versionId', ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getContentVersionDetail", null);
+__decorate([
+    Get(':id/content/compare/:v1/:v2'),
+    __param(0, Param('id', ParseIntPipe)),
+    __param(1, Param('v1', ParseIntPipe)),
+    __param(2, Param('v2', ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Number]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "compareVersions", null);
 __decorate([
     Post(),
     __param(0, Body()),
@@ -116,6 +199,30 @@ __decorate([
     __metadata("design:paramtypes", [Number, SaveProductContentDTO]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "saveProductHtmlContent", null);
+__decorate([
+    Post(':id/content/versions/:versionId/publish'),
+    __param(0, Param('id', ParseIntPipe)),
+    __param(1, Param('versionId', ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "publishVersion", null);
+__decorate([
+    Post(':id/content/versions/:versionId/restore'),
+    __param(0, Param('id', ParseIntPipe)),
+    __param(1, Param('versionId', ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "restoreVersion", null);
+__decorate([
+    Delete(':id/content/versions/:versionId'),
+    __param(0, Param('id', ParseIntPipe)),
+    __param(1, Param('versionId', ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "deleteVersion", null);
 ProductController = __decorate([
     Controller('api/product'),
     __metadata("design:paramtypes", [ProductService,

@@ -320,29 +320,541 @@ export class ProductRepository {
   }
 
   async getHtmlContentByProductId(productId: number): Promise<string | null> {
-    const content = await this.prisma.content_blocks.findFirst({
+    const locale = 'vi';
+
+    const productContent = await this.prisma.product_content.findUnique({
       where: {
-        content_versions: {
-          product_content_content_versions_product_content_idToproduct_content:
-            {
-              product_id: productId,
-            },
+        product_id_locale: {
+          product_id: productId,
+          locale,
         },
-        block_type: 'html',
       },
-      orderBy: { sort_order: 'asc' },
-      select: { data: true },
+      select: {
+        id: true,
+        content_versions_product_content_draft_version_idTocontent_versions: {
+          select: {
+            content_blocks: {
+              where: { block_type: 'html' },
+              orderBy: { sort_order: 'asc' },
+              take: 1,
+              select: { data: true },
+            },
+          },
+        },
+      },
+    });
+    console.log(
+      'Fetched product content for productId',
+      productId,
+      ':',
+      productContent,
+    );
+
+    if (!productContent) {
+      return null;
+    }
+
+    const draftHtmlBlock =
+      productContent
+        .content_versions_product_content_draft_version_idTocontent_versions
+        ?.content_blocks?.[0]?.data;
+
+    console.log(
+      'Draft HTML block for productId',
+      productId,
+      ':',
+      draftHtmlBlock,
+    );
+
+    if (
+      draftHtmlBlock &&
+      typeof draftHtmlBlock === 'object' &&
+      'html' in draftHtmlBlock &&
+      typeof draftHtmlBlock.html === 'string'
+    ) {
+      return draftHtmlBlock.html;
+    }
+
+    const latestVersion = await this.prisma.content_versions.findFirst({
+      where: { product_content_id: productContent.id },
+      orderBy: { version_number: 'desc' },
+      select: {
+        content_blocks: {
+          where: { block_type: 'html' },
+          orderBy: { sort_order: 'asc' },
+          take: 1,
+          select: { data: true },
+        },
+      },
+    });
+
+    const fallbackHtmlBlock = latestVersion?.content_blocks?.[0]?.data;
+
+    if (
+      fallbackHtmlBlock &&
+      typeof fallbackHtmlBlock === 'object' &&
+      'html' in fallbackHtmlBlock &&
+      typeof fallbackHtmlBlock.html === 'string'
+    ) {
+      return fallbackHtmlBlock.html;
+    }
+
+    return null;
+  }
+
+  async getPublishedHtmlContentByProductId(
+    productId: number,
+  ): Promise<string | null> {
+    const locale = 'vi';
+
+    const productContent = await this.prisma.product_content.findUnique({
+      where: {
+        product_id_locale: {
+          product_id: productId,
+          locale,
+        },
+      },
+      select: {
+        id: true,
+        published_version_id: true,
+      },
+    });
+
+    if (!productContent?.published_version_id) {
+      return null;
+    }
+
+    const publishedVersion = await this.prisma.content_versions.findFirst({
+      where: {
+        id: productContent.published_version_id,
+        product_content_id: productContent.id,
+      },
+      select: {
+        content_blocks: {
+          where: { block_type: 'html' },
+          orderBy: { sort_order: 'asc' },
+          take: 1,
+          select: { data: true },
+        },
+      },
+    });
+
+    const htmlBlock = publishedVersion?.content_blocks?.[0]?.data;
+    if (
+      htmlBlock &&
+      typeof htmlBlock === 'object' &&
+      'html' in htmlBlock &&
+      typeof htmlBlock.html === 'string'
+    ) {
+      return htmlBlock.html;
+    }
+
+    return null;
+  }
+
+  async getVersionsList(
+    productId: number,
+    locale = 'vi',
+  ): Promise<{
+    product_id: number;
+    locale: string;
+    versions: Array<{
+      id: number;
+      version_number: number;
+      created_at: Date;
+      change_note: string | null;
+      is_draft: boolean;
+      is_published: boolean;
+    }>;
+    draft_version_id: number | null;
+    published_version_id: number | null;
+  } | null> {
+    const productContent = await this.prisma.product_content.findUnique({
+      where: {
+        product_id_locale: {
+          product_id: productId,
+          locale,
+        },
+      },
+      select: {
+        id: true,
+        draft_version_id: true,
+        published_version_id: true,
+        content_versions_content_versions_product_content_idToproduct_content: {
+          select: {
+            id: true,
+            version_number: true,
+            created_at: true,
+            change_note: true,
+          },
+          orderBy: { version_number: 'desc' },
+        },
+      },
+    });
+
+    if (!productContent) {
+      return null;
+    }
+
+    return {
+      product_id: productId,
+      locale,
+      versions:
+        productContent.content_versions_content_versions_product_content_idToproduct_content.map(
+          (v) => ({
+            id: v.id,
+            version_number: v.version_number,
+            created_at: v.created_at,
+            change_note: v.change_note,
+            is_draft: v.id === productContent.draft_version_id,
+            is_published: v.id === productContent.published_version_id,
+          }),
+        ),
+      draft_version_id: productContent.draft_version_id,
+      published_version_id: productContent.published_version_id,
+    };
+  }
+
+  async getVersionDetail(
+    productId: number,
+    versionId: number,
+    locale = 'vi',
+  ): Promise<{
+    id: number;
+    product_id: number;
+    locale: string;
+    version_number: number;
+    created_at: Date;
+    change_note: string | null;
+    html: string;
+    is_draft: boolean;
+    is_published: boolean;
+  } | null> {
+    const productContent = await this.prisma.product_content.findUnique({
+      where: {
+        product_id_locale: {
+          product_id: productId,
+          locale,
+        },
+      },
+      select: {
+        id: true,
+        draft_version_id: true,
+        published_version_id: true,
+      },
+    });
+
+    if (!productContent) {
+      return null;
+    }
+
+    const version = await this.prisma.content_versions.findUnique({
+      where: { id: versionId },
+      select: {
+        id: true,
+        version_number: true,
+        created_at: true,
+        change_note: true,
+        product_content_id: true,
+        content_blocks: {
+          where: { block_type: 'html' },
+          take: 1,
+          select: { data: true },
+        },
+      },
     });
 
     if (
-      !content ||
-      !content.data ||
-      typeof content.data !== 'object' ||
-      !('html' in content.data)
+      !version ||
+      version.product_content_id !== productContent.id ||
+      !version.content_blocks.length
     ) {
       return null;
     }
 
-    return (content.data as { html: string }).html || null;
+    const htmlData = version.content_blocks[0].data;
+    const html =
+      htmlData && typeof htmlData === 'object' && 'html' in htmlData
+        ? (htmlData as { html: string }).html
+        : '';
+
+    return {
+      id: version.id,
+      product_id: productId,
+      locale,
+      version_number: version.version_number,
+      created_at: version.created_at,
+      change_note: version.change_note,
+      html,
+      is_draft: version.id === productContent.draft_version_id,
+      is_published: version.id === productContent.published_version_id,
+    };
+  }
+
+  async publishVersion(
+    productId: number,
+    versionId: number,
+    locale = 'vi',
+  ): Promise<{
+    product_content_id: number;
+    published_version_id: number;
+    version_number: number;
+  } | null> {
+    const productContent = await this.prisma.product_content.findUnique({
+      where: {
+        product_id_locale: {
+          product_id: productId,
+          locale,
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!productContent) {
+      return null;
+    }
+
+    const version = await this.prisma.content_versions.findUnique({
+      where: { id: versionId },
+      select: {
+        id: true,
+        version_number: true,
+        product_content_id: true,
+      },
+    });
+
+    if (!version || version.product_content_id !== productContent.id) {
+      return null;
+    }
+
+    const updated = await this.prisma.product_content.update({
+      where: { id: productContent.id },
+      data: {
+        published_version_id: version.id,
+        published_at: new Date(),
+      },
+      select: {
+        id: true,
+        published_version_id: true,
+      },
+    });
+
+    return {
+      product_content_id: updated.id,
+      published_version_id: updated.published_version_id ?? versionId,
+      version_number: version.version_number,
+    };
+  }
+
+  async restoreVersion(
+    productId: number,
+    versionId: number,
+    locale = 'vi',
+  ): Promise<{
+    product_content_id: number;
+    draft_version_id: number;
+    version_number: number;
+  } | null> {
+    const productContent = await this.prisma.product_content.findUnique({
+      where: {
+        product_id_locale: {
+          product_id: productId,
+          locale,
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!productContent) {
+      return null;
+    }
+
+    const versionToRestore = await this.prisma.content_versions.findUnique({
+      where: { id: versionId },
+      select: {
+        id: true,
+        version_number: true,
+        product_content_id: true,
+        content_blocks: {
+          where: { block_type: 'html' },
+          take: 1,
+          select: { data: true },
+        },
+      },
+    });
+
+    if (
+      !versionToRestore ||
+      versionToRestore.product_content_id !== productContent.id
+    ) {
+      return null;
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const latestVersion = await tx.content_versions.findFirst({
+        where: { product_content_id: productContent.id },
+        orderBy: { version_number: 'desc' },
+        select: { version_number: true },
+      });
+
+      const nextVersionNumber = (latestVersion?.version_number ?? 0) + 1;
+
+      const newVersion = await tx.content_versions.create({
+        data: {
+          product_content_id: productContent.id,
+          version_number: nextVersionNumber,
+          change_note: `Restored from version ${versionToRestore.version_number}`,
+          created_by: null,
+          created_at: new Date(),
+        },
+      });
+
+      if (versionToRestore.content_blocks.length > 0) {
+        const htmlData = versionToRestore.content_blocks[0].data;
+        await tx.content_blocks.create({
+          data: {
+            version_id: newVersion.id,
+            block_type: 'html',
+            sort_order: 0,
+            data: htmlData || { html: '' },
+          },
+        });
+      }
+
+      await tx.product_content.update({
+        where: { id: productContent.id },
+        data: {
+          draft_version_id: newVersion.id,
+          updated_at: new Date(),
+        },
+      });
+
+      return {
+        product_content_id: productContent.id,
+        draft_version_id: newVersion.id,
+        version_number: nextVersionNumber,
+      };
+    });
+  }
+
+  async deleteVersion(
+    productId: number,
+    versionId: number,
+    locale = 'vi',
+  ): Promise<boolean> {
+    const productContent = await this.prisma.product_content.findUnique({
+      where: {
+        product_id_locale: {
+          product_id: productId,
+          locale,
+        },
+      },
+      select: {
+        id: true,
+        draft_version_id: true,
+        published_version_id: true,
+      },
+    });
+
+    if (!productContent) {
+      return false;
+    }
+
+    // Cannot delete draft or published versions
+    if (
+      versionId === productContent.draft_version_id ||
+      versionId === productContent.published_version_id
+    ) {
+      return false;
+    }
+
+    await this.prisma.content_blocks.deleteMany({
+      where: { version_id: versionId },
+    });
+
+    await this.prisma.content_versions.delete({
+      where: { id: versionId },
+    });
+
+    return true;
+  }
+
+  async compareVersions(
+    productId: number,
+    versionId1: number,
+    versionId2: number,
+    locale = 'vi',
+  ): Promise<{
+    version1: { version_number: number; html: string };
+    version2: { version_number: number; html: string };
+  } | null> {
+    const productContent = await this.prisma.product_content.findUnique({
+      where: {
+        product_id_locale: {
+          product_id: productId,
+          locale,
+        },
+      },
+      select: { id: true },
+    });
+
+    if (!productContent) {
+      return null;
+    }
+
+    const [version1, version2] = await Promise.all([
+      this.prisma.content_versions.findUnique({
+        where: { id: versionId1 },
+        select: {
+          version_number: true,
+          product_content_id: true,
+          content_blocks: {
+            where: { block_type: 'html' },
+            take: 1,
+            select: { data: true },
+          },
+        },
+      }),
+      this.prisma.content_versions.findUnique({
+        where: { id: versionId2 },
+        select: {
+          version_number: true,
+          product_content_id: true,
+          content_blocks: {
+            where: { block_type: 'html' },
+            take: 1,
+            select: { data: true },
+          },
+        },
+      }),
+    ]);
+
+    if (
+      !version1 ||
+      !version2 ||
+      version1.product_content_id !== productContent.id ||
+      version2.product_content_id !== productContent.id
+    ) {
+      return null;
+    }
+
+    const getHtml = (version: typeof version1) => {
+      if (!version.content_blocks.length) return '';
+      const data = version.content_blocks[0].data;
+      return data && typeof data === 'object' && 'html' in data
+        ? (data as { html: string }).html
+        : '';
+    };
+
+    return {
+      version1: {
+        version_number: version1.version_number,
+        html: getHtml(version1),
+      },
+      version2: {
+        version_number: version2.version_number,
+        html: getHtml(version2),
+      },
+    };
   }
 }

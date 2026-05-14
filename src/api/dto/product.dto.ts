@@ -159,3 +159,65 @@ export class CartDTO {
   unit_price?: number | null = null;
   variant?: ProductVariantDTO | null = null;
 }
+
+// Content Management DTOs
+export class ContentBlockDTO {
+  id: number = 0;
+  version_id: number = 0;
+  block_type: string = 'html';
+  sort_order: number = 0;
+  data: Record<string, any> = {};
+}
+
+export class ContentVersionDTO {
+  id: number = 0;
+  product_content_id: number = 0;
+  version_number: number = 1;
+  created_by?: number | null = null;
+  created_at: Date = new Date();
+  change_note?: string | null = null;
+  content_blocks?: ContentBlockDTO[] = [];
+  is_draft?: boolean = false;
+  is_published?: boolean = false;
+}
+
+export class ContentVersionDetailDTO {
+  id: number = 0;
+  product_id: number = 0;
+  locale: string = 'vi';
+  version_number: number = 1;
+  created_at: Date = new Date();
+  change_note?: string | null = null;
+  html: string = '';
+  is_draft?: boolean = false;
+  is_published?: boolean = false;
+  draft_version_id?: number | null = null;
+  published_version_id?: number | null = null;
+}
+
+export class ContentVersionsListDTO {
+  product_id: number = 0;
+  locale: string = 'vi';
+  versions: ContentVersionDTO[] = [];
+  draft_version?: ContentVersionDTO | null = null;
+  published_version?: ContentVersionDTO | null = null;
+}
+
+export class PublishVersionDTO {
+  version_id: number = 0;
+  change_note?: string | null = null;
+}
+
+export class RestoreVersionDTO {
+  version_id: number = 0;
+}
+
+export class CompareVersionsResultDTO {
+  version1: ContentVersionDetailDTO = new ContentVersionDetailDTO();
+  version2: ContentVersionDetailDTO = new ContentVersionDetailDTO();
+  differences: {
+    added: string[];
+    removed: string[];
+    modified: string[];
+  } = { added: [], removed: [], modified: [] };
+}

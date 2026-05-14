@@ -29,6 +29,27 @@ let ProductService = class ProductService {
     async getHtmlContentByProductId(productId) {
         return this.repo.getHtmlContentByProductId(productId);
     }
+    async getPublishedHtmlContentByProductId(productId) {
+        return this.repo.getPublishedHtmlContentByProductId(productId);
+    }
+    async getVersionsList(productId, locale = 'vi') {
+        return this.repo.getVersionsList(productId, locale);
+    }
+    async getVersionDetail(productId, versionId, locale = 'vi') {
+        return this.repo.getVersionDetail(productId, versionId, locale);
+    }
+    async publishVersion(productId, versionId, locale = 'vi') {
+        return this.repo.publishVersion(productId, versionId, locale);
+    }
+    async restoreVersion(productId, versionId, locale = 'vi') {
+        return this.repo.restoreVersion(productId, versionId, locale);
+    }
+    async deleteVersion(productId, versionId, locale = 'vi') {
+        return this.repo.deleteVersion(productId, versionId, locale);
+    }
+    async compareVersions(productId, versionId1, versionId2, locale = 'vi') {
+        return this.repo.compareVersions(productId, versionId1, versionId2, locale);
+    }
 };
 ProductService = __decorate([
     Injectable(),

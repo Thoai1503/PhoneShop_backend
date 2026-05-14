@@ -193,4 +193,54 @@ export class CartDTO {
     unit_price = null;
     variant = null;
 }
+export class ContentBlockDTO {
+    id = 0;
+    version_id = 0;
+    block_type = 'html';
+    sort_order = 0;
+    data = {};
+}
+export class ContentVersionDTO {
+    id = 0;
+    product_content_id = 0;
+    version_number = 1;
+    created_by = null;
+    created_at = new Date();
+    change_note = null;
+    content_blocks = [];
+    is_draft = false;
+    is_published = false;
+}
+export class ContentVersionDetailDTO {
+    id = 0;
+    product_id = 0;
+    locale = 'vi';
+    version_number = 1;
+    created_at = new Date();
+    change_note = null;
+    html = '';
+    is_draft = false;
+    is_published = false;
+    draft_version_id = null;
+    published_version_id = null;
+}
+export class ContentVersionsListDTO {
+    product_id = 0;
+    locale = 'vi';
+    versions = [];
+    draft_version = null;
+    published_version = null;
+}
+export class PublishVersionDTO {
+    version_id = 0;
+    change_note = null;
+}
+export class RestoreVersionDTO {
+    version_id = 0;
+}
+export class CompareVersionsResultDTO {
+    version1 = new ContentVersionDetailDTO();
+    version2 = new ContentVersionDetailDTO();
+    differences = { added: [], removed: [], modified: [] };
+}
 //# sourceMappingURL=product.dto.js.map

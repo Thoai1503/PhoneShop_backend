@@ -103,3 +103,57 @@ export declare class CartDTO {
     unit_price?: number | null;
     variant?: ProductVariantDTO | null;
 }
+export declare class ContentBlockDTO {
+    id: number;
+    version_id: number;
+    block_type: string;
+    sort_order: number;
+    data: Record<string, any>;
+}
+export declare class ContentVersionDTO {
+    id: number;
+    product_content_id: number;
+    version_number: number;
+    created_by?: number | null;
+    created_at: Date;
+    change_note?: string | null;
+    content_blocks?: ContentBlockDTO[];
+    is_draft?: boolean;
+    is_published?: boolean;
+}
+export declare class ContentVersionDetailDTO {
+    id: number;
+    product_id: number;
+    locale: string;
+    version_number: number;
+    created_at: Date;
+    change_note?: string | null;
+    html: string;
+    is_draft?: boolean;
+    is_published?: boolean;
+    draft_version_id?: number | null;
+    published_version_id?: number | null;
+}
+export declare class ContentVersionsListDTO {
+    product_id: number;
+    locale: string;
+    versions: ContentVersionDTO[];
+    draft_version?: ContentVersionDTO | null;
+    published_version?: ContentVersionDTO | null;
+}
+export declare class PublishVersionDTO {
+    version_id: number;
+    change_note?: string | null;
+}
+export declare class RestoreVersionDTO {
+    version_id: number;
+}
+export declare class CompareVersionsResultDTO {
+    version1: ContentVersionDetailDTO;
+    version2: ContentVersionDetailDTO;
+    differences: {
+        added: string[];
+        removed: string[];
+        modified: string[];
+    };
+}

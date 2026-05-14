@@ -41,4 +41,39 @@ export class ProductService {
   async getHtmlContentByProductId(productId: number): Promise<string | null> {
     return this.repo.getHtmlContentByProductId(productId);
   }
+
+  async getPublishedHtmlContentByProductId(
+    productId: number,
+  ): Promise<string | null> {
+    return this.repo.getPublishedHtmlContentByProductId(productId);
+  }
+
+  async getVersionsList(productId: number, locale = 'vi') {
+    return this.repo.getVersionsList(productId, locale);
+  }
+
+  async getVersionDetail(productId: number, versionId: number, locale = 'vi') {
+    return this.repo.getVersionDetail(productId, versionId, locale);
+  }
+
+  async publishVersion(productId: number, versionId: number, locale = 'vi') {
+    return this.repo.publishVersion(productId, versionId, locale);
+  }
+
+  async restoreVersion(productId: number, versionId: number, locale = 'vi') {
+    return this.repo.restoreVersion(productId, versionId, locale);
+  }
+
+  async deleteVersion(productId: number, versionId: number, locale = 'vi') {
+    return this.repo.deleteVersion(productId, versionId, locale);
+  }
+
+  async compareVersions(
+    productId: number,
+    versionId1: number,
+    versionId2: number,
+    locale = 'vi',
+  ) {
+    return this.repo.compareVersions(productId, versionId1, versionId2, locale);
+  }
 }
