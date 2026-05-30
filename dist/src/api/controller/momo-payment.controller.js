@@ -10,30 +10,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Get, Req, Res } from '@nestjs/common';
-import { ProvinceService } from '../../application/service/province.service.js';
-import { respondSuccess } from '../../common/http/response.util.js';
-let ProvinceController = class ProvinceController {
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { PaymentService } from '../../application/service/payment.service.js';
+import { PaymentRequestDTO } from '../dto/payment.dto.js';
+let MoMoPaymentController = class MoMoPaymentController {
     service;
     constructor(service) {
         this.service = service;
     }
-    async getAll(req, res) {
-        const list = await this.service.findAll();
-        return respondSuccess(req, res, 200, list);
+    async createPayment(req, body, res) {
+        const url = await this.service.createMoMoPayment(body, req);
+        return res.status(200).json({ success: true, url });
     }
 };
 __decorate([
-    Get(),
+    Post('create_payment'),
     __param(0, Req()),
-    __param(1, Res({ passthrough: true })),
+    __param(1, Body()),
+    __param(2, Res()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, PaymentRequestDTO, Object]),
     __metadata("design:returntype", Promise)
-], ProvinceController.prototype, "getAll", null);
-ProvinceController = __decorate([
-    Controller('api/v1/province'),
-    __metadata("design:paramtypes", [ProvinceService])
-], ProvinceController);
-export { ProvinceController };
-//# sourceMappingURL=province.controller.js.map
+], MoMoPaymentController.prototype, "createPayment", null);
+MoMoPaymentController = __decorate([
+    Controller('api/v1/momo-payment'),
+    __metadata("design:paramtypes", [PaymentService])
+], MoMoPaymentController);
+export { MoMoPaymentController };
+//# sourceMappingURL=momo-payment.controller.js.map

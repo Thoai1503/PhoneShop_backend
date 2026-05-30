@@ -3,7 +3,7 @@ import { ProvinceService } from '../../application/service/province.service.js';
 import type { Request, Response } from 'express';
 import { respondSuccess } from '../../common/http/response.util.js';
 
-@Controller('api/province')
+@Controller('api/v1/province')
 export class ProvinceController {
   constructor(private readonly service: ProvinceService) {}
 

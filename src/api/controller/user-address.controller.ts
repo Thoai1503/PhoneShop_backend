@@ -14,7 +14,7 @@ import { UserAddressService } from '../../application/service/user-address.servi
 import { UserAddressDTO } from '../dto/user-address.dto.js';
 import { respondSuccess } from '../../common/http/response.util.js';
 
-@Controller('api/user-address')
+@Controller('api/v1/useraddress')
 export class UserAddressController {
   constructor(private readonly service: UserAddressService) {}
 

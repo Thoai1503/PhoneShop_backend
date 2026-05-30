@@ -91,7 +91,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserAddressController.prototype, "updateAddress", null);
 UserAddressController = __decorate([
-    Controller('api/user-address'),
+    Controller('api/v1/useraddress'),
     __metadata("design:paramtypes", [UserAddressService])
 ], UserAddressController);
 export { UserAddressController };

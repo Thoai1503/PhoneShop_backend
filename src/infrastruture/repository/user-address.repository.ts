@@ -42,7 +42,7 @@ export class UserAddressRepository {
 
     if (item.is_default) {
       await this.prisma.user_addresses.updateMany({
-        where: { user_id: item.user_id, is_default: true },
+        where: { user_id: current.user_id, is_default: true },
         data: { is_default: false },
       });
     }
@@ -50,15 +50,32 @@ export class UserAddressRepository {
     const result = await this.prisma.user_addresses.update({
       where: { id },
       data: {
-        user_id: item.user_id,
-        full_name: item.full_name,
-        phone: item.phone,
-        province_id: Number(item.province_id),
-        district_id: Number(item.district_id),
-        ward_id: Number(item.ward_id),
-        address_detail: item.address_detail,
-        address_type: item.address_type,
-        is_default: item.is_default,
+        // user_id: item.user_id,
+        users: {
+          connect: {
+            id: Number(current.user_id),
+          },
+        },
+
+        full_name: current.full_name,
+        phone: current.phone,
+        //  province_id: Number(item.province_id),
+        provinces: {
+          connect: { id: Number(current.province_id) },
+        },
+        //  district_id: Number(item.district_id),
+        districts: {
+          connect: { id: Number(current.district_id) },
+        },
+        //  district_id: Number(item.district_id),
+        // district_id: Number(item.district_id),
+        //ward_id: Number(item.ward_id),
+        wards: {
+          connect: { id: Number(current.ward_id) },
+        },
+        address_detail: current.address_detail,
+        address_type: current.address_type,
+        is_default: true,
         updated_at: new Date(),
       },
     });

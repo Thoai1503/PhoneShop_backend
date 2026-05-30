@@ -23,6 +23,8 @@ import { WardController } from './api/controller/ward.controller.js';
 import { UserAddressController } from './api/controller/user-address.controller.js';
 import { OrderController } from './api/controller/order.controller.js';
 import { OrderDetailController } from './api/controller/order-detail.controller.js';
+import { VNPayPaymentController } from './api/controller/vnpay-payment.controller.js';
+import { MoMoPaymentController } from './api/controller/momo-payment.controller.js';
 
 // Services
 import { CategoryService } from './application/service/category.service.js';
@@ -43,6 +45,7 @@ import { WardService } from './application/service/ward.service.js';
 import { UserAddressService } from './application/service/user-address.service.js';
 import { OrderService } from './application/service/order.service.js';
 import { OrderDetailService } from './application/service/order-detail.service.js';
+import { PaymentService } from './application/service/payment.service.js';
 
 // Repositories
 import { CategoryRepository } from './infrastruture/repository/category.repository.js';
@@ -63,6 +66,7 @@ import { WardRepository } from './infrastruture/repository/ward.repository.js';
 import { UserAddressRepository } from './infrastruture/repository/user-address.repository.js';
 import { OrderRepository } from './infrastruture/repository/order.repository.js';
 import { OrderDetailRepository } from './infrastruture/repository/order-detail.repository.js';
+import { PaymentRepository } from './infrastruture/repository/payment.repository.js';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { AuthController } from './api/controller/auth.controller.js';
@@ -109,6 +113,8 @@ import { CloudinaryService } from './service/cloudinary.service.js';
     UserAddressController,
     OrderController,
     OrderDetailController,
+    VNPayPaymentController,
+    MoMoPaymentController,
   ],
   providers: [
     AppService,
@@ -134,6 +140,7 @@ import { CloudinaryService } from './service/cloudinary.service.js';
     UserAddressService,
     OrderService,
     OrderDetailService,
+    PaymentService,
     CategoryRepository,
     AttributeRepository,
     AttributeValueRepository,
@@ -153,6 +160,7 @@ import { CloudinaryService } from './service/cloudinary.service.js';
     UserAddressRepository,
     OrderRepository,
     OrderDetailRepository,
+    PaymentRepository,
     MailService,
     LoggerService,
     CloudinaryService,
