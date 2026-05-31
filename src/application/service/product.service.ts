@@ -3,6 +3,7 @@ import { ProductRepository } from '../../infrastruture/repository/product.reposi
 import {
   ProductDTO,
   ProductAddAndUpdateStateDTO,
+  ProductUpdateDTO,
   SaveProductContentResultDTO,
 } from '../../api/dto/product.dto.js';
 
@@ -22,6 +23,13 @@ export class ProductService {
     product: ProductAddAndUpdateStateDTO,
   ): Promise<ProductDTO | null> {
     return this.repo.createAndReturn(product);
+  }
+
+  async updateAndReturn(
+    id: number,
+    product: ProductUpdateDTO,
+  ): Promise<ProductDTO | null> {
+    return this.repo.updateAndReturn(id, product);
   }
 
   async saveHtmlContentByProductId(

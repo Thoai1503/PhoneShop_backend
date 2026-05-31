@@ -10,12 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { BadRequestException, Body, Controller, Delete, Get, Header, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, UploadedFile, UseInterceptors, } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Header, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, Post, Req, UploadedFile, UseGuards, UseInterceptors, } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ProductService } from '../../application/service/product.service.js';
-import { ProductAddAndUpdateStateDTO, SaveProductContentDTO, } from '../dto/product.dto.js';
+import { ProductAddAndUpdateStateDTO, ProductUpdateDTO, SaveProductContentDTO, } from '../dto/product.dto.js';
 import { CloudinaryService } from '../../service/cloudinary.service.js';
+import { AuthGuard } from '../../auth/auth.guard.js';
 let ProductController = class ProductController {
     service;
     cloudinaryService;
@@ -74,6 +75,16 @@ let ProductController = class ProductController {
             throw new InternalServerErrorException({
                 message: 'Failed to create product',
             });
+        return result;
+    }
+    async update(request, id, product) {
+        if (!request.admin) {
+            throw new BadRequestException('Only admin can update product');
+        }
+        const result = await this.service.updateAndReturn(id, product);
+        if (!result) {
+            throw new NotFoundException('Product not found');
+        }
         return result;
     }
     async uploadContentImage(id, file) {
@@ -177,6 +188,16 @@ __decorate([
     __metadata("design:paramtypes", [ProductAddAndUpdateStateDTO]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "create", null);
+__decorate([
+    UseGuards(AuthGuard),
+    Post(':id'),
+    __param(0, Req()),
+    __param(1, Param('id', ParseIntPipe)),
+    __param(2, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number, ProductUpdateDTO]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "update", null);
 __decorate([
     Post(':id/content/upload'),
     UseInterceptors(FileInterceptor('file', {

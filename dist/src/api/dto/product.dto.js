@@ -137,6 +137,56 @@ __decorate([
     IsNumber(),
     __metadata("design:type", Number)
 ], ProductAddAndUpdateStateDTO.prototype, "status", void 0);
+export class ProductUpdateDTO {
+    name;
+    description;
+    category_id;
+    brand_id;
+    slug;
+    rating;
+    status;
+}
+__decorate([
+    IsOptional(),
+    Transform(({ value }) => (typeof value === 'string' ? value.trim() : value)),
+    IsNotEmpty(),
+    IsString(),
+    __metadata("design:type", String)
+], ProductUpdateDTO.prototype, "name", void 0);
+__decorate([
+    IsOptional(),
+    IsString(),
+    __metadata("design:type", String)
+], ProductUpdateDTO.prototype, "description", void 0);
+__decorate([
+    IsOptional(),
+    Type(() => Number),
+    IsNumber(),
+    __metadata("design:type", Number)
+], ProductUpdateDTO.prototype, "category_id", void 0);
+__decorate([
+    IsOptional(),
+    Type(() => Number),
+    IsNumber(),
+    __metadata("design:type", Number)
+], ProductUpdateDTO.prototype, "brand_id", void 0);
+__decorate([
+    IsOptional(),
+    IsString(),
+    __metadata("design:type", String)
+], ProductUpdateDTO.prototype, "slug", void 0);
+__decorate([
+    IsOptional(),
+    Type(() => Number),
+    IsNumber(),
+    __metadata("design:type", Number)
+], ProductUpdateDTO.prototype, "rating", void 0);
+__decorate([
+    IsOptional(),
+    Type(() => Number),
+    IsNumber(),
+    __metadata("design:type", Number)
+], ProductUpdateDTO.prototype, "status", void 0);
 export class SaveProductContentDTO {
     html = '';
     locale = 'vi';
@@ -166,6 +216,8 @@ export class SaveProductContentResultDTO {
     product_content_id = 0;
     draft_version_id = 0;
     version_number = 1;
+    is_new_version_created = true;
+    skip_reason = null;
 }
 export class ProductVariantPaginatedDTO {
     data = [];

@@ -1,9 +1,20 @@
-import { Body, Controller, Get, Next, Post, Query, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Next,
+  Post,
+  Query,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { LoginDTO } from '../dto/login.dto.js';
 import { AuthService } from '../../application/service/auth.service.js';
 import type { NextFunction, Response } from 'express';
 import { RegisterDTO } from '../dto/register.dto.js';
 import UserDTO from '../dto/user.dto.js';
+import { AuthGuard } from '../../auth/auth.guard.js';
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -84,5 +95,11 @@ export class AuthController {
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response): Promise<Response> {
     return this.authService.logout(res);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  async getProfile(@Request() req: any): Promise<any> {
+    return 'This is a protected route. Your user ID is: ' + req.userId;
   }
 }

@@ -10,7 +10,9 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -19,12 +21,12 @@ import { ProductService } from '../../application/service/product.service.js';
 import {
   ProductAddAndUpdateStateDTO,
   ProductDTO,
+  ProductUpdateDTO,
   SaveProductContentDTO,
   SaveProductContentResultDTO,
-  RestoreVersionDTO,
 } from '../dto/product.dto.js';
 import { CloudinaryService } from '../../service/cloudinary.service.js';
-import { set } from 'supertest/lib/cookies.js';
+import { AuthGuard } from '../../auth/auth.guard.js';
 
 @Controller('api/product')
 export class ProductController {
@@ -125,6 +127,24 @@ export class ProductController {
       throw new InternalServerErrorException({
         message: 'Failed to create product',
       });
+    return result;
+  }
+
+  // POST api/product/:id
+  @UseGuards(AuthGuard)
+  @Post(':id')
+  async update(
+    @Req() request: any,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() product: ProductUpdateDTO,
+  ): Promise<ProductDTO> {
+    if (!request.admin) {
+      throw new BadRequestException('Only admin can update product');
+    }
+    const result = await this.service.updateAndReturn(id, product);
+    if (!result) {
+      throw new NotFoundException('Product not found');
+    }
     return result;
   }
 

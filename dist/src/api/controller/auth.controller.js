@@ -10,11 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Body, Controller, Get, Next, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Get, Next, Post, Query, Request, Res, UseGuards, } from '@nestjs/common';
 import { LoginDTO } from '../dto/login.dto.js';
 import { AuthService } from '../../application/service/auth.service.js';
 import { RegisterDTO } from '../dto/register.dto.js';
 import UserDTO from '../dto/user.dto.js';
+import { AuthGuard } from '../../auth/auth.guard.js';
 let AuthController = class AuthController {
     authService;
     constructor(authService) {
@@ -53,6 +54,9 @@ let AuthController = class AuthController {
     }
     async logout(res) {
         return this.authService.logout(res);
+    }
+    async getProfile(req) {
+        return 'This is a protected route. Your user ID is: ' + req.userId;
     }
 };
 __decorate([
@@ -103,6 +107,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "logout", null);
+__decorate([
+    UseGuards(AuthGuard),
+    Get('profile'),
+    __param(0, Request()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "getProfile", null);
 AuthController = __decorate([
     Controller('api/v1/auth'),
     __metadata("design:paramtypes", [AuthService])

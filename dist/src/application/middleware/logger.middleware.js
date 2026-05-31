@@ -33,6 +33,7 @@ let LoggerMiddleware = class LoggerMiddleware {
         const method = req.method;
         const rawUrl = req.originalUrl || req.url || '';
         const urlPath = rawUrl.split('?')[0];
+        const ip = req.ip || req.socket?.remoteAddress || 'unknown';
         if (SKIP_METHODS.has(method) || SKIP_PATHS.has(urlPath)) {
             return next();
         }

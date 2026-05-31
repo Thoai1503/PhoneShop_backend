@@ -23,6 +23,9 @@ let ProductService = class ProductService {
     async createAndReturn(product) {
         return this.repo.createAndReturn(product);
     }
+    async updateAndReturn(id, product) {
+        return this.repo.updateAndReturn(id, product);
+    }
     async saveHtmlContentByProductId(productId, html, locale = 'vi', changeNote) {
         return this.repo.saveHtmlContentByProductId(productId, html, locale, changeNote);
     }

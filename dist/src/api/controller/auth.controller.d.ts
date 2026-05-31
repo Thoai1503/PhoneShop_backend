@@ -15,4 +15,5 @@ export declare class AuthController {
     }): Promise<Response<any, Record<string, any>>>;
     verifyEmailByGet(res: Response, token?: string): Promise<Response<any, Record<string, any>>>;
     logout(res: Response): Promise<Response>;
+    getProfile(req: any): Promise<any>;
 }

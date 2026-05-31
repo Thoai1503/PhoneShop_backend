@@ -3,6 +3,7 @@ import { PrismaService } from '../database/prisma.service.js';
 import {
   ProductDTO,
   ProductAddAndUpdateStateDTO,
+  ProductUpdateDTO,
   ProductAttributeDTO,
   ProductVariantDTO,
   ProductImageDTO,
@@ -231,6 +232,39 @@ export class ProductRepository {
     return dto;
   }
 
+  async updateAndReturn(
+    id: number,
+    product: ProductUpdateDTO,
+  ): Promise<ProductDTO | null> {
+    const existing = await this.prisma.products.findUnique({ where: { id } });
+    if (!existing) return null;
+
+    const updated = await this.prisma.products.update({
+      where: { id },
+      data: {
+        name: product.name ?? existing.name,
+        description: product.description ?? existing.description,
+        brand_id: product.brand_id ?? existing.brand_id,
+        category_id: product.category_id ?? existing.category_id,
+        slug: product.slug ?? existing.slug,
+        rating: product.rating ?? Number(existing.rating),
+        status: product.status ?? existing.status,
+      },
+    });
+
+    const dto = new ProductDTO();
+    dto.id = updated.id;
+    dto.name = updated.name;
+    dto.description = updated.description;
+    dto.slug = updated.slug;
+    dto.brand_id = updated.brand_id ?? 0;
+    dto.category_id = updated.category_id;
+    dto.rating = Number(updated.rating);
+    dto.status = updated.status;
+    dto.created_at = updated.created_at;
+    return dto;
+  }
+
   async saveHtmlContentByProductId(
     productId: number,
     html: string,
@@ -242,8 +276,11 @@ export class ProductRepository {
     product_content_id: number;
     draft_version_id: number;
     version_number: number;
+    is_new_version_created: boolean;
+    skip_reason?: string | null;
   } | null> {
     const normalizedLocale = locale?.trim().toLowerCase() || 'vi';
+    const normalizedHtml = (html ?? '').trim();
 
     return this.prisma.$transaction(async (tx) => {
       const product = await tx.products.findUnique({
@@ -274,6 +311,46 @@ export class ProductRepository {
         },
       });
 
+      if (content.published_version_id) {
+        const publishedVersion = await tx.content_versions.findFirst({
+          where: {
+            id: content.published_version_id,
+            product_content_id: content.id,
+          },
+          select: {
+            id: true,
+            version_number: true,
+            content_blocks: {
+              where: { block_type: 'html' },
+              orderBy: { sort_order: 'asc' },
+              take: 1,
+              select: { data: true },
+            },
+          },
+        });
+
+        const publishedHtmlData = publishedVersion?.content_blocks?.[0]?.data;
+        const publishedHtml =
+          publishedHtmlData &&
+          typeof publishedHtmlData === 'object' &&
+          'html' in publishedHtmlData &&
+          typeof publishedHtmlData.html === 'string'
+            ? publishedHtmlData.html.trim()
+            : '';
+
+        if (publishedVersion && publishedHtml === normalizedHtml) {
+          return {
+            product_id: productId,
+            locale: normalizedLocale,
+            product_content_id: content.id,
+            draft_version_id: content.draft_version_id ?? 0,
+            version_number: publishedVersion.version_number,
+            is_new_version_created: false,
+            skip_reason: 'NO_CHANGES_FROM_PUBLISHED',
+          };
+        }
+      }
+
       const latestVersion = await tx.content_versions.findFirst({
         where: { product_content_id: content.id },
         orderBy: { version_number: 'desc' },
@@ -297,7 +374,7 @@ export class ProductRepository {
           version_id: version.id,
           block_type: 'html',
           sort_order: 0,
-          data: { html },
+          data: { html: normalizedHtml },
         },
       });
 
@@ -315,6 +392,8 @@ export class ProductRepository {
         product_content_id: content.id,
         draft_version_id: version.id,
         version_number: nextVersionNumber,
+        is_new_version_created: true,
+        skip_reason: null,
       };
     });
   }

@@ -65,6 +65,15 @@ export declare class ProductAddAndUpdateStateDTO {
     rating: number;
     status: number;
 }
+export declare class ProductUpdateDTO {
+    name?: string;
+    description?: string;
+    category_id?: number;
+    brand_id?: number;
+    slug?: string;
+    rating?: number;
+    status?: number;
+}
 export declare class SaveProductContentDTO {
     html: string;
     locale?: string;
@@ -76,6 +85,8 @@ export declare class SaveProductContentResultDTO {
     product_content_id: number;
     draft_version_id: number;
     version_number: number;
+    is_new_version_created: boolean;
+    skip_reason?: string | null;
 }
 export declare class ProductVariantPaginatedDTO {
     data: ProductVariantDTO[];

@@ -104,6 +104,42 @@ export class ProductAddAndUpdateStateDTO {
   status: number = 0;
 }
 
+export class ProductUpdateDTO {
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @IsNotEmpty()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  category_id?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  brand_id?: number;
+
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  rating?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  status?: number;
+}
+
 export class SaveProductContentDTO {
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsNotEmpty()
@@ -129,6 +165,8 @@ export class SaveProductContentResultDTO {
   product_content_id: number = 0;
   draft_version_id: number = 0;
   version_number: number = 1;
+  is_new_version_created: boolean = true;
+  skip_reason?: string | null = null;
 }
 
 export class ProductVariantPaginatedDTO {

@@ -26,7 +26,7 @@ export class LoggerMiddleware implements NestMiddleware {
     const method: string = req.method;
     const rawUrl: string = req.originalUrl || req.url || '';
     const urlPath: string = rawUrl.split('?')[0];
-
+    const ip = req.ip || req.socket?.remoteAddress || 'unknown';
     if (SKIP_METHODS.has(method) || SKIP_PATHS.has(urlPath)) {
       return next();
     }

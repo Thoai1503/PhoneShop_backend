@@ -1,7 +1,9 @@
 import jwt, { type SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
 import { TokenPair } from '../../api/dto/user.dto.js';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export default class JWTService {
   private accessTokenSecret: jwt.Secret;
   private refreshTokenSecret: jwt.Secret;

@@ -79,6 +79,8 @@ import { LoggerService } from './application/service/logger.service.js';
 import { LoggerMiddleware } from './application/middleware/logger.middleware.js';
 import { MailService } from './service/mail.service.js';
 import { CloudinaryService } from './service/cloudinary.service.js';
+import { RateLimitMiddleware } from './application/middleware/rate-limit.middleware.js';
+import { RateLimiterService } from './common/service/rate-limiter.service.js';
 
 @Module({
   imports: [
@@ -129,6 +131,7 @@ import { CloudinaryService } from './service/cloudinary.service.js';
     CategoryAttributeService,
     CategoryBrandService,
     ProductService,
+    RateLimiterService,
     ProductAttributeService,
     ProductVariantService,
     VariantAttributeService,
@@ -176,7 +179,7 @@ export class AppModule implements NestModule {
         next();
       })
       .forRoutes('*')
-      .apply(LoggerMiddleware)
+      .apply(LoggerMiddleware, RateLimitMiddleware)
       .forRoutes(AuthController);
   }
 }
