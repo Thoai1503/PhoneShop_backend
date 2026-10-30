@@ -1,17 +1,18 @@
-import { CategoryAttributeRepository } from '../../infrastruture/repository/category-attribute.repository.js';
-import { CategoryAttributeDTO, CategoryAttributeUpdateStateDTO } from '../../api/dto/category-attribute.dto.js';
-export declare class CategoryAttributeService {
+import { type ICategoryAttributeRepository } from '../../domain/repositories/icategory.repository.js';
+import type { ICategoryAttributeService } from '../../domain/services/icategory.service.js';
+import type { CategoryAttributeEntity, CategoryAttributeUpdateEntity } from '../../domain/entities/categories/category.entity.js';
+export declare class CategoryAttributeService implements ICategoryAttributeService {
     private readonly repo;
-    constructor(repo: CategoryAttributeRepository);
-    getAll(): Promise<CategoryAttributeDTO[]>;
-    findById(id: number): Promise<CategoryAttributeDTO | null>;
-    create(entity: CategoryAttributeDTO): Promise<boolean>;
-    update(id: number, updateState: CategoryAttributeUpdateStateDTO): Promise<{
+    constructor(repo: ICategoryAttributeRepository);
+    getAll(): Promise<CategoryAttributeEntity[]>;
+    findById(id: number): Promise<CategoryAttributeEntity | null>;
+    create(entity: CategoryAttributeEntity): Promise<boolean>;
+    update(id: number, updateState: CategoryAttributeUpdateEntity): Promise<{
         success: boolean;
-        entity?: CategoryAttributeDTO;
+        entity?: CategoryAttributeEntity;
     }>;
     delete(id: number): Promise<boolean>;
-    getByCategory(categorySlug: string): Promise<CategoryAttributeDTO[]>;
+    getByCategory(categorySlug: string): Promise<CategoryAttributeEntity[]>;
     createMultiple(categoryId: number, attributeIds: number[]): Promise<{
         success: boolean;
         failedId?: number;

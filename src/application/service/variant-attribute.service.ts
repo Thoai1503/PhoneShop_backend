@@ -1,16 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { VariantAttributeRepository } from '../../infrastruture/repository/variant-attribute.repository.js';
-import { VariantAttributeDTO } from '../../api/dto/product.dto.js';
+import { Inject, Injectable } from '@nestjs/common';
+import {
+  VARIANT_ATTRIBUTE_REPOSITORY,
+  type IVariantAttributeRepository,
+} from '../../domain/repositories/iproduct.repository.js';
+import type { IVariantAttributeService } from '../../domain/services/iproduct.service.js';
+import type { VariantAttributeEntity } from '../../domain/entities/products/product.entity.js';
 
 @Injectable()
-export class VariantAttributeService {
-  constructor(private readonly repo: VariantAttributeRepository) {}
+export class VariantAttributeService implements IVariantAttributeService {
+  constructor(
+    @Inject(VARIANT_ATTRIBUTE_REPOSITORY)
+    private readonly repo: IVariantAttributeRepository,
+  ) {}
 
-  async getAll(): Promise<VariantAttributeDTO[]> {
+  async getAll(): Promise<VariantAttributeEntity[]> {
     return this.repo.getAll();
   }
 
-  async updateFromList(list: VariantAttributeDTO[]): Promise<boolean> {
+  async updateFromList(list: VariantAttributeEntity[]): Promise<boolean> {
     return this.repo.updateFromList(list);
   }
 }

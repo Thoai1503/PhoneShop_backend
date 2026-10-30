@@ -7,8 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { OrderDetailRepository } from '../../infrastruture/repository/order-detail.repository.js';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Inject, Injectable } from '@nestjs/common';
+import { ORDER_DETAIL_REPOSITORY, } from '../../domain/repositories/iorder.repository.js';
 let OrderDetailService = class OrderDetailService {
     repo;
     constructor(repo) {
@@ -20,7 +23,8 @@ let OrderDetailService = class OrderDetailService {
 };
 OrderDetailService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [OrderDetailRepository])
+    __param(0, Inject(ORDER_DETAIL_REPOSITORY)),
+    __metadata("design:paramtypes", [Object])
 ], OrderDetailService);
 export { OrderDetailService };
 //# sourceMappingURL=order-detail.service.js.map

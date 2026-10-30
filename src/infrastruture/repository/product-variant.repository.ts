@@ -1,49 +1,116 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import {
-  FilterStateDTO,
-  ProductAttributeDTO,
-  ProductDTO,
-  ProductImageDTO,
-  ProductVariantDTO,
-  ProductVariantPaginatedDTO,
-  VariantAttributeDTO,
-} from '../../api/dto/product.dto.js';
-import {
-  AttributeDTO,
-  AttributeValueDTO,
-} from '../../api/dto/attribute.dto.js';
-import { CategoryDTO } from '../../api/dto/category.dto.js';
-import { BrandDTO } from '../../api/dto/brand.dto.js';
+import type { Prisma } from '@prisma/client';
 import { CatalogSaveChangesService } from '../database/catalog-save-changes.service.js';
+import type { IProductVariantRepository } from '../../domain/repositories/iproduct.repository.js';
+import type {
+  FilterStateEntity,
+  ProductVariantEntity,
+  ProductVariantPaginatedEntity,
+} from '../../domain/entities/products/product.entity.js';
+
+type VariantWithProductDetails = Prisma.product_variantsGetPayload<{
+  include: {
+    products: {
+      include: {
+        categories: true;
+        brands: true;
+        product_attribute: { include: { attributes: true } };
+        product_variants: true;
+      };
+    };
+    product_image: true;
+    variant_attribute: {
+      include: { attributes: true; attribute_value: true };
+    };
+  };
+}>;
+
+type VariantWithProductAndAttributes = Prisma.product_variantsGetPayload<{
+  include: {
+    product_image: true;
+    products: {
+      include: {
+        brands: true;
+        product_attribute: { include: { attributes: true } };
+      };
+    };
+    variant_attribute: {
+      include: {
+        attributes: true;
+        attribute_value: { include: { attributes: true } };
+      };
+    };
+  };
+}>;
+
+type VariantWithProductFilters = Prisma.product_variantsGetPayload<{
+  include: {
+    products: {
+      include: {
+        categories: true;
+        product_attribute: { include: { attributes: true } };
+      };
+    };
+    product_image: true;
+    variant_attribute: {
+      include: {
+        attributes: true;
+        attribute_value: { include: { attributes: true } };
+      };
+    };
+  };
+}>;
+
+type VariantRecord =
+  | VariantWithProductDetails
+  | VariantWithProductAndAttributes
+  | VariantWithProductFilters;
+
+type VariantAttributeRecord = {
+  id: number;
+  variant_id: number;
+  attribute_id: number;
+  value_decimal: { toNumber(): number } | number | null;
+  value_int: number | null;
+  value_text: string | null;
+  attribute_value_id: number | null;
+  attribute_value: {
+    id: number;
+    attribute_id: number;
+    value: string | null;
+  } | null;
+  attributes: {
+    id: number;
+    name: string;
+    slug: string | null;
+    data_type: string;
+    unit: string;
+    status: number;
+  } | null;
+};
 
 @Injectable()
-export class ProductVariantRepository {
+export class ProductVariantRepository implements IProductVariantRepository {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
     @Inject()
     private readonly catalogSaveChangesService: CatalogSaveChangesService,
   ) {}
 
-  async create(entity: ProductVariantDTO): Promise<boolean> {
-    try {
-      const variant = await this.prisma.product_variants.create({
-        data: {
-          product_id: entity.product_id,
-          name: entity.name,
-          SKU: entity.sku,
-          price: entity.price,
-          status: 1,
-          created_at: new Date(),
-        },
-      });
-      await this.catalogSaveChangesService.afterProductVariantCreated(
-        variant.id,
-      );
-      return true;
-    } catch (er) {
-      throw er;
-    }
+  async create(entity: ProductVariantEntity): Promise<boolean> {
+    const variant = await this.prisma.product_variants.create({
+      data: {
+        product_id: entity.product_id,
+        name: entity.name,
+        SKU: entity.sku,
+        price: entity.price,
+        status: 1,
+        created_at: new Date(),
+      },
+    });
+    await this.catalogSaveChangesService.afterProductVariantCreated(variant.id);
+    return true;
   }
 
   async delete(id: number): Promise<boolean> {
@@ -60,7 +127,7 @@ export class ProductVariantRepository {
     }
   }
 
-  async findById(id: number): Promise<ProductVariantDTO | null> {
+  async findById(id: number): Promise<ProductVariantEntity | null> {
     const x = await this.prisma.product_variants.findUnique({
       where: { id },
       include: {
@@ -82,10 +149,10 @@ export class ProductVariantRepository {
       },
     });
     if (!x) return null;
-    return this.toDTO(x);
+    return this.toEntity(x);
   }
 
-  async update(entity: ProductVariantDTO): Promise<boolean> {
+  async update(entity: ProductVariantEntity): Promise<boolean> {
     try {
       const existing = await this.prisma.product_variants.findUnique({
         where: { id: entity.id },
@@ -105,7 +172,7 @@ export class ProductVariantRepository {
     }
   }
 
-  async findByProductId(productId: number): Promise<ProductVariantDTO[]> {
+  async findByProductId(productId: number): Promise<ProductVariantEntity[]> {
     const list = await this.prisma.product_variants.findMany({
       where: { product_id: productId },
       include: {
@@ -124,12 +191,12 @@ export class ProductVariantRepository {
         },
       },
     });
-    return list.map((e) => this.toDTO(e));
+    return list.map((e) => this.toEntity(e));
   }
 
   async getPaginationData(
-    st: FilterStateDTO,
-  ): Promise<ProductVariantPaginatedDTO> {
+    st: FilterStateEntity,
+  ): Promise<ProductVariantPaginatedEntity> {
     // Fetch all with relations then filter in memory (same as .NET original)
     const allVariants = await this.prisma.product_variants.findMany({
       include: {
@@ -239,136 +306,143 @@ export class ProductVariantRepository {
     const totalCount = list.length;
     const paginatedList = list.slice(st.skip, st.skip + st.take);
 
-    const result = new ProductVariantPaginatedDTO();
-    result.count = totalCount;
-    result.max = maxPriceInDb;
-    result.min = 0;
-    result.data = paginatedList.map((x) => this.toDTO(x));
-    return result;
+    return {
+      count: totalCount,
+      max: maxPriceInDb,
+      min: 0,
+      data: paginatedList.map((x) => this.toEntity(x)),
+    };
   }
 
-  private toDTO(x: any): ProductVariantDTO {
-    const dto = new ProductVariantDTO();
-    dto.id = x.id;
-    dto.product_id = x.product_id;
-    dto.name = x.name;
-    dto.price = x.price;
-    dto.sku = x.SKU;
-    dto.status = x.status;
-    dto.created_at = x.created_at;
+  private toEntity(x: VariantRecord): ProductVariantEntity {
+    const entity: ProductVariantEntity = {
+      id: x.id,
+      product_id: x.product_id,
+      name: x.name,
+      price: x.price,
+      sku: x.SKU,
+      status: x.status,
+      created_at: x.created_at,
+      product: null,
+      product_images: null,
+      variant_attributes: null,
+    };
 
     if (x.products) {
       const p = x.products;
-      const productDto = new ProductDTO();
-      productDto.id = p.id;
-      productDto.name = p.name;
-      productDto.slug = p.slug;
-      productDto.description = p.description;
-      productDto.status = p.status;
-      productDto.created_at = p.created_at;
-      productDto.brand_id = p.brand_id ?? 0;
-      productDto.category_id = p.category_id;
-
-      if (p.categories) {
-        const cat = new CategoryDTO();
-        cat.id = p.categories.id;
-        cat.name = p.categories.name?.trim() ?? '';
-        cat.slug = p.categories.slug?.toLowerCase().trim() ?? '';
-        productDto.category = cat;
-      }
-
-      if (p.brands) {
-        const brand = new BrandDTO();
-        brand.id = p.brands.id;
-        brand.name = p.brands.name;
-        brand.slug = p.brands.slug;
-        productDto.brand = brand;
-      }
-
-      if (p.product_variants) {
-        productDto.product_variant = p.product_variants.map((v: any) => {
-          const vDto = new ProductVariantDTO();
-          vDto.id = v.id;
-          vDto.product_id = v.product_id;
-          vDto.name = v.name;
-          vDto.price = v.price;
-          vDto.sku = v.SKU;
-          vDto.status = v.status;
-          vDto.created_at = v.created_at;
-          return vDto;
-        });
-      }
-
-      if (p.product_attribute) {
-        productDto.product_attribute = p.product_attribute.map((pa: any) => {
-          const paDto = new ProductAttributeDTO();
-          paDto.id = pa.id;
-          paDto.product_id = pa.product_id;
-          paDto.attribute_id = pa.attribute_id;
-          paDto.value_decimal =
-            pa.value_decimal !== null ? Number(pa.value_decimal) : null;
-          paDto.value_int = pa.value_int;
-          paDto.value_text = pa.value_text;
-          if (pa.attributes) {
-            const attr = new AttributeDTO();
-            attr.id = pa.attributes.id;
-            attr.name = pa.attributes.name;
-            attr.slug = pa.attributes.slug ?? '';
-            attr.data_type = pa.attributes.data_type;
-            attr.unit = pa.attributes.unit;
-            attr.status = pa.attributes.status;
-            paDto.attribute = attr;
-          }
-          return paDto;
-        });
-      }
-
-      dto.product = productDto;
+      const product: NonNullable<ProductVariantEntity['product']> = {
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        description: p.description,
+        status: p.status,
+        created_at: p.created_at,
+        brand_id: p.brand_id ?? 0,
+        category_id: p.category_id,
+        rating: 0,
+        brand:
+          'brands' in p && p.brands
+            ? {
+                id: p.brands.id,
+                name: p.brands.name,
+                slug: p.brands.slug,
+              }
+            : null,
+        category:
+          'categories' in p && p.categories
+            ? {
+                id: p.categories.id,
+                name: p.categories.name?.trim() ?? '',
+                slug: p.categories.slug?.toLowerCase().trim() ?? '',
+                path: '',
+                category_attributes: [],
+              }
+            : null,
+        product_variant:
+          'product_variants' in p
+            ? p.product_variants.map((v) => ({
+                id: v.id,
+                product_id: v.product_id,
+                name: v.name,
+                price: v.price,
+                sku: v.SKU,
+                status: v.status,
+                created_at: v.created_at,
+                product: null,
+                product_images: null,
+                variant_attributes: null,
+              }))
+            : [],
+        product_attribute: p.product_attribute.map((pa) => ({
+          id: pa.id,
+          product_id: pa.product_id,
+          attribute_id: pa.attribute_id,
+          value_decimal:
+            pa.value_decimal === null ? null : Number(pa.value_decimal),
+          value_int: pa.value_int,
+          value_text: pa.value_text,
+          attribute_value_id: null,
+          attribute: pa.attributes
+            ? {
+                id: pa.attributes.id,
+                name: pa.attributes.name,
+                slug: pa.attributes.slug ?? '',
+                data_type: pa.attributes.data_type,
+                unit: pa.attributes.unit,
+                status: pa.attributes.status,
+                is_selected: 0,
+                attribute_values: [],
+              }
+            : null,
+        })),
+      };
+      entity.product = product;
     }
 
     if (x.product_image) {
-      dto.product_images = x.product_image.map((img: any) => {
-        const imgDto = new ProductImageDTO();
-        imgDto.id = img.id;
-        imgDto.product_id = img.product_id;
-        imgDto.variant_id = img.variant_id;
-        imgDto.url = img.url;
-        return imgDto;
-      });
+      entity.product_images = x.product_image.map((img) => ({
+        id: img.id,
+        product_id: img.product_id,
+        variant_id: img.variant_id,
+        url: img.url,
+      }));
     }
 
     if (x.variant_attribute) {
-      dto.variant_attributes = x.variant_attribute.map((va: any) => {
-        const vaDto = new VariantAttributeDTO();
-        vaDto.id = va.id;
-        vaDto.variant_id = va.variant_id;
-        vaDto.attribute_id = va.attribute_id;
-        vaDto.value_decimal =
-          va.value_decimal !== null ? Number(va.value_decimal) : null;
-        vaDto.value_int = va.value_int;
-        vaDto.value_text = va.value_text;
-        vaDto.attribute_value_id = va.attribute_value_id;
-        if (va.attribute_value) {
-          const avDto = new AttributeValueDTO();
-          avDto.id = va.attribute_value.id;
-          avDto.attribute_id = va.attribute_value.attribute_id;
-          avDto.value = va.attribute_value.value ?? '';
-          vaDto.attribute_value = avDto;
-        }
-        if (va.attributes) {
-          const attr = new AttributeDTO();
-          attr.id = va.attributes.id;
-          attr.name = va.attributes.name;
-          attr.slug = va.attributes.slug ?? '';
-          attr.data_type = va.attributes.data_type;
-          attr.unit = va.attributes.unit;
-          attr.status = va.attributes.status;
-          vaDto.attribute = attr;
-        }
-        return vaDto;
-      });
+      entity.variant_attributes = x.variant_attribute.map(
+        (va: VariantAttributeRecord) => ({
+          id: va.id,
+          variant_id: va.variant_id,
+          attribute_id: va.attribute_id,
+          value_decimal:
+            va.value_decimal === null ? null : Number(va.value_decimal),
+          value_int: va.value_int,
+          value_text: va.value_text,
+          attribute_value_id: va.attribute_value_id,
+          attribute_value:
+            'attribute_value' in va && va.attribute_value
+              ? {
+                  id: va.attribute_value.id,
+                  attribute_id: va.attribute_value.attribute_id,
+                  value: va.attribute_value.value ?? '',
+                }
+              : null,
+          attribute: va.attributes
+            ? {
+                id: va.attributes.id,
+                name: va.attributes.name,
+                slug: va.attributes.slug ?? '',
+                data_type: va.attributes.data_type,
+                unit: va.attributes.unit,
+                status: va.attributes.status,
+                is_selected: 0,
+                attribute_values: [],
+              }
+            : null,
+        }),
+      );
     }
 
-    return dto;
+    return entity;
   }
 }

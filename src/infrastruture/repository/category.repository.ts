@@ -1,18 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BaseRepository } from './base.repository.js';
-import { Category } from '../model/category.modal.js';
 import { PrismaService } from '../database/prisma.service.js';
-import { CategoryDTO } from '../../api/dto/category.dto.js';
+import type { ICategoryRepository } from '../../domain/repositories/icategory.repository.js';
+import type { CategoryEntity } from '../../domain/entities/categories/category.entity.js';
 
 @Injectable()
-export class CategoryRepository extends BaseRepository {
+export class CategoryRepository
+  extends BaseRepository
+  implements ICategoryRepository
+{
   constructor(
     @Inject(PrismaService) protected readonly prismaService: PrismaService,
   ) {
     super(prismaService);
   }
 
-  async create(item: CategoryDTO): Promise<CategoryDTO> {
+  async create(item: CategoryEntity): Promise<CategoryEntity> {
     const created = await this.prismaService.categories.create({
       data: {
         name: item.name,
@@ -23,23 +26,26 @@ export class CategoryRepository extends BaseRepository {
         created_at: new Date(),
       },
     });
-    return this.toDTO(created);
+    return this.toEntity(created);
   }
 
-  async findById(id: number): Promise<CategoryDTO | null> {
+  async findById(id: number): Promise<CategoryEntity | null> {
     const category = await this.prismaService.categories.findUnique({
       where: { id },
     });
     if (!category) return null;
-    return this.toDTO(category);
+    return this.toEntity(category);
   }
 
-  async findAll(): Promise<CategoryDTO[]> {
+  async findAll(): Promise<CategoryEntity[]> {
     const categories = await this.prismaService.categories.findMany();
-    return categories.map((c) => this.toDTO(c));
+    return categories.map((c) => this.toEntity(c));
   }
 
-  async update(id: number, item: CategoryDTO): Promise<CategoryDTO | null> {
+  async update(
+    id: number,
+    item: CategoryEntity,
+  ): Promise<CategoryEntity | null> {
     const existing = await this.prismaService.categories.findUnique({
       where: { id },
     });
@@ -54,7 +60,7 @@ export class CategoryRepository extends BaseRepository {
         level: item.level ?? existing.level,
       },
     });
-    return this.toDTO(updated);
+    return this.toEntity(updated);
   }
 
   async deleteById(id: number): Promise<boolean> {
@@ -66,15 +72,26 @@ export class CategoryRepository extends BaseRepository {
     return true;
   }
 
-  private toDTO(c: any): CategoryDTO {
-    const dto = new CategoryDTO();
-    dto.id = c.id;
-    dto.name = c.name;
-    dto.slug = c.slug;
-    dto.parent_id = c.parent_id ?? 0;
-    dto.path = c.path ?? '';
-    dto.level = c.level ?? 0;
-    dto.created_at = c.created_at;
-    return dto;
+  private toEntity<
+    T extends {
+      id: number;
+      name: string;
+      slug: string;
+      parent_id: number | null;
+      path: string | null;
+      level: number | null;
+      created_at: Date | null;
+    },
+  >(c: T): CategoryEntity {
+    return {
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      parent_id: c.parent_id ?? 0,
+      path: c.path ?? '',
+      level: c.level ?? 0,
+      created_at: c.created_at ?? undefined,
+      category_attributes: [],
+    };
   }
 }

@@ -1,23 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { WardDTO } from '../../api/dto/ward.dto.js';
+import type { WardEntity } from '../../domain/entities/ward.entity.js';
+import type { IWardRepository } from '../../domain/repositories/iward.repository.js';
 
 @Injectable()
-export class WardRepository {
+export class WardRepository implements IWardRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async getByDistrictId(districtId: number): Promise<WardDTO[]> {
+  async findByDistrictId(districtId: number): Promise<WardEntity[]> {
     const list = await this.prisma.wards.findMany({
       where: { district_id: districtId },
     });
-    return list.map((item) => {
-      const dto = new WardDTO();
-      dto.id = item.id;
-      dto.name = item.name;
-      dto.code = item.code;
-      dto.district_id = item.district_id;
-      dto.status = item.status;
-      return dto;
-    });
+    return list.map((item) => ({
+      id: item.id,
+      name: item.name,
+      code: item.code,
+      district_id: item.district_id,
+      status: item.status,
+    }));
   }
 }

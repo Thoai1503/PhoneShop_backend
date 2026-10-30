@@ -1,15 +1,16 @@
 import UserDTO from '../../api/dto/user.dto.js';
-import { UsersRepository } from '../../infrastruture/repository/user.repository.js';
+import { type IUsersRepository } from '../../domain/repositories/iuser.repository.js';
 import { NextFunction, Response } from 'express';
 import PasswordService from './password.service.js';
 import JWTService from './JWT.service.js';
 import { MailService } from '../../service/mail.service.js';
-export declare class AuthService {
+import type { IAuthService } from '../../domain/services/iauth.service.js';
+export declare class AuthService implements IAuthService<Response, NextFunction, UserDTO> {
     private readonly userRepo;
     private readonly passwordService;
     private readonly jwtService;
     private readonly mailService;
-    constructor(userRepo: UsersRepository, passwordService: PasswordService, jwtService: JWTService, mailService: MailService);
+    constructor(userRepo: IUsersRepository, passwordService: PasswordService, jwtService: JWTService, mailService: MailService);
     refreshToken: (req: {
         refreshToken?: string;
     }, res: Response, next: NextFunction) => Promise<Response<any, Record<string, any>> | undefined>;
@@ -18,4 +19,5 @@ export declare class AuthService {
     verifyEmailToken: (token: string | undefined, res: Response) => Promise<Response<any, Record<string, any>>>;
     register: (req: UserDTO, res: Response, next: NextFunction) => Promise<Response<any, Record<string, any>> | undefined>;
     logout: (res: Response) => Promise<Response>;
+    private toUserDTO;
 }

@@ -1,35 +1,39 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { AttributeValueDTO } from '../../api/dto/attribute.dto.js';
 import { BaseRepository } from './base.repository.js';
+import type { IAttributeValueRepository } from '../../domain/repositories/iattribute.repository.js';
+import type { AttributeValueEntity } from '../../domain/entities/attributes/attribute.entity.js';
 
 @Injectable()
-export class AttributeValueRepository extends BaseRepository {
+export class AttributeValueRepository
+  extends BaseRepository
+  implements IAttributeValueRepository
+{
   constructor(protected readonly prisma: PrismaService) {
     //  @Inject(PrismaService) private readonly prisma: PrismaService
     super(prisma);
   }
 
-  async findById(id: number): Promise<AttributeValueDTO | null> {
+  async findById(id: number): Promise<AttributeValueEntity | null> {
     const entity = await this.prisma.attribute_value.findUnique({
       where: { id },
     });
     if (!entity) return null;
-    return this.toDTO(entity);
+    return {
+      id: entity.id,
+      attribute_id: entity.attribute_id,
+      value: entity.value?.trim() ?? '',
+    };
   }
 
-  async getByAttributeId(attributeId: number): Promise<AttributeValueDTO[]> {
+  async getByAttributeId(attributeId: number): Promise<AttributeValueEntity[]> {
     const list = await this.prisma.attribute_value.findMany({
       where: { attribute_id: attributeId },
     });
-    return list.map((av) => this.toDTO(av));
-  }
-
-  private toDTO(av: any): AttributeValueDTO {
-    const dto = new AttributeValueDTO();
-    dto.id = av.id;
-    dto.attribute_id = av.attribute_id;
-    dto.value = av.value?.trim() ?? '';
-    return dto;
+    return list.map((av) => ({
+      id: av.id,
+      attribute_id: av.attribute_id,
+      value: av.value?.trim() ?? '',
+    }));
   }
 }

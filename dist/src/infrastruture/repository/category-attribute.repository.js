@@ -12,9 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { CategoryAttributeDTO } from '../../api/dto/category-attribute.dto.js';
-import { AttributeDTO, AttributeValueDTO, } from '../../api/dto/attribute.dto.js';
-import { CategoryDTO } from '../../api/dto/category.dto.js';
 let CategoryAttributeRepository = class CategoryAttributeRepository {
     prisma;
     constructor(prisma) {
@@ -24,7 +21,7 @@ let CategoryAttributeRepository = class CategoryAttributeRepository {
         const list = await this.prisma.category_attributes.findMany({
             include: { attributes: true },
         });
-        return list.map((ca) => this.toDTO(ca));
+        return list.map((ca) => this.toEntity(ca));
     }
     async findById(id) {
         const ca = await this.prisma.category_attributes.findUnique({
@@ -33,7 +30,7 @@ let CategoryAttributeRepository = class CategoryAttributeRepository {
         });
         if (!ca)
             return null;
-        return this.toDTO(ca);
+        return this.toEntity(ca);
     }
     async create(entity) {
         try {
@@ -93,45 +90,51 @@ let CategoryAttributeRepository = class CategoryAttributeRepository {
             },
         });
         return list.map((ca) => {
-            const dto = this.toDTO(ca);
-            dto.category = (() => {
-                const c = new CategoryDTO();
-                c.id = ca.categories.id;
-                c.name = ca.categories.name?.trim() ?? '';
-                c.slug = ca.categories.slug?.trim() ?? '';
-                return c;
-            })();
+            const entity = this.toEntity(ca);
+            entity.category = {
+                id: ca.categories.id,
+                name: ca.categories.name?.trim() ?? '',
+                slug: ca.categories.slug?.trim() ?? '',
+                path: '',
+            };
             if (ca.attributes) {
-                dto.attribute.attribute_values = (ca.attributes.attribute_value ?? []).map((av) => {
-                    const avDto = new AttributeValueDTO();
-                    avDto.id = av.id;
-                    avDto.attribute_id = av.attribute_id;
-                    avDto.value = av.value ?? '';
-                    return avDto;
-                });
+                entity.attribute.attribute_values = ca.attributes.attribute_value.map((av) => ({
+                    id: av.id,
+                    attribute_id: av.attribute_id,
+                    value: av.value ?? '',
+                }));
             }
-            return dto;
+            return entity;
         });
     }
-    toDTO(ca) {
-        const dto = new CategoryAttributeDTO();
-        dto.id = ca.id;
-        dto.category_id = ca.category_id;
-        dto.attribute_id = ca.attribute_id;
-        dto.is_filterable = ca.is_filterable;
-        dto.is_variant_level = ca.is_variant_level;
-        dto.is_required = ca.is_required;
+    toEntity(ca) {
+        let attribute = null;
         if (ca.attributes) {
-            const attr = new AttributeDTO();
-            attr.id = ca.attributes.id;
-            attr.name = ca.attributes.name?.trim() ?? '';
-            attr.slug = ca.attributes.slug?.trim() ?? '';
-            attr.data_type = ca.attributes.data_type;
-            attr.unit = ca.attributes.unit;
-            attr.status = ca.attributes.status;
-            dto.attribute = attr;
+            attribute = {
+                id: ca.attributes.id,
+                name: ca.attributes.name?.trim() ?? '',
+                slug: ca.attributes.slug?.trim() ?? '',
+                data_type: ca.attributes.data_type,
+                unit: ca.attributes.unit,
+                status: ca.attributes.status,
+                is_selected: 0,
+                attribute_values: (ca.attributes.attribute_value ?? []).map((av) => ({
+                    id: av.id,
+                    attribute_id: av.attribute_id,
+                    value: av.value?.trim() ?? '',
+                })),
+            };
         }
-        return dto;
+        return {
+            id: ca.id,
+            category_id: ca.category_id,
+            attribute_id: ca.attribute_id,
+            is_filterable: ca.is_filterable,
+            is_variant_level: ca.is_variant_level,
+            is_required: ca.is_required,
+            category: null,
+            attribute,
+        };
     }
 };
 CategoryAttributeRepository = __decorate([

@@ -1,12 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { WardRepository } from '../../infrastruture/repository/ward.repository.js';
-import { WardDTO } from '../../api/dto/ward.dto.js';
+import { Inject, Injectable } from '@nestjs/common';
+import type { WardEntity } from '../../domain/entities/ward.entity.js';
+import {
+  WARD_REPOSITORY,
+  type IWardRepository,
+} from '../../domain/repositories/iward.repository.js';
+import type { IWardService } from '../../domain/services/iward.service.js';
 
 @Injectable()
-export class WardService {
-  constructor(private readonly repo: WardRepository) {}
+export class WardService implements IWardService {
+  constructor(
+    @Inject(WARD_REPOSITORY)
+    private readonly repo: IWardRepository,
+  ) {}
 
-  async getByDistrictId(districtId: number): Promise<WardDTO[]> {
-    return this.repo.getByDistrictId(districtId);
+  async getByDistrictId(districtId: number): Promise<WardEntity[]> {
+    return this.repo.findByDistrictId(districtId);
   }
 }

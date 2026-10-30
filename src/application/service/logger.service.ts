@@ -1,5 +1,6 @@
 //import { APP_HOST } from '@constants';
 import { Injectable, Logger } from '@nestjs/common';
+import type { ILoggerService } from '../../domain/services/ilogger.service.js';
 
 export class Context {
   module: string;
@@ -7,8 +8,8 @@ export class Context {
 }
 
 @Injectable()
-export class LoggerService extends Logger {
-  logger(message: any, context?: Context) {
+export class LoggerService extends Logger implements ILoggerService {
+  logger(message: unknown, context?: Context) {
     const now = new Date();
     const standard = {
       server: process.env.APP_HOST || '0.0.0.0',
@@ -20,7 +21,7 @@ export class LoggerService extends Logger {
     super.log(data);
   }
 
-  err(message: any, context: Context) {
+  err(message: unknown, context: Context) {
     const now = new Date();
     const standard = {
       server: process.env.APP_HOST || '0.0.0.0',
@@ -32,7 +33,7 @@ export class LoggerService extends Logger {
     super.error(data);
   }
 
-  warning(message: any, context: Context) {
+  warning(message: unknown, context: Context) {
     const now = new Date();
     const standard = {
       server: process.env.APP_HOST || '0.0.0.0',

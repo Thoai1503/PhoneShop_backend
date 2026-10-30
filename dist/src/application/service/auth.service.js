@@ -7,9 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Inject, Injectable } from '@nestjs/common';
 import UserDTO from '../../api/dto/user.dto.js';
-import { UsersRepository } from '../../infrastruture/repository/user.repository.js';
+import { USERS_REPOSITORY, } from '../../domain/repositories/iuser.repository.js';
 import jwt from 'jsonwebtoken';
 import PasswordService from './password.service.js';
 import JWTService from './JWT.service.js';
@@ -36,14 +39,15 @@ let AuthService = class AuthService {
                 });
             }
             const decoded = this.jwtService.verifyRefreshToken(refreshToken);
-            const user = await this.userRepo.getUserById(decoded?.id);
-            if (!user) {
+            const userEntity = await this.userRepo.getUserById(decoded?.id);
+            if (!userEntity) {
                 return res.status(401).json({
                     success: false,
                     message: 'User not found',
                     code: 'USER_NOT_FOUND',
                 });
             }
+            const user = this.toUserDTO(userEntity);
             const newTokens = user.generateAuthToken();
             const cookieOptions = {
                 expires: new Date(Date.now() +
@@ -92,19 +96,20 @@ let AuthService = class AuthService {
                 code: 'INVALID_EMAIL',
             });
         }
-        const user = await this.userRepo.findByEmail(email);
-        if (!user)
+        const userEntity = await this.userRepo.findByEmail(email);
+        if (!userEntity)
             return res.status(401).json({
                 success: false,
                 message: 'Invalid credentials',
                 code: 'INVALID_CREDENTIALS',
             });
-        if (user.getStatus() !== 1)
+        if (userEntity.status !== 1)
             return res.status(401).json({
                 success: false,
                 message: 'Account is not active',
                 code: 'ACCOUNT_INACTIVE',
             });
+        const user = this.toUserDTO(userEntity);
         const isPasswordValid = await user.comparePassword(password);
         if (!isPasswordValid)
             return res.status(401).json({
@@ -172,22 +177,22 @@ let AuthService = class AuthService {
                     code: 'INVALID_TOKEN_PURPOSE',
                 });
             }
-            const user = await this.userRepo.getUserById(decoded.id);
-            if (!user || user.getEmail() !== decoded.email) {
+            const userEntity = await this.userRepo.getUserById(decoded.id);
+            if (!userEntity || userEntity.email !== decoded.email) {
                 return res.status(404).json({
                     success: false,
                     message: 'User for verification token not found',
                     code: 'VERIFY_USER_NOT_FOUND',
                 });
             }
-            if (user.getStatus() === 1) {
+            if (userEntity.status === 1) {
                 return res.status(200).json({
                     success: true,
                     message: 'Email already verified',
                     code: 'EMAIL_ALREADY_VERIFIED',
                 });
             }
-            await this.userRepo.markUserAsVerified(user.getId());
+            await this.userRepo.markUserAsVerified(userEntity.id);
             return res.status(200).json({
                 success: true,
                 message: 'Email verified successfully. You can now log in.',
@@ -258,7 +263,17 @@ let AuthService = class AuthService {
             await newUser.hashPassword();
             newUser.setStatus(0);
             newUser.setIsVerified(0);
-            const createdUser = await this.userRepo.createUser(newUser);
+            const createdUserEntity = await this.userRepo.createUser({
+                id: newUser.getId(),
+                name: newUser.getName(),
+                email: newUser.getEmail(),
+                phone: newUser.getPhone(),
+                password: newUser.getPassword(),
+                role: newUser.getRole(),
+                status: newUser.getStatus(),
+                is_verified: newUser.getIsVerified(),
+            });
+            const createdUser = this.toUserDTO(createdUserEntity);
             const verifyToken = this.jwtService.generateEmailVerificationToken({
                 id: createdUser.getId(),
                 email: createdUser.getEmail(),
@@ -332,11 +347,23 @@ let AuthService = class AuthService {
             });
         }
     };
+    toUserDTO(user) {
+        return new UserDTO({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            password: user.password,
+            role: user.role,
+            status: user.status,
+            is_verified: user.is_verified,
+        });
+    }
 };
 AuthService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [UsersRepository,
-        PasswordService,
+    __param(0, Inject(USERS_REPOSITORY)),
+    __metadata("design:paramtypes", [Object, PasswordService,
         JWTService,
         MailService])
 ], AuthService);

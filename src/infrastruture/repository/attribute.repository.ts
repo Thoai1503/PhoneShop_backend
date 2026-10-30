@@ -1,22 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import {
-  AttributeDTO,
-  AttributeValueDTO,
-} from '../../api/dto/attribute.dto.js';
+import type { IAttributeRepository } from '../../domain/repositories/iattribute.repository.js';
+import type {
+  AttributeEntity,
+  AttributeValueEntity,
+} from '../../domain/entities/attributes/attribute.entity.js';
 
 @Injectable()
-export class AttributeRepository {
+export class AttributeRepository implements IAttributeRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<AttributeDTO[]> {
+  async getAll(): Promise<AttributeEntity[]> {
     const attrs = await this.prisma.attributes.findMany({
       include: { attribute_value: true },
     });
-    return attrs.map((a) => this.toDTO(a));
+    return attrs.map((a) => this.toEntity(a));
   }
 
-  async create(entity: AttributeDTO): Promise<boolean> {
+  async create(entity: AttributeEntity): Promise<boolean> {
     try {
       await this.prisma.attributes.create({
         data: {
@@ -33,7 +34,7 @@ export class AttributeRepository {
     }
   }
 
-  async getByCategoryId(categoryId: number): Promise<AttributeDTO[]> {
+  async getByCategoryId(categoryId: number): Promise<AttributeEntity[]> {
     const attrs = await this.prisma.attributes.findMany({
       include: {
         attribute_value: true,
@@ -41,28 +42,44 @@ export class AttributeRepository {
       },
     });
     return attrs.map((a) => {
-      const dto = this.toDTO(a);
-      dto.is_selected = a.category_attributes.length > 0 ? 1 : 0;
-      return dto;
+      return {
+        ...this.toEntity(a),
+        is_selected: a.category_attributes.length > 0 ? 1 : 0,
+      };
     });
   }
 
-  private toDTO(a: any): AttributeDTO {
-    const dto = new AttributeDTO();
-    dto.id = a.id;
-    dto.name = a.name;
-    dto.slug = a.slug ?? '';
-    dto.data_type = a.data_type;
-    dto.unit = a.unit;
-    dto.status = a.status;
-    dto.is_selected = 0;
-    dto.attribute_values = (a.attribute_value ?? []).map((av: any) => {
-      const avDto = new AttributeValueDTO();
-      avDto.id = av.id;
-      avDto.attribute_id = av.attribute_id;
-      avDto.value = av.value?.trim() ?? '';
-      return avDto;
-    });
-    return dto;
+  private toEntity<
+    T extends {
+      id: number;
+      name: string;
+      slug: string | null;
+      data_type: string;
+      unit: string;
+      status: number;
+      attribute_value?: Array<{
+        id: number;
+        attribute_id: number;
+        value: string | null;
+      }>;
+    },
+  >(a: T): AttributeEntity {
+    const attributeValues: AttributeValueEntity[] = (
+      a.attribute_value ?? []
+    ).map((av) => ({
+      id: av.id,
+      attribute_id: av.attribute_id,
+      value: av.value?.trim() ?? '',
+    }));
+    return {
+      id: a.id,
+      name: a.name,
+      slug: a.slug ?? '',
+      data_type: a.data_type,
+      unit: a.unit,
+      status: a.status,
+      is_selected: 0,
+      attribute_values: attributeValues,
+    };
   }
 }

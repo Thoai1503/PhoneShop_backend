@@ -1,12 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { DistrictRepository } from '../../infrastruture/repository/district.repository.js';
-import { DistrictDTO } from '../../api/dto/district.dto.js';
+import { Inject, Injectable } from '@nestjs/common';
+import type { DistrictEntity } from '../../domain/entities/district.entity.js';
+import {
+  DISTRICT_REPOSITORY,
+  type IDistrictRepository,
+} from '../../domain/repositories/idistrict.repository.js';
+import type { IDistrictService } from '../../domain/services/idistrict.service.js';
 
 @Injectable()
-export class DistrictService {
-  constructor(private readonly repo: DistrictRepository) {}
+export class DistrictService implements IDistrictService {
+  constructor(
+    @Inject(DISTRICT_REPOSITORY)
+    private readonly repo: IDistrictRepository,
+  ) {}
 
-  async getByProvinceId(provinceId: number): Promise<DistrictDTO[]> {
-    return this.repo.getByProvinceId(provinceId);
+  async getByProvinceId(provinceId: number): Promise<DistrictEntity[]> {
+    return this.repo.findByProvinceId(provinceId);
   }
 }

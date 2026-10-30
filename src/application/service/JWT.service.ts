@@ -1,10 +1,11 @@
 import jwt, { type SignOptions } from 'jsonwebtoken';
 import crypto from 'crypto';
-import { TokenPair } from '../../api/dto/user.dto.js';
 import { Injectable } from '@nestjs/common';
+import type { IJWTService } from '../../domain/services/iauth.service.js';
+import type { TokenPairEntity } from '../../domain/entities/users/user.entity.js';
 
 @Injectable()
-export default class JWTService {
+export default class JWTService implements IJWTService {
   private accessTokenSecret: jwt.Secret;
   private refreshTokenSecret: jwt.Secret;
   private accessTokenExpiry: string;
@@ -40,7 +41,7 @@ export default class JWTService {
     return jwt.sign(payload, this.refreshTokenSecret, options);
   }
 
-  generateTokens(payload: any): TokenPair {
+  generateTokens(payload: any): TokenPairEntity {
     const accessToken = this.generateAccessToken(payload);
     const refreshToken = this.generateRefreshToken(payload);
 

@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { CartDTO, ProductImageDTO, ProductVariantDTO, } from '../../api/dto/product.dto.js';
 let CartRepository = class CartRepository {
     prisma;
     constructor(prisma) {
@@ -54,26 +53,30 @@ let CartRepository = class CartRepository {
             },
         });
         return list.map((c) => {
-            const dto = new CartDTO();
-            dto.id = c.id;
-            dto.user_id = c.user_id;
-            dto.variant_id = c.variant_id;
-            dto.quantity = c.quantity;
-            dto.unit_price = Number(c.unit_price ?? 0);
-            const vDto = new ProductVariantDTO();
-            vDto.id = c.product_variants.id;
-            vDto.name = c.product_variants.name;
-            vDto.price = c.product_variants.price;
-            vDto.product_images = c.product_variants.product_image.map((img) => {
-                const imgDto = new ProductImageDTO();
-                imgDto.id = img.id;
-                imgDto.product_id = img.product_id;
-                imgDto.variant_id = img.variant_id;
-                imgDto.url = img.url;
-                return imgDto;
-            });
-            dto.variant = vDto;
-            return dto;
+            return {
+                id: c.id,
+                user_id: c.user_id,
+                variant_id: c.variant_id,
+                quantity: c.quantity,
+                unit_price: Number(c.unit_price ?? 0),
+                variant: {
+                    id: c.product_variants.id,
+                    name: c.product_variants.name,
+                    price: c.product_variants.price,
+                    product_id: 0,
+                    sku: '',
+                    status: 0,
+                    created_at: null,
+                    product: null,
+                    product_images: c.product_variants.product_image.map((img) => ({
+                        id: img.id,
+                        product_id: img.product_id,
+                        variant_id: img.variant_id,
+                        url: img.url,
+                    })),
+                    variant_attributes: null,
+                },
+            };
         });
     }
 };

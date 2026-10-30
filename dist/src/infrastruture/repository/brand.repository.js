@@ -12,33 +12,52 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { BrandDTO } from '../../api/dto/brand.dto.js';
-let BrandRepository = class BrandRepository {
+import { BaseRepository } from './base.repository.js';
+let BrandRepository = class BrandRepository extends BaseRepository {
     prisma;
     constructor(prisma) {
+        super(prisma);
         this.prisma = prisma;
     }
     async create(item) {
         const created = await this.prisma.brands.create({
             data: {
                 name: item.name,
-                slug: item.slug || '',
-                status: item.status ?? 1,
+                slug: item.slug,
+                status: item.status,
             },
         });
-        return created.id;
+        return this.toEntity(created);
     }
-    async getAll() {
-        const list = await this.prisma.brands.findMany();
-        return list.map((b) => this.toDTO(b));
+    async findById(id) {
+        const brand = await this.prisma.brands.findUnique({ where: { id } });
+        return brand ? this.toEntity(brand) : null;
     }
-    toDTO(b) {
-        const dto = new BrandDTO();
-        dto.id = b.id;
-        dto.name = b.name;
-        dto.slug = b.slug;
-        dto.status = b.status;
-        return dto;
+    async findAll() {
+        const brands = await this.prisma.brands.findMany();
+        return brands.map((brand) => this.toEntity(brand));
+    }
+    async update(id, input) {
+        const existing = await this.prisma.brands.findUnique({ where: { id } });
+        if (!existing)
+            return null;
+        const updated = await this.prisma.brands.update({
+            where: { id },
+            data: input,
+        });
+        return this.toEntity(updated);
+    }
+    async delete(id) {
+        const result = await this.prisma.brands.deleteMany({ where: { id } });
+        return result.count > 0;
+    }
+    toEntity(brand) {
+        return {
+            id: brand.id,
+            name: brand.name,
+            slug: brand.slug,
+            status: brand.status,
+        };
     }
 };
 BrandRepository = __decorate([

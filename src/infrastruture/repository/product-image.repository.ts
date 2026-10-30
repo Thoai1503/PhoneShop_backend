@@ -1,14 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { ProductImageDTO } from '../../api/dto/product.dto.js';
 import * as path from 'path';
 import * as fs from 'fs';
+import type { IProductImageRepository } from '../../domain/repositories/iproduct.repository.js';
+import type { ProductImageEntity } from '../../domain/entities/products/product.entity.js';
 
 @Injectable()
-export class ProductImageRepository {
+export class ProductImageRepository implements IProductImageRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async create(entity: ProductImageDTO): Promise<boolean> {
+  async create(entity: ProductImageEntity): Promise<boolean> {
     try {
       await this.prisma.product_image.create({
         data: {
@@ -42,17 +43,15 @@ export class ProductImageRepository {
     }
   }
 
-  async getByVariantId(variantId: number): Promise<ProductImageDTO[]> {
+  async getByVariantId(variantId: number): Promise<ProductImageEntity[]> {
     const list = await this.prisma.product_image.findMany({
       where: { variant_id: variantId },
     });
-    return list.map((e) => {
-      const dto = new ProductImageDTO();
-      dto.id = e.id;
-      dto.product_id = e.product_id;
-      dto.variant_id = variantId;
-      dto.url = e.url;
-      return dto;
-    });
+    return list.map((e) => ({
+      id: e.id,
+      product_id: e.product_id,
+      variant_id: variantId,
+      url: e.url,
+    }));
   }
 }

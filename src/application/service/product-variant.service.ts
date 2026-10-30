@@ -1,26 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { ProductVariantRepository } from '../../infrastruture/repository/product-variant.repository.js';
+import { Inject, Injectable } from '@nestjs/common';
 import {
-  FilterStateDTO,
-  ProductVariantDTO,
-  ProductVariantPaginatedDTO,
-} from '../../api/dto/product.dto.js';
+  PRODUCT_VARIANT_REPOSITORY,
+  type IProductVariantRepository,
+} from '../../domain/repositories/iproduct.repository.js';
+import type { IProductVariantService } from '../../domain/services/iproduct.service.js';
+import type {
+  FilterStateEntity,
+  ProductVariantEntity,
+  ProductVariantPaginatedEntity,
+} from '../../domain/entities/products/product.entity.js';
 
 @Injectable()
-export class ProductVariantService {
-  constructor(private readonly repo: ProductVariantRepository) {}
+export class ProductVariantService implements IProductVariantService {
+  constructor(
+    @Inject(PRODUCT_VARIANT_REPOSITORY)
+    private readonly repo: IProductVariantRepository,
+  ) {}
 
   async getPaginationData(
-    st: FilterStateDTO,
-  ): Promise<ProductVariantPaginatedDTO> {
+    st: FilterStateEntity,
+  ): Promise<ProductVariantPaginatedEntity> {
     return this.repo.getPaginationData(st);
   }
 
-  async findById(id: number): Promise<ProductVariantDTO | null> {
+  async findById(id: number): Promise<ProductVariantEntity | null> {
     return this.repo.findById(id);
   }
 
-  async create(entity: ProductVariantDTO): Promise<boolean> {
+  async create(entity: ProductVariantEntity): Promise<boolean> {
     return this.repo
       .create(entity)
       .then((res) => res)
@@ -30,7 +37,7 @@ export class ProductVariantService {
       });
   }
 
-  async update(entity: ProductVariantDTO): Promise<boolean> {
+  async update(entity: ProductVariantEntity): Promise<boolean> {
     return this.repo.update(entity);
   }
 
@@ -38,7 +45,7 @@ export class ProductVariantService {
     return this.repo.delete(id);
   }
 
-  async findByProductId(productId: number): Promise<ProductVariantDTO[]> {
+  async findByProductId(productId: number): Promise<ProductVariantEntity[]> {
     return this.repo.findByProductId(productId);
   }
 }

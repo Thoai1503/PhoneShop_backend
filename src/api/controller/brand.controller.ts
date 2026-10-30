@@ -12,22 +12,17 @@ export class BrandController {
   @Post()
   async createBrand(
     @Req() req: Request,
-    @Body()
-    body: { id?: number; name?: string; slug?: string; status?: number },
+    @Body() body: BrandDTO,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Response> {
-    try {
-      const newBrand = new BrandDTO();
-      newBrand.id = body.id ?? 0;
-      newBrand.name = body.name ?? '';
-      newBrand.slug = body.slug ?? '';
-      newBrand.status = body.status ?? 1;
-
-      const data = await this.service.create(newBrand);
-      return respondSuccess(req, res, 200, data, { message: 'Brand created' });
-    } catch (error) {
-      throw error;
-    }
+    const brand = await this.service.create({
+      name: body.name ?? '',
+      slug: body.slug ?? '',
+      status: body.status ?? 1,
+    });
+    return respondSuccess(req, res, 200, brand.id, {
+      message: 'Brand created',
+    });
   }
 
   // GET api/brand

@@ -1,30 +1,37 @@
-import { Injectable } from '@nestjs/common';
-import { CategoryAttributeRepository } from '../../infrastruture/repository/category-attribute.repository.js';
+import { Inject, Injectable } from '@nestjs/common';
 import {
-  CategoryAttributeDTO,
-  CategoryAttributeUpdateStateDTO,
-} from '../../api/dto/category-attribute.dto.js';
+  CATEGORY_ATTRIBUTE_REPOSITORY,
+  type ICategoryAttributeRepository,
+} from '../../domain/repositories/icategory.repository.js';
+import type { ICategoryAttributeService } from '../../domain/services/icategory.service.js';
+import type {
+  CategoryAttributeEntity,
+  CategoryAttributeUpdateEntity,
+} from '../../domain/entities/categories/category.entity.js';
 
 @Injectable()
-export class CategoryAttributeService {
-  constructor(private readonly repo: CategoryAttributeRepository) {}
+export class CategoryAttributeService implements ICategoryAttributeService {
+  constructor(
+    @Inject(CATEGORY_ATTRIBUTE_REPOSITORY)
+    private readonly repo: ICategoryAttributeRepository,
+  ) {}
 
-  async getAll(): Promise<CategoryAttributeDTO[]> {
+  async getAll(): Promise<CategoryAttributeEntity[]> {
     return this.repo.getAll();
   }
 
-  async findById(id: number): Promise<CategoryAttributeDTO | null> {
+  async findById(id: number): Promise<CategoryAttributeEntity | null> {
     return this.repo.findById(id);
   }
 
-  async create(entity: CategoryAttributeDTO): Promise<boolean> {
+  async create(entity: CategoryAttributeEntity): Promise<boolean> {
     return this.repo.create(entity);
   }
 
   async update(
     id: number,
-    updateState: CategoryAttributeUpdateStateDTO,
-  ): Promise<{ success: boolean; entity?: CategoryAttributeDTO }> {
+    updateState: CategoryAttributeUpdateEntity,
+  ): Promise<{ success: boolean; entity?: CategoryAttributeEntity }> {
     const entity = await this.repo.findById(id);
     if (!entity) return { success: false };
     entity.category_id = updateState.category_id;
@@ -41,7 +48,9 @@ export class CategoryAttributeService {
     return this.repo.delete(id);
   }
 
-  async getByCategory(categorySlug: string): Promise<CategoryAttributeDTO[]> {
+  async getByCategory(
+    categorySlug: string,
+  ): Promise<CategoryAttributeEntity[]> {
     return this.repo.getByCategory(categorySlug);
   }
 

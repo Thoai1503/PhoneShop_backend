@@ -7,20 +7,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { WardRepository } from '../../infrastruture/repository/ward.repository.js';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Inject, Injectable } from '@nestjs/common';
+import { WARD_REPOSITORY, } from '../../domain/repositories/iward.repository.js';
 let WardService = class WardService {
     repo;
     constructor(repo) {
         this.repo = repo;
     }
     async getByDistrictId(districtId) {
-        return this.repo.getByDistrictId(districtId);
+        return this.repo.findByDistrictId(districtId);
     }
 };
 WardService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [WardRepository])
+    __param(0, Inject(WARD_REPOSITORY)),
+    __metadata("design:paramtypes", [Object])
 ], WardService);
 export { WardService };
 //# sourceMappingURL=ward.service.js.map

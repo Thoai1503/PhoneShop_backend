@@ -1,12 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { UserAddressDTO } from '../../api/dto/user-address.dto.js';
+import type { IUserAddressRepository } from '../../domain/repositories/iuser.repository.js';
+import type {
+  UserAddressEntity,
+  UserAddressWithRelationsEntity,
+} from '../../domain/entities/users/user.entity.js';
 
 @Injectable()
-export class UserAddressRepository {
+export class UserAddressRepository implements IUserAddressRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async create(item: UserAddressDTO): Promise<number> {
+  async create(item: UserAddressEntity): Promise<number> {
     if (item.is_default) {
       await this.prisma.user_addresses.updateMany({
         where: { user_id: item.user_id, is_default: true },
@@ -32,7 +36,7 @@ export class UserAddressRepository {
     return 1;
   }
 
-  async update(id: number, item: UserAddressDTO): Promise<boolean> {
+  async update(id: number, item: UserAddressEntity): Promise<boolean> {
     const current = await this.prisma.user_addresses.findUnique({
       where: { id },
     });
@@ -83,7 +87,9 @@ export class UserAddressRepository {
     return !!result;
   }
 
-  async findByUserId(userId: number): Promise<any[]> {
+  async findByUserId(
+    userId: number,
+  ): Promise<UserAddressWithRelationsEntity[]> {
     return this.prisma.user_addresses.findMany({
       where: {
         user_id: userId,

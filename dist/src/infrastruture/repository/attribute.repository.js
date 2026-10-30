@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { AttributeDTO, AttributeValueDTO, } from '../../api/dto/attribute.dto.js';
 let AttributeRepository = class AttributeRepository {
     prisma;
     constructor(prisma) {
@@ -22,7 +21,7 @@ let AttributeRepository = class AttributeRepository {
         const attrs = await this.prisma.attributes.findMany({
             include: { attribute_value: true },
         });
-        return attrs.map((a) => this.toDTO(a));
+        return attrs.map((a) => this.toEntity(a));
     }
     async create(entity) {
         try {
@@ -49,28 +48,28 @@ let AttributeRepository = class AttributeRepository {
             },
         });
         return attrs.map((a) => {
-            const dto = this.toDTO(a);
-            dto.is_selected = a.category_attributes.length > 0 ? 1 : 0;
-            return dto;
+            return {
+                ...this.toEntity(a),
+                is_selected: a.category_attributes.length > 0 ? 1 : 0,
+            };
         });
     }
-    toDTO(a) {
-        const dto = new AttributeDTO();
-        dto.id = a.id;
-        dto.name = a.name;
-        dto.slug = a.slug ?? '';
-        dto.data_type = a.data_type;
-        dto.unit = a.unit;
-        dto.status = a.status;
-        dto.is_selected = 0;
-        dto.attribute_values = (a.attribute_value ?? []).map((av) => {
-            const avDto = new AttributeValueDTO();
-            avDto.id = av.id;
-            avDto.attribute_id = av.attribute_id;
-            avDto.value = av.value?.trim() ?? '';
-            return avDto;
-        });
-        return dto;
+    toEntity(a) {
+        const attributeValues = (a.attribute_value ?? []).map((av) => ({
+            id: av.id,
+            attribute_id: av.attribute_id,
+            value: av.value?.trim() ?? '',
+        }));
+        return {
+            id: a.id,
+            name: a.name,
+            slug: a.slug ?? '',
+            data_type: a.data_type,
+            unit: a.unit,
+            status: a.status,
+            is_selected: 0,
+            attribute_values: attributeValues,
+        };
     }
 };
 AttributeRepository = __decorate([

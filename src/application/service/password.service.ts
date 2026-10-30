@@ -1,9 +1,10 @@
 // const bcrypt = require("bcryptjs");
 import { Injectable } from '@nestjs/common';
 import bcrypt from 'bcryptjs';
+import type { IPasswordService } from '../../domain/services/iauth.service.js';
 
 @Injectable()
-export default class PasswordService {
+export default class PasswordService implements IPasswordService {
   private saltRounds: number;
   private minLength: number;
   private requireUppercase: boolean;

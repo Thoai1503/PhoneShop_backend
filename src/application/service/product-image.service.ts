@@ -1,12 +1,19 @@
-import { Injectable } from '@nestjs/common';
-import { ProductImageRepository } from '../../infrastruture/repository/product-image.repository.js';
-import { ProductImageDTO } from '../../api/dto/product.dto.js';
+import { Inject, Injectable } from '@nestjs/common';
+import {
+  PRODUCT_IMAGE_REPOSITORY,
+  type IProductImageRepository,
+} from '../../domain/repositories/iproduct.repository.js';
+import type { IProductImageService } from '../../domain/services/iproduct.service.js';
+import type { ProductImageEntity } from '../../domain/entities/products/product.entity.js';
 
 @Injectable()
-export class ProductImageService {
-  constructor(private readonly repo: ProductImageRepository) {}
+export class ProductImageService implements IProductImageService {
+  constructor(
+    @Inject(PRODUCT_IMAGE_REPOSITORY)
+    private readonly repo: IProductImageRepository,
+  ) {}
 
-  async create(entity: ProductImageDTO): Promise<boolean> {
+  async create(entity: ProductImageEntity): Promise<boolean> {
     return this.repo.create(entity);
   }
 
@@ -14,7 +21,7 @@ export class ProductImageService {
     return this.repo.delete(id);
   }
 
-  async getByVariantId(variantId: number): Promise<ProductImageDTO[]> {
+  async getByVariantId(variantId: number): Promise<ProductImageEntity[]> {
     return this.repo.getByVariantId(variantId);
   }
 }

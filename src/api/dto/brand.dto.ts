@@ -1,6 +1,20 @@
+import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+
 export class BrandDTO {
-  id: number = 0;
-  name: string = '';
-  slug: string = '';
-  status: number = 1;
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  id?: number;
+
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @IsOptional()
+  @IsInt()
+  status?: number;
 }

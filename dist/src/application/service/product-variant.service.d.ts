@@ -1,12 +1,13 @@
-import { ProductVariantRepository } from '../../infrastruture/repository/product-variant.repository.js';
-import { FilterStateDTO, ProductVariantDTO, ProductVariantPaginatedDTO } from '../../api/dto/product.dto.js';
-export declare class ProductVariantService {
+import { type IProductVariantRepository } from '../../domain/repositories/iproduct.repository.js';
+import type { IProductVariantService } from '../../domain/services/iproduct.service.js';
+import type { FilterStateEntity, ProductVariantEntity, ProductVariantPaginatedEntity } from '../../domain/entities/products/product.entity.js';
+export declare class ProductVariantService implements IProductVariantService {
     private readonly repo;
-    constructor(repo: ProductVariantRepository);
-    getPaginationData(st: FilterStateDTO): Promise<ProductVariantPaginatedDTO>;
-    findById(id: number): Promise<ProductVariantDTO | null>;
-    create(entity: ProductVariantDTO): Promise<boolean>;
-    update(entity: ProductVariantDTO): Promise<boolean>;
+    constructor(repo: IProductVariantRepository);
+    getPaginationData(st: FilterStateEntity): Promise<ProductVariantPaginatedEntity>;
+    findById(id: number): Promise<ProductVariantEntity | null>;
+    create(entity: ProductVariantEntity): Promise<boolean>;
+    update(entity: ProductVariantEntity): Promise<boolean>;
     delete(id: number): Promise<boolean>;
-    findByProductId(productId: number): Promise<ProductVariantDTO[]>;
+    findByProductId(productId: number): Promise<ProductVariantEntity[]>;
 }

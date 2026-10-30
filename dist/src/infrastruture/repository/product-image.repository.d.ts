@@ -1,9 +1,10 @@
 import { PrismaService } from '../database/prisma.service.js';
-import { ProductImageDTO } from '../../api/dto/product.dto.js';
-export declare class ProductImageRepository {
+import type { IProductImageRepository } from '../../domain/repositories/iproduct.repository.js';
+import type { ProductImageEntity } from '../../domain/entities/products/product.entity.js';
+export declare class ProductImageRepository implements IProductImageRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    create(entity: ProductImageDTO): Promise<boolean>;
+    create(entity: ProductImageEntity): Promise<boolean>;
     delete(id: number): Promise<boolean>;
-    getByVariantId(variantId: number): Promise<ProductImageDTO[]>;
+    getByVariantId(variantId: number): Promise<ProductImageEntity[]>;
 }

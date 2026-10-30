@@ -1,5 +1,6 @@
-import { TokenPair } from '../../api/dto/user.dto.js';
-export default class JWTService {
+import type { IJWTService } from '../../domain/services/iauth.service.js';
+import type { TokenPairEntity } from '../../domain/entities/users/user.entity.js';
+export default class JWTService implements IJWTService {
     private accessTokenSecret;
     private refreshTokenSecret;
     private accessTokenExpiry;
@@ -7,7 +8,7 @@ export default class JWTService {
     constructor();
     generateAccessToken(payload: any): any;
     generateRefreshToken(payload: any): any;
-    generateTokens(payload: any): TokenPair;
+    generateTokens(payload: any): TokenPairEntity;
     verifyAccessToken(token: string): any;
     verifyRefreshToken(token: string): any;
     decodeToken(token: string): any;
