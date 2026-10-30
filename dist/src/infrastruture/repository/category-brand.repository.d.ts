@@ -1,7 +1,8 @@
 import { PrismaService } from '../database/prisma.service.js';
-import { CategoryBrandDTO } from '../../api/dto/category-brand.dto.js';
-export declare class CategoryBrandRepository {
+import type { ICategoryBrandRepository } from '../../domain/repositories/icategory.repository.js';
+import type { CategoryBrandEntity } from '../../domain/entities/categories/category.entity.js';
+export declare class CategoryBrandRepository implements ICategoryBrandRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    getByCategory(categorySlug: string): Promise<CategoryBrandDTO[]>;
+    getByCategory(categorySlug: string): Promise<CategoryBrandEntity[]>;
 }

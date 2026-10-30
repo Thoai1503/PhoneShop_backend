@@ -20,18 +20,14 @@ let BrandController = class BrandController {
         this.service = service;
     }
     async createBrand(req, body, res) {
-        try {
-            const newBrand = new BrandDTO();
-            newBrand.id = body.id ?? 0;
-            newBrand.name = body.name ?? '';
-            newBrand.slug = body.slug ?? '';
-            newBrand.status = body.status ?? 1;
-            const data = await this.service.create(newBrand);
-            return respondSuccess(req, res, 200, data, { message: 'Brand created' });
-        }
-        catch (error) {
-            throw error;
-        }
+        const brand = await this.service.create({
+            name: body.name ?? '',
+            slug: body.slug ?? '',
+            status: body.status ?? 1,
+        });
+        return respondSuccess(req, res, 200, brand.id, {
+            message: 'Brand created',
+        });
     }
     async getAll(req, res) {
         const list = await this.service.getAll();
@@ -44,7 +40,7 @@ __decorate([
     __param(1, Body()),
     __param(2, Res({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:paramtypes", [Object, BrandDTO, Object]),
     __metadata("design:returntype", Promise)
 ], BrandController.prototype, "createBrand", null);
 __decorate([

@@ -1,7 +1,8 @@
 import { PrismaService } from '../database/prisma.service.js';
-import { OrderDetailDTO } from '../../api/dto/order-detail.dto.js';
-export declare class OrderDetailRepository {
+import type { IOrderDetailRepository } from '../../domain/repositories/iorder.repository.js';
+import type { OrderDetailEntity } from '../../domain/entities/orders/order.entity.js';
+export declare class OrderDetailRepository implements IOrderDetailRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    findByOrderId(orderId: number): Promise<OrderDetailDTO[]>;
+    findByOrderId(orderId: number): Promise<OrderDetailEntity[]>;
 }

@@ -13,7 +13,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import { Inject, Injectable } from '@nestjs/common';
 import { BaseRepository } from './base.repository.js';
 import { PrismaService } from '../database/prisma.service.js';
-import { CategoryDTO } from '../../api/dto/category.dto.js';
 let CategoryRepository = class CategoryRepository extends BaseRepository {
     prismaService;
     constructor(prismaService) {
@@ -31,7 +30,7 @@ let CategoryRepository = class CategoryRepository extends BaseRepository {
                 created_at: new Date(),
             },
         });
-        return this.toDTO(created);
+        return this.toEntity(created);
     }
     async findById(id) {
         const category = await this.prismaService.categories.findUnique({
@@ -39,11 +38,11 @@ let CategoryRepository = class CategoryRepository extends BaseRepository {
         });
         if (!category)
             return null;
-        return this.toDTO(category);
+        return this.toEntity(category);
     }
     async findAll() {
         const categories = await this.prismaService.categories.findMany();
-        return categories.map((c) => this.toDTO(c));
+        return categories.map((c) => this.toEntity(c));
     }
     async update(id, item) {
         const existing = await this.prismaService.categories.findUnique({
@@ -61,7 +60,7 @@ let CategoryRepository = class CategoryRepository extends BaseRepository {
                 level: item.level ?? existing.level,
             },
         });
-        return this.toDTO(updated);
+        return this.toEntity(updated);
     }
     async deleteById(id) {
         const existing = await this.prismaService.categories.findUnique({
@@ -72,16 +71,17 @@ let CategoryRepository = class CategoryRepository extends BaseRepository {
         await this.prismaService.categories.delete({ where: { id } });
         return true;
     }
-    toDTO(c) {
-        const dto = new CategoryDTO();
-        dto.id = c.id;
-        dto.name = c.name;
-        dto.slug = c.slug;
-        dto.parent_id = c.parent_id ?? 0;
-        dto.path = c.path ?? '';
-        dto.level = c.level ?? 0;
-        dto.created_at = c.created_at;
-        return dto;
+    toEntity(c) {
+        return {
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            parent_id: c.parent_id ?? 0,
+            path: c.path ?? '',
+            level: c.level ?? 0,
+            created_at: c.created_at ?? undefined,
+            category_attributes: [],
+        };
     }
 };
 CategoryRepository = __decorate([

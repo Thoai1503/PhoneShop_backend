@@ -1,26 +1,23 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import {
-  ProductDTO,
-  ProductAddAndUpdateStateDTO,
-  ProductUpdateDTO,
-  ProductAttributeDTO,
-  ProductVariantDTO,
-  ProductImageDTO,
-} from '../../api/dto/product.dto.js';
-import { BrandDTO } from '../../api/dto/brand.dto.js';
-import { CategoryDTO } from '../../api/dto/category.dto.js';
-import {
-  AttributeDTO,
-  AttributeValueDTO,
-} from '../../api/dto/attribute.dto.js';
-import { CategoryAttributeDTO } from '../../api/dto/category-attribute.dto.js';
+import type { IProductRepository } from '../../domain/repositories/iproduct.repository.js';
+import type {
+  ProductContentComparisonEntity,
+  ProductContentRestoreEntity,
+  ProductContentResultEntity,
+  ProductContentVersionEntity,
+  ProductContentVersionsEntity,
+  ProductContentVersionStatusEntity,
+  ProductCreateEntity,
+  ProductEntity,
+  ProductUpdateEntity,
+} from '../../domain/entities/products/product.entity.js';
 
 @Injectable()
-export class ProductRepository {
+export class ProductRepository implements IProductRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<ProductDTO[]> {
+  async getAll(): Promise<ProductEntity[]> {
     const list = await this.prisma.products.findMany({
       include: {
         brands: true,
@@ -28,54 +25,52 @@ export class ProductRepository {
         product_variants: { include: { product_image: true } },
       },
     });
-    return list.map((en) => {
-      const dto = new ProductDTO();
-      dto.id = en.id;
-      dto.name = en.name;
-      dto.description = en.description;
-      dto.category_id = en.category_id;
-      dto.brand_id = en.brand_id ?? 0;
-      dto.rating = Number(en.rating);
-      dto.status = en.status;
-
-      const brand = new BrandDTO();
-      brand.id = en.brands?.id ?? 0;
-      brand.name = en.brands?.name ?? '';
-      brand.slug = en.brands?.slug ?? '';
-      dto.brand = brand;
-
-      const cat = new CategoryDTO();
-      cat.id = en.categories.id;
-      cat.name = en.categories.name;
-      cat.slug = en.categories.slug;
-      cat.parent_id = en.categories.parent_id ?? 0;
-      cat.path = en.categories.path ?? '';
-      cat.level = en.categories.level ?? 0;
-      dto.category = cat;
-
-      dto.product_variant = en.product_variants.map((v) => {
-        const vDto = new ProductVariantDTO();
-        vDto.id = v.id;
-        vDto.name = v.name;
-        vDto.price = v.price;
-        vDto.product_id = v.product_id;
-        vDto.sku = v.SKU;
-        vDto.product_images = v.product_image.map((img) => {
-          const imgDto = new ProductImageDTO();
-          imgDto.id = img.id;
-          imgDto.product_id = img.product_id;
-          imgDto.url = img.url;
-          imgDto.variant_id = img.variant_id;
-          return imgDto;
-        });
-        return vDto;
-      });
-
-      return dto;
-    });
+    return list.map((en) => ({
+      id: en.id,
+      name: en.name,
+      description: en.description,
+      category_id: en.category_id,
+      brand_id: en.brand_id ?? 0,
+      slug: '',
+      rating: Number(en.rating),
+      status: en.status,
+      created_at: null,
+      brand: {
+        id: en.brands?.id ?? 0,
+        name: en.brands?.name ?? '',
+        slug: en.brands?.slug ?? '',
+      },
+      category: {
+        id: en.categories.id,
+        name: en.categories.name,
+        slug: en.categories.slug,
+        parent_id: en.categories.parent_id ?? 0,
+        path: en.categories.path ?? '',
+        level: en.categories.level ?? 0,
+        category_attributes: [],
+      },
+      product_attribute: [],
+      product_variant: en.product_variants.map((v) => ({
+        id: v.id,
+        name: v.name,
+        price: v.price,
+        product_id: v.product_id,
+        sku: v.SKU,
+        status: 0,
+        created_at: null,
+        product: null,
+        product_images: v.product_image.map((img) => ({
+          id: img.id,
+          product_id: img.product_id,
+          url: img.url,
+          variant_id: img.variant_id,
+        })),
+        variant_attributes: null,
+      })),
+    }));
   }
 
-  async findById(id: number): Promise<ProductDTO | null> {
+  async findById(id: number): Promise<ProductEntity | null> {
     const en = await this.prisma.products.findUnique({
       where: { id },
       include: {
@@ -96,89 +91,83 @@ export class ProductRepository {
     });
     if (!en) return null;
 
-    const dto = new ProductDTO();
-    dto.id = en.id;
-    dto.name = en.name;
-    dto.description = en.description;
-    dto.category_id = en.category_id;
-    dto.brand_id = en.brand_id ?? 0;
-    dto.rating = Number(en.rating);
-    dto.status = en.status;
-
-    const brand = new BrandDTO();
-    brand.id = en.brands?.id ?? 0;
-    brand.name = en.brands?.name ?? '';
-    brand.slug = en.brands?.slug ?? '';
-    dto.brand = brand;
-
-    const cat = new CategoryDTO();
-    cat.id = en.categories.id;
-    cat.name = en.categories.name;
-    cat.slug = en.categories.slug;
-    cat.parent_id = en.categories.parent_id ?? 0;
-    cat.path = en.categories.path ?? '';
-    cat.level = en.categories.level ?? 0;
-    cat.category_attributes = en.categories.category_attributes.map((ca) => {
-      const caDto = new CategoryAttributeDTO();
-      caDto.id = ca.id;
-      caDto.category_id = ca.category_id;
-      caDto.attribute_id = ca.attribute_id;
-      caDto.is_filterable = ca.is_filterable;
-      caDto.is_variant_level = ca.is_variant_level;
-      caDto.is_required = ca.is_required;
-      const attr = new AttributeDTO();
-      attr.id = ca.attributes.id;
-      attr.name = ca.attributes.name;
-      attr.slug = ca.attributes.slug ?? '';
-      attr.data_type = ca.attributes.data_type;
-      attr.unit = ca.attributes.unit;
-      attr.status = ca.attributes.status;
-      attr.attribute_values = ca.attributes.attribute_value.map((av) => {
-        const avDto = new AttributeValueDTO();
-        avDto.id = av.id;
-        avDto.attribute_id = av.attribute_id;
-        avDto.value = av.value;
-        return avDto;
-      });
-      caDto.attribute = attr;
-      return caDto;
-    });
-    dto.category = cat;
-
-    dto.product_attribute = en.product_attribute.map((pa) => {
-      const paDto = new ProductAttributeDTO();
-      paDto.id = pa.id;
-      paDto.product_id = pa.product_id;
-      paDto.attribute_id = pa.attribute_id;
-      paDto.value_text = pa.value_text;
-      paDto.value_int = pa.value_int;
-      paDto.value_decimal =
-        pa.value_decimal !== null ? Number(pa.value_decimal) : null;
-      paDto.attribute_value_id = pa.attribute_value_id;
-      const attr = new AttributeDTO();
-      attr.id = pa.attributes.id;
-      attr.name = pa.attributes.name;
-      attr.slug = pa.attributes.slug ?? '';
-      attr.data_type = pa.attributes.data_type;
-      attr.unit = pa.attributes.unit;
-      attr.status = pa.attributes.status;
-      attr.attribute_values = pa.attributes.attribute_value.map((av) => {
-        const avDto = new AttributeValueDTO();
-        avDto.id = av.id;
-        avDto.attribute_id = av.attribute_id;
-        avDto.value = av.value;
-        return avDto;
-      });
-      paDto.attribute = attr;
-      return paDto;
-    });
-
-    return dto;
+    return {
+      id: en.id,
+      name: en.name,
+      description: en.description,
+      category_id: en.category_id,
+      brand_id: en.brand_id ?? 0,
+      slug: '',
+      rating: Number(en.rating),
+      status: en.status,
+      created_at: null,
+      brand: {
+        id: en.brands?.id ?? 0,
+        name: en.brands?.name ?? '',
+        slug: en.brands?.slug ?? '',
+      },
+      category: {
+        id: en.categories.id,
+        name: en.categories.name,
+        slug: en.categories.slug,
+        parent_id: en.categories.parent_id ?? 0,
+        path: en.categories.path ?? '',
+        level: en.categories.level ?? 0,
+        category_attributes: en.categories.category_attributes.map((ca) => ({
+          id: ca.id,
+          category_id: ca.category_id,
+          attribute_id: ca.attribute_id,
+          is_filterable: ca.is_filterable,
+          is_variant_level: ca.is_variant_level,
+          is_required: ca.is_required,
+          category: null,
+          attribute: {
+            id: ca.attributes.id,
+            name: ca.attributes.name,
+            slug: ca.attributes.slug ?? '',
+            data_type: ca.attributes.data_type,
+            unit: ca.attributes.unit,
+            status: ca.attributes.status,
+            is_selected: 0,
+            attribute_values: ca.attributes.attribute_value.map((av) => ({
+              id: av.id,
+              attribute_id: av.attribute_id,
+              value: av.value,
+            })),
+          },
+        })),
+      },
+      product_attribute: en.product_attribute.map((pa) => ({
+        id: pa.id,
+        product_id: pa.product_id,
+        attribute_id: pa.attribute_id,
+        value_text: pa.value_text,
+        value_int: pa.value_int,
+        value_decimal:
+          pa.value_decimal !== null ? Number(pa.value_decimal) : null,
+        attribute_value_id: pa.attribute_value_id,
+        attribute: {
+          id: pa.attributes.id,
+          name: pa.attributes.name,
+          slug: pa.attributes.slug ?? '',
+          data_type: pa.attributes.data_type,
+          unit: pa.attributes.unit,
+          status: pa.attributes.status,
+          is_selected: 0,
+          attribute_values: pa.attributes.attribute_value.map((av) => ({
+            id: av.id,
+            attribute_id: av.attribute_id,
+            value: av.value,
+          })),
+        },
+      })),
+      product_variant: [],
+    };
   }
 
   async createAndReturn(
-    product: ProductAddAndUpdateStateDTO,
-  ): Promise<ProductDTO | null> {
+    product: ProductCreateEntity,
+  ): Promise<ProductEntity | null> {
     const en = await this.prisma.$transaction(async (tx) => {
       const created = await tx.products.create({
         data: {
@@ -223,19 +212,27 @@ export class ProductRepository {
     });
 
     if (!en) return null;
-    const dto = new ProductDTO();
-    dto.id = en.id;
-    dto.name = en.name;
-    dto.slug = en.slug;
-    dto.brand_id = en.brand_id ?? 0;
-    dto.category_id = en.category_id;
-    return dto;
+    return {
+      id: en.id,
+      name: en.name,
+      slug: en.slug,
+      brand_id: en.brand_id ?? 0,
+      category_id: en.category_id,
+      description: '',
+      rating: 0,
+      status: 0,
+      created_at: null,
+      category: null,
+      brand: null,
+      product_attribute: [],
+      product_variant: [],
+    };
   }
 
   async updateAndReturn(
     id: number,
-    product: ProductUpdateDTO,
-  ): Promise<ProductDTO | null> {
+    product: ProductUpdateEntity,
+  ): Promise<ProductEntity | null> {
     const existing = await this.prisma.products.findUnique({ where: { id } });
     if (!existing) return null;
 
@@ -252,17 +249,21 @@ export class ProductRepository {
       },
     });
 
-    const dto = new ProductDTO();
-    dto.id = updated.id;
-    dto.name = updated.name;
-    dto.description = updated.description;
-    dto.slug = updated.slug;
-    dto.brand_id = updated.brand_id ?? 0;
-    dto.category_id = updated.category_id;
-    dto.rating = Number(updated.rating);
-    dto.status = updated.status;
-    dto.created_at = updated.created_at;
-    return dto;
+    return {
+      id: updated.id,
+      name: updated.name,
+      description: updated.description,
+      slug: updated.slug,
+      brand_id: updated.brand_id ?? 0,
+      category_id: updated.category_id,
+      rating: Number(updated.rating),
+      status: updated.status,
+      created_at: updated.created_at,
+      category: null,
+      brand: null,
+      product_attribute: [],
+      product_variant: [],
+    };
   }
 
   async saveHtmlContentByProductId(
@@ -270,15 +271,7 @@ export class ProductRepository {
     html: string,
     locale = 'vi',
     changeNote?: string | null,
-  ): Promise<{
-    product_id: number;
-    locale: string;
-    product_content_id: number;
-    draft_version_id: number;
-    version_number: number;
-    is_new_version_created: boolean;
-    skip_reason?: string | null;
-  } | null> {
+  ): Promise<ProductContentResultEntity | null> {
     const normalizedLocale = locale?.trim().toLowerCase() || 'vi';
     const normalizedHtml = (html ?? '').trim();
 
@@ -534,20 +527,7 @@ export class ProductRepository {
   async getVersionsList(
     productId: number,
     locale = 'vi',
-  ): Promise<{
-    product_id: number;
-    locale: string;
-    versions: Array<{
-      id: number;
-      version_number: number;
-      created_at: Date;
-      change_note: string | null;
-      is_draft: boolean;
-      is_published: boolean;
-    }>;
-    draft_version_id: number | null;
-    published_version_id: number | null;
-  } | null> {
+  ): Promise<ProductContentVersionsEntity | null> {
     const productContent = await this.prisma.product_content.findUnique({
       where: {
         product_id_locale: {
@@ -598,17 +578,7 @@ export class ProductRepository {
     productId: number,
     versionId: number,
     locale = 'vi',
-  ): Promise<{
-    id: number;
-    product_id: number;
-    locale: string;
-    version_number: number;
-    created_at: Date;
-    change_note: string | null;
-    html: string;
-    is_draft: boolean;
-    is_published: boolean;
-  } | null> {
+  ): Promise<ProductContentVersionEntity | null> {
     const productContent = await this.prisma.product_content.findUnique({
       where: {
         product_id_locale: {
@@ -674,11 +644,7 @@ export class ProductRepository {
     productId: number,
     versionId: number,
     locale = 'vi',
-  ): Promise<{
-    product_content_id: number;
-    published_version_id: number;
-    version_number: number;
-  } | null> {
+  ): Promise<ProductContentVersionStatusEntity | null> {
     const productContent = await this.prisma.product_content.findUnique({
       where: {
         product_id_locale: {
@@ -729,11 +695,7 @@ export class ProductRepository {
     productId: number,
     versionId: number,
     locale = 'vi',
-  ): Promise<{
-    product_content_id: number;
-    draft_version_id: number;
-    version_number: number;
-  } | null> {
+  ): Promise<ProductContentRestoreEntity | null> {
     const productContent = await this.prisma.product_content.findUnique({
       where: {
         product_id_locale: {
@@ -863,10 +825,7 @@ export class ProductRepository {
     versionId1: number,
     versionId2: number,
     locale = 'vi',
-  ): Promise<{
-    version1: { version_number: number; html: string };
-    version2: { version_number: number; html: string };
-  } | null> {
+  ): Promise<ProductContentComparisonEntity | null> {
     const productContent = await this.prisma.product_content.findUnique({
       where: {
         product_id_locale: {

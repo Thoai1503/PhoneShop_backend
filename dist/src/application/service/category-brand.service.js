@@ -7,8 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { CategoryBrandRepository } from '../../infrastruture/repository/category-brand.repository.js';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Inject, Injectable } from '@nestjs/common';
+import { CATEGORY_BRAND_REPOSITORY, } from '../../domain/repositories/icategory.repository.js';
 let CategoryBrandService = class CategoryBrandService {
     repo;
     constructor(repo) {
@@ -20,7 +23,8 @@ let CategoryBrandService = class CategoryBrandService {
 };
 CategoryBrandService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [CategoryBrandRepository])
+    __param(0, Inject(CATEGORY_BRAND_REPOSITORY)),
+    __metadata("design:paramtypes", [Object])
 ], CategoryBrandService);
 export { CategoryBrandService };
 //# sourceMappingURL=category-brand.service.js.map

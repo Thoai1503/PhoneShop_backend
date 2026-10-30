@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { ProvinceDTO } from '../../api/dto/province.dto.js';
 let ProvinceRepository = class ProvinceRepository {
     prisma;
     constructor(prisma) {
@@ -20,14 +19,12 @@ let ProvinceRepository = class ProvinceRepository {
     }
     async findAll() {
         const list = await this.prisma.provinces.findMany();
-        return list.map((item) => {
-            const dto = new ProvinceDTO();
-            dto.id = item.id;
-            dto.name = item.name;
-            dto.code = item.code;
-            dto.status = item.status;
-            return dto;
-        });
+        return list.map((item) => ({
+            id: item.id,
+            name: item.name,
+            code: item.code,
+            status: item.status,
+        }));
     }
 };
 ProvinceRepository = __decorate([

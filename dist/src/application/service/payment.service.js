@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { createHmac } from 'crypto';
-import { PaymentRepository } from '../../infrastruture/repository/payment.repository.js';
+import { PAYMENT_REPOSITORY, } from '../../domain/repositories/ipayment.repository.js';
 let PaymentService = class PaymentService {
     repo;
     constructor(repo) {
@@ -228,8 +228,8 @@ let PaymentService = class PaymentService {
 };
 PaymentService = __decorate([
     Injectable(),
-    __param(0, Inject(PaymentRepository)),
-    __metadata("design:paramtypes", [PaymentRepository])
+    __param(0, Inject(PAYMENT_REPOSITORY)),
+    __metadata("design:paramtypes", [Object])
 ], PaymentService);
 export { PaymentService };
 //# sourceMappingURL=payment.service.js.map

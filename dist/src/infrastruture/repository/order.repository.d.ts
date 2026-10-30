@@ -1,9 +1,10 @@
 import { PrismaService } from '../database/prisma.service.js';
-import { OrderDTO } from '../../api/dto/order.dto.js';
-export declare class OrderRepository {
+import type { IOrderRepository } from '../../domain/repositories/iorder.repository.js';
+import type { OrderEntity } from '../../domain/entities/orders/order.entity.js';
+export declare class OrderRepository implements IOrderRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    findAll(): Promise<OrderDTO[]>;
-    findById(id: number): Promise<OrderDTO | null>;
-    getByUserId(userId: number): Promise<OrderDTO[]>;
+    findAll(): Promise<OrderEntity[]>;
+    findById(id: number): Promise<OrderEntity | null>;
+    getByUserId(userId: number): Promise<OrderEntity[]>;
 }

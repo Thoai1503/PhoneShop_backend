@@ -1,7 +1,8 @@
-import { DistrictRepository } from '../../infrastruture/repository/district.repository.js';
-import { DistrictDTO } from '../../api/dto/district.dto.js';
-export declare class DistrictService {
+import type { DistrictEntity } from '../../domain/entities/district.entity.js';
+import { type IDistrictRepository } from '../../domain/repositories/idistrict.repository.js';
+import type { IDistrictService } from '../../domain/services/idistrict.service.js';
+export declare class DistrictService implements IDistrictService {
     private readonly repo;
-    constructor(repo: DistrictRepository);
-    getByProvinceId(provinceId: number): Promise<DistrictDTO[]>;
+    constructor(repo: IDistrictRepository);
+    getByProvinceId(provinceId: number): Promise<DistrictEntity[]>;
 }

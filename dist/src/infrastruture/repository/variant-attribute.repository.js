@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { VariantAttributeDTO } from '../../api/dto/product.dto.js';
 let VariantAttributeRepository = class VariantAttributeRepository {
     prisma;
     constructor(prisma) {
@@ -20,7 +19,7 @@ let VariantAttributeRepository = class VariantAttributeRepository {
     }
     async getAll() {
         const list = await this.prisma.variant_attribute.findMany();
-        return list.map((x) => this.toDTO(x));
+        return list.map((x) => this.toEntity(x));
     }
     async updateFromList(list) {
         try {
@@ -32,7 +31,7 @@ let VariantAttributeRepository = class VariantAttributeRepository {
                     value_int: x.value_int !== null ? Number(x.value_int) : null,
                     value_text: x.value_text ?? null,
                     value_decimal: x.value_decimal ?? null,
-                    attribute_value_id: x.attribute_value_id ?? null,
+                    attribute_value_id: null,
                 },
             })));
             return true;
@@ -42,16 +41,22 @@ let VariantAttributeRepository = class VariantAttributeRepository {
             return false;
         }
     }
-    toDTO(x) {
-        const dto = new VariantAttributeDTO();
-        dto.id = x.id;
-        dto.attribute_id = x.attribute_id;
-        dto.variant_id = x.variant_id;
-        dto.value_decimal =
-            x.value_decimal !== null ? Number(x.value_decimal) : null;
-        dto.value_int = x.value_int;
-        dto.value_text = x.value_text;
-        return dto;
+    toEntity(x) {
+        return {
+            id: x.id,
+            attribute_id: x.attribute_id,
+            variant_id: x.variant_id,
+            value_decimal: x.value_decimal !== null
+                ? typeof x.value_decimal === 'number'
+                    ? x.value_decimal
+                    : x.value_decimal.toNumber()
+                : null,
+            value_int: x.value_int,
+            value_text: x.value_text,
+            attribute_value_id: x.attribute_value_id ?? null,
+            attribute_value: null,
+            attribute: null,
+        };
     }
 };
 VariantAttributeRepository = __decorate([

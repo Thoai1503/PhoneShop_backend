@@ -1,6 +1,7 @@
 import { PrismaService } from '../database/prisma.service.js';
-import { CartDTO } from '../../api/dto/product.dto.js';
-export declare class CartRepository {
+import type { ICartRepository } from '../../domain/repositories/icart.repository.js';
+import type { CartEntity } from '../../domain/entities/cart/cart.entity.js';
+export declare class CartRepository implements ICartRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
     create(item: {
@@ -12,5 +13,5 @@ export declare class CartRepository {
     updateQuantity(id: number, quantity: number): Promise<boolean>;
     deleteById(id: number): Promise<boolean>;
     deleteByUserId(userId: number): Promise<boolean>;
-    findByUserId(userId: number): Promise<CartDTO[]>;
+    findByUserId(userId: number): Promise<CartEntity[]>;
 }

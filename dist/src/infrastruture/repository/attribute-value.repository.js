@@ -9,7 +9,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { AttributeValueDTO } from '../../api/dto/attribute.dto.js';
 import { BaseRepository } from './base.repository.js';
 let AttributeValueRepository = class AttributeValueRepository extends BaseRepository {
     prisma;
@@ -23,20 +22,21 @@ let AttributeValueRepository = class AttributeValueRepository extends BaseReposi
         });
         if (!entity)
             return null;
-        return this.toDTO(entity);
+        return {
+            id: entity.id,
+            attribute_id: entity.attribute_id,
+            value: entity.value?.trim() ?? '',
+        };
     }
     async getByAttributeId(attributeId) {
         const list = await this.prisma.attribute_value.findMany({
             where: { attribute_id: attributeId },
         });
-        return list.map((av) => this.toDTO(av));
-    }
-    toDTO(av) {
-        const dto = new AttributeValueDTO();
-        dto.id = av.id;
-        dto.attribute_id = av.attribute_id;
-        dto.value = av.value?.trim() ?? '';
-        return dto;
+        return list.map((av) => ({
+            id: av.id,
+            attribute_id: av.attribute_id,
+            value: av.value?.trim() ?? '',
+        }));
     }
 };
 AttributeValueRepository = __decorate([

@@ -1,23 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { DistrictDTO } from '../../api/dto/district.dto.js';
+import type { DistrictEntity } from '../../domain/entities/district.entity.js';
+import type { IDistrictRepository } from '../../domain/repositories/idistrict.repository.js';
 
 @Injectable()
-export class DistrictRepository {
+export class DistrictRepository implements IDistrictRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async getByProvinceId(provinceId: number): Promise<DistrictDTO[]> {
+  async findByProvinceId(provinceId: number): Promise<DistrictEntity[]> {
     const list = await this.prisma.districts.findMany({
       where: { province_id: provinceId },
     });
-    return list.map((item) => {
-      const dto = new DistrictDTO();
-      dto.id = item.id;
-      dto.name = item.name;
-      dto.code = item.code;
-      dto.province_id = item.province_id;
-      dto.status = item.status;
-      return dto;
-    });
+    return list.map((item) => ({
+      id: item.id,
+      name: item.name,
+      code: item.code,
+      province_id: item.province_id,
+      status: item.status,
+    }));
   }
 }

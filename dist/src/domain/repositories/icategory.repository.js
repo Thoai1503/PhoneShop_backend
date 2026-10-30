@@ -1,0 +1,4 @@
+export const CATEGORY_ATTRIBUTE_REPOSITORY = Symbol('CATEGORY_ATTRIBUTE_REPOSITORY');
+export const CATEGORY_BRAND_REPOSITORY = Symbol('CATEGORY_BRAND_REPOSITORY');
+export const CATEGORY_REPOSITORY = Symbol('CATEGORY_REPOSITORY');
+//# sourceMappingURL=icategory.repository.js.map

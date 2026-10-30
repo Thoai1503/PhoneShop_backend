@@ -1,20 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import { OrderRepository } from '../../infrastruture/repository/order.repository.js';
-import { OrderDTO } from '../../api/dto/order.dto.js';
+import { Inject, Injectable } from '@nestjs/common';
+import {
+  ORDER_REPOSITORY,
+  type IOrderRepository,
+} from '../../domain/repositories/iorder.repository.js';
+import type { IOrderService } from '../../domain/services/iorder.service.js';
+import type { OrderEntity } from '../../domain/entities/orders/order.entity.js';
 
 @Injectable()
-export class OrderService {
-  constructor(private readonly repo: OrderRepository) {}
+export class OrderService implements IOrderService {
+  constructor(
+    @Inject(ORDER_REPOSITORY)
+    private readonly repo: IOrderRepository,
+  ) {}
 
-  async findAll(): Promise<OrderDTO[]> {
+  async findAll(): Promise<OrderEntity[]> {
     return this.repo.findAll();
   }
 
-  async getByUserId(userId: number): Promise<OrderDTO[]> {
+  async getByUserId(userId: number): Promise<OrderEntity[]> {
     return this.repo.getByUserId(userId);
   }
 
-  async findById(id: number): Promise<OrderDTO | null> {
+  async findById(id: number): Promise<OrderEntity | null> {
     return this.repo.findById(id);
   }
 }

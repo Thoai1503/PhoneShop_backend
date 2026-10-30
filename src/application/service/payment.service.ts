@@ -1,8 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { createHmac } from 'crypto';
 import type { Request } from 'express';
-import { PaymentRepository } from '../../infrastruture/repository/payment.repository.js';
-import { PaymentRequestDTO } from '../../api/dto/payment.dto.js';
+import {
+  PAYMENT_REPOSITORY,
+  type IPaymentRepository,
+} from '../../domain/repositories/ipayment.repository.js';
+import type { IPaymentService } from '../../domain/services/ipayment.service.js';
+import type { PaymentRequestEntity } from '../../domain/entities/payments/payment.entity.js';
 
 type PaymentInfo = {
   user_id?: number;
@@ -11,9 +15,9 @@ type PaymentInfo = {
 };
 
 @Injectable()
-export class PaymentService {
+export class PaymentService implements IPaymentService<PaymentRequestEntity> {
   constructor(
-    @Inject(PaymentRepository) private readonly repo: PaymentRepository,
+    @Inject(PAYMENT_REPOSITORY) private readonly repo: IPaymentRepository,
   ) {}
 
   private getClientIp(req: Request): string {
@@ -96,7 +100,7 @@ export class PaymentService {
   }
 
   async createVNPayPayment(
-    payload: PaymentRequestDTO,
+    payload: PaymentRequestEntity,
     req: Request,
   ): Promise<string> {
     const userId = payload.user_id;
@@ -184,7 +188,7 @@ export class PaymentService {
   }
 
   async createMoMoPayment(
-    payload: PaymentRequestDTO,
+    payload: PaymentRequestEntity,
     req: Request,
   ): Promise<string> {
     const userId = payload.user_id;

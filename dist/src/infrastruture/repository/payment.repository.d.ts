@@ -1,13 +1,10 @@
 import { PrismaService } from '../database/prisma.service.js';
-type CartItem = {
-    variant_id: number;
-    quantity: number;
-    unit_price: unknown;
-};
-export declare class PaymentRepository {
+import type { IPaymentRepository } from '../../domain/repositories/ipayment.repository.js';
+import type { PaymentCartItemEntity, PendingOrderEntity } from '../../domain/entities/payments/payment.entity.js';
+export declare class PaymentRepository implements IPaymentRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    getCartItemsByUserId(userId: number): Promise<CartItem[]>;
+    getCartItemsByUserId(userId: number): Promise<PaymentCartItemEntity[]>;
     createOrderFromCart(payload: {
         userId: number;
         amount: number;
@@ -16,16 +13,7 @@ export declare class PaymentRepository {
         orderId: number;
         cartCount: number;
     }>;
-    getPendingOrderByUserId(userId: number): Promise<{
-        id: number;
-        status: number;
-        created_at: Date;
-        user_id: number;
-        discount: import("@prisma/client-runtime-utils").Decimal;
-        total: import("@prisma/client-runtime-utils").Decimal;
-        address_id: number | null;
-    } | null>;
+    getPendingOrderByUserId(userId: number): Promise<PendingOrderEntity | null>;
     updateOrderStatus(orderId: number, status: number): Promise<boolean>;
     deleteCartByUserId(userId: number): Promise<boolean>;
 }
-export {};

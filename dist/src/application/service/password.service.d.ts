@@ -1,4 +1,5 @@
-export default class PasswordService {
+import type { IPasswordService } from '../../domain/services/iauth.service.js';
+export default class PasswordService implements IPasswordService {
     private saltRounds;
     private minLength;
     private requireUppercase;

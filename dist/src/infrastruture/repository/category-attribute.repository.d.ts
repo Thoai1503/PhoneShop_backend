@@ -1,13 +1,14 @@
 import { PrismaService } from '../database/prisma.service.js';
-import { CategoryAttributeDTO } from '../../api/dto/category-attribute.dto.js';
-export declare class CategoryAttributeRepository {
+import type { ICategoryAttributeRepository } from '../../domain/repositories/icategory.repository.js';
+import type { CategoryAttributeEntity, CategoryAttributeUpdateEntity } from '../../domain/entities/categories/category.entity.js';
+export declare class CategoryAttributeRepository implements ICategoryAttributeRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    getAll(): Promise<CategoryAttributeDTO[]>;
-    findById(id: number): Promise<CategoryAttributeDTO | null>;
-    create(entity: CategoryAttributeDTO): Promise<boolean>;
-    update(entity: CategoryAttributeDTO): Promise<boolean>;
+    getAll(): Promise<CategoryAttributeEntity[]>;
+    findById(id: number): Promise<CategoryAttributeEntity | null>;
+    create(entity: CategoryAttributeEntity): Promise<boolean>;
+    update(entity: CategoryAttributeUpdateEntity): Promise<boolean>;
     delete(id: number): Promise<boolean>;
-    getByCategory(categorySlug: string): Promise<CategoryAttributeDTO[]>;
-    private toDTO;
+    getByCategory(categorySlug: string): Promise<CategoryAttributeEntity[]>;
+    private toEntity;
 }

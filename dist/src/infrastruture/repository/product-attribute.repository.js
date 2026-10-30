@@ -21,7 +21,17 @@ let ProductAttributeRepository = class ProductAttributeRepository {
         const en = await this.prisma.product_attribute.findUnique({
             where: { id },
         });
-        return en;
+        if (!en)
+            return null;
+        return {
+            id: en.id,
+            product_id: en.product_id,
+            attribute_id: en.attribute_id,
+            value_int: en.value_int,
+            value_text: en.value_text,
+            value_decimal: en.value_decimal === null ? null : Number(en.value_decimal),
+            attribute_value_id: en.attribute_value_id,
+        };
     }
     async update(id, entity) {
         try {

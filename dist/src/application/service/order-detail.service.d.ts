@@ -1,7 +1,8 @@
-import { OrderDetailRepository } from '../../infrastruture/repository/order-detail.repository.js';
-import { OrderDetailDTO } from '../../api/dto/order-detail.dto.js';
-export declare class OrderDetailService {
+import { type IOrderDetailRepository } from '../../domain/repositories/iorder.repository.js';
+import type { IOrderDetailService } from '../../domain/services/iorder.service.js';
+import type { OrderDetailEntity } from '../../domain/entities/orders/order.entity.js';
+export declare class OrderDetailService implements IOrderDetailService {
     private readonly repo;
-    constructor(repo: OrderDetailRepository);
-    findByOrderId(orderId: number): Promise<OrderDetailDTO[]>;
+    constructor(repo: IOrderDetailRepository);
+    findByOrderId(orderId: number): Promise<OrderDetailEntity[]>;
 }

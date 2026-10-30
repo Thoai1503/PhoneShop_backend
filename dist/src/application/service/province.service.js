@@ -7,8 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { ProvinceRepository } from '../../infrastruture/repository/province.repository.js';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Inject, Injectable } from '@nestjs/common';
+import { PROVINCE_REPOSITORY, } from '../../domain/repositories/iprovince.repository.js';
 let ProvinceService = class ProvinceService {
     repo;
     constructor(repo) {
@@ -20,7 +23,8 @@ let ProvinceService = class ProvinceService {
 };
 ProvinceService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [ProvinceRepository])
+    __param(0, Inject(PROVINCE_REPOSITORY)),
+    __metadata("design:paramtypes", [Object])
 ], ProvinceService);
 export { ProvinceService };
 //# sourceMappingURL=province.service.js.map

@@ -1,11 +1,12 @@
-import { CategoryRepository } from '../../infrastruture/repository/category.repository.js';
-import { CategoryDTO } from '../../api/dto/category.dto.js';
-export declare class CategoryService {
+import { type ICategoryRepository } from '../../domain/repositories/icategory.repository.js';
+import type { ICategoryService } from '../../domain/services/icategory.service.js';
+import type { CategoryEntity } from '../../domain/entities/categories/category.entity.js';
+export declare class CategoryService implements ICategoryService {
     private readonly categoryRepository;
-    constructor(categoryRepository: CategoryRepository);
-    getAll(): Promise<CategoryDTO[]>;
-    findById(id: number): Promise<CategoryDTO | null>;
-    createCategory(categoryData: CategoryDTO): Promise<CategoryDTO>;
-    updateCategory(id: number, categoryData: CategoryDTO): Promise<CategoryDTO | null>;
+    constructor(categoryRepository: ICategoryRepository);
+    getAll(): Promise<CategoryEntity[]>;
+    findById(id: number): Promise<CategoryEntity | null>;
+    createCategory(categoryData: CategoryEntity): Promise<CategoryEntity>;
+    updateCategory(id: number, categoryData: CategoryEntity): Promise<CategoryEntity | null>;
     deleteCategory(id: number): Promise<boolean>;
 }

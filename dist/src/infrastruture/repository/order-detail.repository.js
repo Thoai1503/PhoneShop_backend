@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { OrderDetailDTO } from '../../api/dto/order-detail.dto.js';
 let OrderDetailRepository = class OrderDetailRepository {
     prisma;
     constructor(prisma) {
@@ -24,14 +23,12 @@ let OrderDetailRepository = class OrderDetailRepository {
                 order_id: orderId,
             },
         });
-        return list.map((item) => {
-            const dto = new OrderDetailDTO();
-            dto.id = item.id;
-            dto.order_id = item.order_id;
-            dto.variant_id = item.variant_id !== null ? Number(item.variant_id) : 0;
-            dto.quantity = item.quantity;
-            return dto;
-        });
+        return list.map((item) => ({
+            id: item.id,
+            order_id: item.order_id,
+            variant_id: item.variant_id !== null ? Number(item.variant_id) : 0,
+            quantity: item.quantity,
+        }));
     }
 };
 OrderDetailRepository = __decorate([

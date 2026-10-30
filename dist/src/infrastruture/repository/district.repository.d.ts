@@ -1,7 +1,8 @@
 import { PrismaService } from '../database/prisma.service.js';
-import { DistrictDTO } from '../../api/dto/district.dto.js';
-export declare class DistrictRepository {
+import type { DistrictEntity } from '../../domain/entities/district.entity.js';
+import type { IDistrictRepository } from '../../domain/repositories/idistrict.repository.js';
+export declare class DistrictRepository implements IDistrictRepository {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    getByProvinceId(provinceId: number): Promise<DistrictDTO[]>;
+    findByProvinceId(provinceId: number): Promise<DistrictEntity[]>;
 }

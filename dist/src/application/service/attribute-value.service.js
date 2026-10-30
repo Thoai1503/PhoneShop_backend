@@ -7,8 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { AttributeValueRepository } from '../../infrastruture/repository/attribute-value.repository.js';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Inject, Injectable } from '@nestjs/common';
+import { ATTRIBUTE_VALUE_REPOSITORY, } from '../../domain/repositories/iattribute.repository.js';
 let AttributeValueService = class AttributeValueService {
     repo;
     constructor(repo) {
@@ -23,7 +26,8 @@ let AttributeValueService = class AttributeValueService {
 };
 AttributeValueService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [AttributeValueRepository])
+    __param(0, Inject(ATTRIBUTE_VALUE_REPOSITORY)),
+    __metadata("design:paramtypes", [Object])
 ], AttributeValueService);
 export { AttributeValueService };
 //# sourceMappingURL=attribute-value.service.js.map

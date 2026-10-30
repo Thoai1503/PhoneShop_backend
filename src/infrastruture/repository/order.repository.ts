@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { OrderDTO, OrderUserDTO } from '../../api/dto/order.dto.js';
+import type { IOrderRepository } from '../../domain/repositories/iorder.repository.js';
+import type { OrderEntity } from '../../domain/entities/orders/order.entity.js';
 
 @Injectable()
-export class OrderRepository {
+export class OrderRepository implements IOrderRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<OrderDTO[]> {
+  async findAll(): Promise<OrderEntity[]> {
     const list = await this.prisma.orders.findMany({
       include: { users: true, user_addresses: true },
       orderBy: {
@@ -14,29 +15,25 @@ export class OrderRepository {
       },
     });
 
-    return list.map((item) => {
-      const dto = new OrderDTO();
-      dto.id = item.id;
-      dto.user_id = item.user_id;
-      dto.discount = Number(item.discount);
-      dto.total = Number(item.total);
-      dto.address_id = item.address_id ?? undefined;
-      dto.status = item.status;
-      dto.created_at = item.created_at;
-
-      const userDto = new OrderUserDTO();
-      userDto.id = item.users.id;
-      userDto.name = item.users.full_name;
-      userDto.email = item.users.email;
-      userDto.phone = item.users.phone;
-      userDto.status = item.users.status;
-      dto.user = userDto;
-
-      return dto;
-    });
+    return list.map((item) => ({
+      id: item.id,
+      user_id: item.user_id,
+      discount: Number(item.discount),
+      total: Number(item.total),
+      address_id: item.address_id ?? undefined,
+      status: item.status,
+      created_at: item.created_at,
+      user: {
+        id: item.users.id,
+        name: item.users.full_name,
+        email: item.users.email,
+        phone: item.users.phone,
+        status: item.users.status,
+      },
+    }));
   }
 
-  async findById(id: number): Promise<OrderDTO | null> {
+  async findById(id: number): Promise<OrderEntity | null> {
     const item = await this.prisma.orders.findUnique({
       where: { id },
       include: { users: true, user_addresses: true },
@@ -44,41 +41,38 @@ export class OrderRepository {
 
     if (!item) return null;
 
-    const dto = new OrderDTO();
-    dto.id = item.id;
-    dto.user_id = item.user_id;
-    dto.discount = Number(item.discount);
-    dto.total = Number(item.total);
-    dto.address_id = item.address_id ?? undefined;
-    dto.status = item.status;
-    dto.created_at = item.created_at;
-
-    const userDto = new OrderUserDTO();
-    userDto.id = item.users.id;
-    userDto.name = item.users.full_name;
-    userDto.email = item.users.email;
-    userDto.phone = item.users.phone;
-    userDto.status = item.users.status;
-    dto.user = userDto;
-
-    return dto;
+    return {
+      id: item.id,
+      user_id: item.user_id,
+      discount: Number(item.discount),
+      total: Number(item.total),
+      address_id: item.address_id ?? undefined,
+      status: item.status,
+      created_at: item.created_at,
+      user: {
+        id: item.users.id,
+        name: item.users.full_name,
+        email: item.users.email,
+        phone: item.users.phone,
+        status: item.users.status,
+      },
+    };
   }
 
-  async getByUserId(userId: number): Promise<OrderDTO[]> {
+  async getByUserId(userId: number): Promise<OrderEntity[]> {
     const list = await this.prisma.orders.findMany({
       where: { user_id: userId },
     });
 
-    return list.map((item) => {
-      const dto = new OrderDTO();
-      dto.id = item.id;
-      dto.user_id = userId;
-      dto.discount = Number(item.discount);
-      dto.total = Number(item.total);
-      dto.address_id = item.address_id ?? undefined;
-      dto.status = item.status;
-      dto.created_at = item.created_at;
-      return dto;
-    });
+    return list.map((item) => ({
+      id: item.id,
+      user_id: userId,
+      discount: Number(item.discount),
+      total: Number(item.total),
+      address_id: item.address_id ?? undefined,
+      status: item.status,
+      created_at: item.created_at,
+      user: null,
+    }));
   }
 }

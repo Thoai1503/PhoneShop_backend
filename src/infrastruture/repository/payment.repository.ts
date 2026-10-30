@@ -1,17 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-
-type CartItem = {
-  variant_id: number;
-  quantity: number;
-  unit_price: unknown;
-};
+import type { IPaymentRepository } from '../../domain/repositories/ipayment.repository.js';
+import type {
+  PaymentCartItemEntity,
+  PendingOrderEntity,
+} from '../../domain/entities/payments/payment.entity.js';
 
 @Injectable()
-export class PaymentRepository {
+export class PaymentRepository implements IPaymentRepository {
   constructor(@Inject(PrismaService) private readonly prisma: PrismaService) {}
 
-  async getCartItemsByUserId(userId: number): Promise<CartItem[]> {
+  async getCartItemsByUserId(userId: number): Promise<PaymentCartItemEntity[]> {
     return this.prisma.cart.findMany({
       where: { user_id: userId },
       select: {
@@ -68,7 +67,9 @@ export class PaymentRepository {
     });
   }
 
-  async getPendingOrderByUserId(userId: number) {
+  async getPendingOrderByUserId(
+    userId: number,
+  ): Promise<PendingOrderEntity | null> {
     return this.prisma.orders.findFirst({
       where: {
         user_id: userId,

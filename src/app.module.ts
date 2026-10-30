@@ -81,6 +81,36 @@ import { MailService } from './service/mail.service.js';
 import { CloudinaryService } from './service/cloudinary.service.js';
 import { RateLimitMiddleware } from './application/middleware/rate-limit.middleware.js';
 import { RateLimiterService } from './common/service/rate-limiter.service.js';
+import { BRAND_REPOSITORY } from './domain/repositories/ibrand.repository.js';
+import { DISTRICT_REPOSITORY } from './domain/repositories/idistrict.repository.js';
+import { PROVINCE_REPOSITORY } from './domain/repositories/iprovince.repository.js';
+import { WARD_REPOSITORY } from './domain/repositories/iward.repository.js';
+import {
+  ATTRIBUTE_REPOSITORY,
+  ATTRIBUTE_VALUE_REPOSITORY,
+} from './domain/repositories/iattribute.repository.js';
+import {
+  CATEGORY_ATTRIBUTE_REPOSITORY,
+  CATEGORY_BRAND_REPOSITORY,
+  CATEGORY_REPOSITORY,
+} from './domain/repositories/icategory.repository.js';
+import { CART_REPOSITORY } from './domain/repositories/icart.repository.js';
+import {
+  ORDER_DETAIL_REPOSITORY,
+  ORDER_REPOSITORY,
+} from './domain/repositories/iorder.repository.js';
+import { PAYMENT_REPOSITORY } from './domain/repositories/ipayment.repository.js';
+import {
+  PRODUCT_ATTRIBUTE_REPOSITORY,
+  PRODUCT_IMAGE_REPOSITORY,
+  PRODUCT_REPOSITORY,
+  PRODUCT_VARIANT_REPOSITORY,
+  VARIANT_ATTRIBUTE_REPOSITORY,
+} from './domain/repositories/iproduct.repository.js';
+import {
+  USER_ADDRESS_REPOSITORY,
+  USERS_REPOSITORY,
+} from './domain/repositories/iuser.repository.js';
 
 @Module({
   imports: [
@@ -164,6 +194,44 @@ import { RateLimiterService } from './common/service/rate-limiter.service.js';
     OrderRepository,
     OrderDetailRepository,
     PaymentRepository,
+    { provide: BRAND_REPOSITORY, useExisting: BrandRepository },
+    { provide: DISTRICT_REPOSITORY, useExisting: DistrictRepository },
+    { provide: PROVINCE_REPOSITORY, useExisting: ProvinceRepository },
+    { provide: WARD_REPOSITORY, useExisting: WardRepository },
+    { provide: ATTRIBUTE_REPOSITORY, useExisting: AttributeRepository },
+    {
+      provide: ATTRIBUTE_VALUE_REPOSITORY,
+      useExisting: AttributeValueRepository,
+    },
+    { provide: CART_REPOSITORY, useExisting: CartRepository },
+    {
+      provide: CATEGORY_ATTRIBUTE_REPOSITORY,
+      useExisting: CategoryAttributeRepository,
+    },
+    {
+      provide: CATEGORY_BRAND_REPOSITORY,
+      useExisting: CategoryBrandRepository,
+    },
+    { provide: CATEGORY_REPOSITORY, useExisting: CategoryRepository },
+    { provide: ORDER_DETAIL_REPOSITORY, useExisting: OrderDetailRepository },
+    { provide: ORDER_REPOSITORY, useExisting: OrderRepository },
+    { provide: PAYMENT_REPOSITORY, useExisting: PaymentRepository },
+    {
+      provide: PRODUCT_ATTRIBUTE_REPOSITORY,
+      useExisting: ProductAttributeRepository,
+    },
+    { provide: PRODUCT_IMAGE_REPOSITORY, useExisting: ProductImageRepository },
+    { provide: PRODUCT_REPOSITORY, useExisting: ProductRepository },
+    {
+      provide: PRODUCT_VARIANT_REPOSITORY,
+      useExisting: ProductVariantRepository,
+    },
+    { provide: USER_ADDRESS_REPOSITORY, useExisting: UserAddressRepository },
+    { provide: USERS_REPOSITORY, useExisting: UsersRepository },
+    {
+      provide: VARIANT_ATTRIBUTE_REPOSITORY,
+      useExisting: VariantAttributeRepository,
+    },
     MailService,
     LoggerService,
     CloudinaryService,

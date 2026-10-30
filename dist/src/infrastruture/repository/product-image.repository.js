@@ -12,7 +12,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service.js';
-import { ProductImageDTO } from '../../api/dto/product.dto.js';
 import * as path from 'path';
 import * as fs from 'fs';
 let ProductImageRepository = class ProductImageRepository {
@@ -57,14 +56,12 @@ let ProductImageRepository = class ProductImageRepository {
         const list = await this.prisma.product_image.findMany({
             where: { variant_id: variantId },
         });
-        return list.map((e) => {
-            const dto = new ProductImageDTO();
-            dto.id = e.id;
-            dto.product_id = e.product_id;
-            dto.variant_id = variantId;
-            dto.url = e.url;
-            return dto;
-        });
+        return list.map((e) => ({
+            id: e.id,
+            product_id: e.product_id,
+            variant_id: variantId,
+            url: e.url,
+        }));
     }
 };
 ProductImageRepository = __decorate([

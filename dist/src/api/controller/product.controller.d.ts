@@ -13,57 +13,17 @@ export declare class ProductController {
     getPublishedProductHtmlContent(id: number): Promise<{
         html: string;
     }>;
-    getContentVersions(id: number): Promise<{
-        product_id: number;
-        locale: string;
-        versions: Array<{
-            id: number;
-            version_number: number;
-            created_at: Date;
-            change_note: string | null;
-            is_draft: boolean;
-            is_published: boolean;
-        }>;
-        draft_version_id: number | null;
-        published_version_id: number | null;
-    }>;
-    getContentVersionDetail(id: number, versionId: number): Promise<{
-        id: number;
-        product_id: number;
-        locale: string;
-        version_number: number;
-        created_at: Date;
-        change_note: string | null;
-        html: string;
-        is_draft: boolean;
-        is_published: boolean;
-    }>;
-    compareVersions(id: number, v1: number, v2: number): Promise<{
-        version1: {
-            version_number: number;
-            html: string;
-        };
-        version2: {
-            version_number: number;
-            html: string;
-        };
-    }>;
+    getContentVersions(id: number): Promise<import("../../domain/entities/products/product.entity.js").ProductContentVersionsEntity>;
+    getContentVersionDetail(id: number, versionId: number): Promise<import("../../domain/entities/products/product.entity.js").ProductContentVersionEntity>;
+    compareVersions(id: number, v1: number, v2: number): Promise<import("../../domain/entities/products/product.entity.js").ProductContentComparisonEntity>;
     create(product: ProductAddAndUpdateStateDTO): Promise<ProductDTO>;
     update(request: any, id: number, product: ProductUpdateDTO): Promise<ProductDTO>;
     uploadContentImage(id: number, file: Express.Multer.File): Promise<{
         url: string;
     }>;
     saveProductHtmlContent(id: number, payload: SaveProductContentDTO): Promise<SaveProductContentResultDTO>;
-    publishVersion(id: number, versionId: number): Promise<{
-        product_content_id: number;
-        published_version_id: number;
-        version_number: number;
-    }>;
-    restoreVersion(id: number, versionId: number): Promise<{
-        product_content_id: number;
-        draft_version_id: number;
-        version_number: number;
-    }>;
+    publishVersion(id: number, versionId: number): Promise<import("../../domain/entities/products/product.entity.js").ProductContentVersionStatusEntity>;
+    restoreVersion(id: number, versionId: number): Promise<import("../../domain/entities/products/product.entity.js").ProductContentRestoreEntity>;
     deleteVersion(id: number, versionId: number): Promise<{
         success: boolean;
     }>;

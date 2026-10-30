@@ -7,8 +7,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { ProductVariantRepository } from '../../infrastruture/repository/product-variant.repository.js';
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+import { Inject, Injectable } from '@nestjs/common';
+import { PRODUCT_VARIANT_REPOSITORY, } from '../../domain/repositories/iproduct.repository.js';
 let ProductVariantService = class ProductVariantService {
     repo;
     constructor(repo) {
@@ -41,7 +44,8 @@ let ProductVariantService = class ProductVariantService {
 };
 ProductVariantService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [ProductVariantRepository])
+    __param(0, Inject(PRODUCT_VARIANT_REPOSITORY)),
+    __metadata("design:paramtypes", [Object])
 ], ProductVariantService);
 export { ProductVariantService };
 //# sourceMappingURL=product-variant.service.js.map

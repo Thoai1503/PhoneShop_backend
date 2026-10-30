@@ -1,7 +1,8 @@
-import { ProvinceRepository } from '../../infrastruture/repository/province.repository.js';
-import { ProvinceDTO } from '../../api/dto/province.dto.js';
-export declare class ProvinceService {
+import type { ProvinceEntity } from '../../domain/entities/province.entity.js';
+import { type IProvinceRepository } from '../../domain/repositories/iprovince.repository.js';
+import type { IProvinceService } from '../../domain/services/iprovince.service.js';
+export declare class ProvinceService implements IProvinceService {
     private readonly repo;
-    constructor(repo: ProvinceRepository);
-    findAll(): Promise<ProvinceDTO[]>;
+    constructor(repo: IProvinceRepository);
+    findAll(): Promise<ProvinceEntity[]>;
 }
