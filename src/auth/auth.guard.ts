@@ -18,6 +18,7 @@ export class AuthGuard implements CanActivate {
     const method = request.method;
     const token = this.extractTokenFromHeader(request);
     const originUrl = request.originalUrl as string;
+    console.log(`AuthGuard: ${method} ${originUrl}, token: ${token}`);
     try {
       if (!token) {
         return false;
@@ -34,8 +35,7 @@ export class AuthGuard implements CanActivate {
         !originUrl.includes('api/v1/useraddress')
       ) {
         request.admin = isValid;
-      }
-      else {
+      } else {
         request.admin = null;
       }
 
@@ -45,11 +45,13 @@ export class AuthGuard implements CanActivate {
     }
     return true;
   }
-  private extractTokenFromHeader(request: Request): string | undefined {
+  public extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] =
       (
         request.headers.get?.('authorization') ||
-        request.headers['authorization']
+        request.headers['authorization'] ||
+        request.headers['Authorization'] ||
+        request.headers.get?.('Authorization')
       )?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }

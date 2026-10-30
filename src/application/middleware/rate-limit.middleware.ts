@@ -17,13 +17,21 @@ export class RateLimitMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     // Ưu tiên dùng userId nếu đã login, fallback về IP
-
+    console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
     const authHeader = req.headers['authorization'];
+    console.log(`Authorization header: ${authHeader}`);
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.slice(7);
-      const decoded = this.jwtService.verifyAccessToken(token);
-      if (decoded && decoded.id) {
-        (req as any).user = { userId: decoded.id };
+      try {
+        if (!token) {
+          return false;
+        }
+        const isValid = this.jwtService.verifyAccessToken(token);
+        if (isValid) {
+          (req as any).user = { userId: isValid.id };
+        }
+      } catch (error) {
+        console.error('Error verifying token:', error);
       }
     }
 

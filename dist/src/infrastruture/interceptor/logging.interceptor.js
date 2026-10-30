@@ -9,7 +9,12 @@ import { tap } from 'rxjs/operators';
 let LoggingInterceptor = class LoggingInterceptor {
     intercept(context, next) {
         console.log('Before...');
+        const request = context.switchToHttp().getRequest();
+        const method = request.method;
+        const url = request.originalUrl;
+        const headers = request.headers;
         const now = Date.now();
+        console.log(`[${new Date().toISOString()}] ${method} ${url} Headers: ${JSON.stringify(headers)}`);
         return next
             .handle()
             .pipe(tap(() => console.log(`After... ${Date.now() - now}ms`)));

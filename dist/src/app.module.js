@@ -89,7 +89,7 @@ let AppModule = class AppModule {
         })
             .forRoutes('*')
             .apply(LoggerMiddleware, RateLimitMiddleware)
-            .forRoutes(AuthController);
+            .forRoutes(AuthController, ProductController, CategoryController, AttributeController, AttributeValueController, BrandController, CategoryAttributeController, CategoryBrandController, ProductAttributeController, ProductVariantController, VariantAttributeController, ProductImageController, CartController, ProvinceController, DistrictController, WardController, UserAddressController, OrderController, OrderDetailController, VNPayPaymentController, MoMoPaymentController);
     }
 };
 AppModule = __decorate([

@@ -18,12 +18,22 @@ let RateLimitMiddleware = class RateLimitMiddleware {
         this.jwtService = jwtService;
     }
     use(req, res, next) {
+        console.log(`Incoming request: ${req.method} ${req.originalUrl}`);
         const authHeader = req.headers['authorization'];
+        console.log(`Authorization header: ${authHeader}`);
         if (authHeader && authHeader.startsWith('Bearer ')) {
             const token = authHeader.slice(7);
-            const decoded = this.jwtService.verifyAccessToken(token);
-            if (decoded && decoded.id) {
-                req.user = { userId: decoded.id };
+            try {
+                if (!token) {
+                    return false;
+                }
+                const isValid = this.jwtService.verifyAccessToken(token);
+                if (isValid) {
+                    req.user = { userId: isValid.id };
+                }
+            }
+            catch (error) {
+                console.error('Error verifying token:', error);
             }
         }
         const userId = req.user?.userId;

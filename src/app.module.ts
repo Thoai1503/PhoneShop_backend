@@ -180,6 +180,28 @@ export class AppModule implements NestModule {
       })
       .forRoutes('*')
       .apply(LoggerMiddleware, RateLimitMiddleware)
-      .forRoutes(AuthController);
+      .forRoutes(
+        AuthController,
+        ProductController,
+        CategoryController,
+        AttributeController,
+        AttributeValueController,
+        BrandController,
+        CategoryAttributeController,
+        CategoryBrandController,
+        ProductAttributeController,
+        ProductVariantController,
+        VariantAttributeController,
+        ProductImageController,
+        CartController,
+        ProvinceController,
+        DistrictController,
+        WardController,
+        UserAddressController,
+        OrderController,
+        OrderDetailController,
+        VNPayPaymentController,
+        MoMoPaymentController,
+      );
   }
 }
