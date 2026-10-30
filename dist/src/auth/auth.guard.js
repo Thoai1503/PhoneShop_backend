@@ -19,6 +19,7 @@ let AuthGuard = class AuthGuard {
         const method = request.method;
         const token = this.extractTokenFromHeader(request);
         const originUrl = request.originalUrl;
+        console.log(`AuthGuard: ${method} ${originUrl}, token: ${token}`);
         try {
             if (!token) {
                 return false;
@@ -46,7 +47,9 @@ let AuthGuard = class AuthGuard {
     }
     extractTokenFromHeader(request) {
         const [type, token] = (request.headers.get?.('authorization') ||
-            request.headers['authorization'])?.split(' ') ?? [];
+            request.headers['authorization'] ||
+            request.headers['Authorization'] ||
+            request.headers.get?.('Authorization'))?.split(' ') ?? [];
         return type === 'Bearer' ? token : undefined;
     }
 };

@@ -6,6 +6,6 @@ export declare class RateLimitMiddleware implements NestMiddleware {
     private readonly rateLimiter;
     private readonly jwtService;
     constructor(rateLimiter: RateLimiterService, jwtService: JWTService);
-    use(req: Request, res: Response, next: NextFunction): void;
+    use(req: Request, res: Response, next: NextFunction): false | undefined;
     private getResetTime;
 }
